@@ -1,16 +1,19 @@
 {
   "expo": {
     "name": "AFFutbol",
-    "slug": "AFFutbol",
+    "slug": "affutbol",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/images/icon.png",
     "scheme": "affutbol",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon"
+      "icon": "./assets/expo.icon",
+      "bundleIdentifier": "com.alejandroff.affutbol",
+      "supportsTablet": true
     },
     "android": {
+      "package": "com.alejandroff.affutbol",
       "adaptiveIcon": {
         "backgroundColor": "#E6F4FE",
         "foregroundImage": "./assets/images/android-icon-foreground.png",
@@ -28,9 +31,13 @@
       [
         "expo-splash-screen",
         {
-          "backgroundColor": "#208AEF",
+          "backgroundColor": "#07120D",
           "image": "./assets/images/splash-icon.png",
-          "imageWidth": 76
+          "imageWidth": 96,
+          "dark": {
+            "backgroundColor": "#07120D",
+            "image": "./assets/images/splash-icon.png"
+          }
         }
       ]
     ],

@@ -9,22 +9,41 @@ export default function AppTabs() {
 
   return (
     <NativeTabs
-      backgroundColor={colors.background}
-      indicatorColor={colors.backgroundElement}
-      labelStyle={{ selected: { color: colors.text } }}>
+      backgroundColor={colors.backgroundElement}
+      indicatorColor={colors.backgroundSelected}
+      tintColor={colors.brand}
+      labelStyle={{ selected: { color: colors.brand } }}>
       <NativeTabs.Trigger name="index">
-        <NativeTabs.Trigger.Label>Home</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Label>Partidos</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/home.png')}
-          renderingMode="template"
+          sf={{ default: 'sportscourt', selected: 'sportscourt.fill' }}
+          md="sports_soccer"
         />
       </NativeTabs.Trigger>
 
-      <NativeTabs.Trigger name="explore">
-        <NativeTabs.Trigger.Label>Explore</NativeTabs.Trigger.Label>
+      <NativeTabs.Trigger name="news">
+        <NativeTabs.Trigger.Label>Noticias</NativeTabs.Trigger.Label>
         <NativeTabs.Trigger.Icon
-          src={require('@/assets/images/tabIcons/explore.png')}
-          renderingMode="template"
+          sf={{ default: 'newspaper', selected: 'newspaper.fill' }}
+          md="newspaper"
+        />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="predictions">
+        <NativeTabs.Trigger.Label>Predicciones</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'target', selected: 'target' }} md="target" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="rankings">
+        <NativeTabs.Trigger.Label>Ranking</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon sf={{ default: 'trophy', selected: 'trophy.fill' }} md="emoji_events" />
+      </NativeTabs.Trigger>
+
+      <NativeTabs.Trigger name="profile">
+        <NativeTabs.Trigger.Label>Perfil</NativeTabs.Trigger.Label>
+        <NativeTabs.Trigger.Icon
+          sf={{ default: 'person.crop.circle', selected: 'person.crop.circle.fill' }}
+          md="person"
         />
       </NativeTabs.Trigger>
     </NativeTabs>
