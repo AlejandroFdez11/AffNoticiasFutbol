@@ -5,6 +5,8 @@ import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
 import { Screen } from '@/components/screen';
 import { ScreenHeader } from '@/components/screen-header';
+import { SegmentedControl } from '@/components/segmented-control';
+import { ErrorState, LoadingState } from '@/components/state-card';
 import { ThemedText } from '@/components/themed-text';
 import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -19,9 +21,7 @@ import {
 import { EventTimeline } from '@/features/matches/components/event-timeline';
 import { LineupsView } from '@/features/matches/components/lineups-view';
 import { Scoreboard } from '@/features/matches/components/scoreboard';
-import { SegmentedControl } from '@/features/matches/components/segmented-control';
 import { StatisticsView } from '@/features/matches/components/statistics-view';
-import { ErrorState, LoadingState } from '@/features/matches/components/state-card';
 import { MATCH_TABS, type MatchTabKey } from '@/features/matches/constants';
 
 export default function MatchDetailScreen() {

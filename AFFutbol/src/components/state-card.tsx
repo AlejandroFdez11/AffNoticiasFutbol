@@ -2,9 +2,10 @@ import { SymbolView } from 'expo-symbols';
 import { type ComponentProps } from 'react';
 import { ActivityIndicator, Pressable, StyleSheet, View } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
 import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+
+import { ThemedText } from './themed-text';
 
 type SymbolName = ComponentProps<typeof SymbolView>['name'];
 
@@ -59,14 +60,16 @@ export function EmptyState(props: Omit<StateCardProps, 'action'>) {
 export function ErrorState({
   message,
   onRetry,
+  title = 'No se pudieron cargar los partidos',
 }: {
   message: string;
   onRetry: () => void;
+  title?: string;
 }) {
   return (
     <StateCard
       icon={{ ios: 'exclamationmark.triangle', android: 'warning', web: 'warning' }}
-      title="No se pudieron cargar los partidos"
+      title={title}
       description={message}
       action={{ label: 'Reintentar', onPress: onRetry }}
     />

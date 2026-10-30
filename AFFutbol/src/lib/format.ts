@@ -1,4 +1,11 @@
-import { format, isToday, isTomorrow, isYesterday, parseISO } from 'date-fns';
+import {
+  format,
+  formatDistanceStrict,
+  isToday,
+  isTomorrow,
+  isYesterday,
+  parseISO,
+} from 'date-fns';
 import { es } from 'date-fns/locale';
 
 function capitalize(value: string) {
@@ -31,4 +38,9 @@ export function relativeDayLabel(date: Date): string {
 /** Example: `21:00` for an ISO date returned by the football API. */
 export function formatMatchTime(isoDate: string): string {
   return format(parseISO(isoDate), 'HH:mm');
+}
+
+/** Example: `hace 2 horas` for a content publication date. */
+export function formatRelativeTime(isoDate: string, now: Date = new Date()): string {
+  return formatDistanceStrict(parseISO(isoDate), now, { locale: es, addSuffix: true });
 }

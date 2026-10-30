@@ -1,8 +1,9 @@
 import { Pressable, StyleSheet, View } from 'react-native';
 
-import { ThemedText } from '@/components/themed-text';
 import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
+
+import { ThemedText } from './themed-text';
 
 type SegmentedControlProps<T extends string> = {
   options: readonly { key: T; label: string }[];

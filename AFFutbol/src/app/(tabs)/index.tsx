@@ -1,17 +1,17 @@
 import { format } from 'date-fns';
-import { SymbolView } from 'expo-symbols';
+import { useRouter } from 'expo-router';
 import { useMemo, useState } from 'react';
 import {
-  ActivityIndicator,
-  Pressable,
   RefreshControl,
   SectionList,
   StyleSheet,
   View,
 } from 'react-native';
 
+import { IconButton } from '@/components/icon-button';
 import { Screen } from '@/components/screen';
 import { ScreenHeader } from '@/components/screen-header';
+import { ErrorState, EmptyState, LoadingState } from '@/components/state-card';
 import { ThemedText } from '@/components/themed-text';
 import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
@@ -25,11 +25,6 @@ import { AUTO_EXPAND_THRESHOLD } from '@/features/matches/constants';
 import { DateStrip } from '@/features/matches/components/date-strip';
 import { MatchRow } from '@/features/matches/components/match-row';
 import { SectionHeader } from '@/features/matches/components/section-header';
-import {
-  EmptyState,
-  ErrorState,
-  LoadingState,
-} from '@/features/matches/components/state-card';
 import { groupFixturesByLeague, getLiveFixtures } from '@/features/matches/grouping';
 import { isLiveMatch } from '@/features/matches/mappers';
 
@@ -48,6 +43,7 @@ type MatchSection = {
 
 export default function MatchesScreen() {
   const theme = useTheme();
+  const router = useRouter();
   const [selectedDate, setSelectedDate] = useState<Date>(() => new Date());
   const [expandedSections, setExpandedSections] = useState<Record<string, boolean>>({});
 
@@ -146,10 +142,19 @@ export default function MatchesScreen() {
               title="Partidos"
               subtitle={formatLongDate(selectedDate)}
               right={
-                <RefreshButton
-                  busy={isRefetching}
-                  onPress={() => void refetch()}
-                />
+                <View style={styles.headerActions}>
+                  <IconButton
+                    icon={{ ios: 'chart.bar', android: 'bar_chart', web: 'bar_chart' }}
+                    label="Ver estadísticas"
+                    onPress={() => router.push('/statistics')}
+                  />
+                  <IconButton
+                    icon={{ ios: 'arrow.clockwise', android: 'refresh', web: 'refresh' }}
+                    label="Actualizar partidos"
+                    busy={isRefetching}
+                    onPress={() => void refetch()}
+                  />
+                </View>
               }
             />
 
@@ -197,33 +202,6 @@ export default function MatchesScreen() {
   );
 }
 
-function RefreshButton({ busy, onPress }: { busy: boolean; onPress: () => void }) {
-  const theme = useTheme();
-
-  return (
-    <Pressable
-      accessibilityRole="button"
-      accessibilityLabel="Actualizar partidos"
-      disabled={busy}
-      onPress={onPress}
-      style={({ pressed }) => [
-        styles.refresh,
-        { backgroundColor: theme.backgroundElement, borderColor: theme.border },
-        pressed && styles.pressed,
-      ]}>
-      {busy ? (
-        <ActivityIndicator size="small" color={theme.brand} />
-      ) : (
-        <SymbolView
-          name={{ ios: 'arrow.clockwise', android: 'refresh', web: 'refresh' }}
-          size={18}
-          tintColor={theme.brand}
-        />
-      )}
-    </Pressable>
-  );
-}
-
 const styles = StyleSheet.create({
   content: {
     flexGrow: 1,
@@ -234,6 +212,11 @@ const styles = StyleSheet.create({
   header: {
     gap: Spacing.three,
     paddingBottom: Spacing.two,
+  },
+  headerActions: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.two,
   },
   demo: {
     paddingHorizontal: Spacing.three,
@@ -246,16 +229,5 @@ const styles = StyleSheet.create({
   footer: {
     alignItems: 'center',
     paddingTop: Spacing.three,
-  },
-  refresh: {
-    width: 40,
-    height: 40,
-    alignItems: 'center',
-    justifyContent: 'center',
-    borderRadius: Radii.pill,
-    borderWidth: 1,
-  },
-  pressed: {
-    opacity: 0.7,
   },
 });

@@ -22,6 +22,8 @@ export default function RootLayout() {
         <Stack screenOptions={{ headerShown: false }}>
           <Stack.Screen name="(tabs)" />
           <Stack.Screen name="match/[id]" />
+          <Stack.Screen name="article/[id]" />
+          <Stack.Screen name="statistics" />
         </Stack>
       </ThemeProvider>
     </QueryClientProvider>
