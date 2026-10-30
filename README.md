@@ -4,7 +4,7 @@
 
 ## ✨ Características
 
-- **Partidos del día:** todos los encuentros de la jornada en un solo lugar, con resultados en directo.
+- **Partidos del día:** todos los encuentros de la jornada en un solo lugar, agrupados por competición, con marcador en directo y detalle de cada partido (eventos, alineaciones y estadísticas).
 - **Noticias:** actualidad futbolística centralizada.
 - **Estadísticas:** datos de equipos, jugadores y competiciones.
 - **Rumores:** mercado de fichajes y últimas filtraciones.
@@ -18,8 +18,8 @@
 | Fase | Estado |
 | --- | --- |
 | Fase 0 — Cimientos y navegación | ✅ Completada |
-| Fase 1 — Partidos del día y detalle | 🚧 Siguiente |
-| Fase 2 — Noticias, estadísticas y rumores | ⏳ Pendiente |
+| Fase 1 — Partidos del día y detalle | ✅ Completada |
+| Fase 2 — Noticias, estadísticas y rumores | 🚧 Siguiente |
 | Fase 3 — Autenticación y perfil | ⏳ Pendiente |
 | Fase 4 — Predicciones | ⏳ Pendiente |
 | Fase 5 — Rankings y ligas privadas | ⏳ Pendiente |
@@ -72,9 +72,16 @@ Escanea el QR con Expo Go o pulsa `i` / `a` para abrir un simulador.
 | --- | --- | --- |
 | `EXPO_PUBLIC_API_FOOTBALL_KEY` | API key de API-Football | vacío |
 | `EXPO_PUBLIC_API_FOOTBALL_BASE_URL` | URL base de la API | `https://v3.football.api-sports.io` |
-| `EXPO_PUBLIC_USE_MOCKS` | Fuerza el uso de datos simulados | `true` si no hay key |
+| `EXPO_PUBLIC_USE_MOCKS` | Fuerza el uso de datos simulados (`true`/`false`) | `true` si no hay key |
 
 > ⚠️ Las variables `EXPO_PUBLIC_*` se incluyen en el bundle. No guardes secretos privados ahí. Antes de publicar, las llamadas a API-Football se moverán a una Edge Function de Supabase.
+
+### Datos y límites de la API
+
+- La app solo usa los endpoints `fixtures?date=` y `fixtures?id=` (más `events`, `lineups` y `statistics` por partido). El plan Free de API-Football **no permite consultar ligas por temporada** fuera de 2022–2024.
+- El plan Free incluye **100 peticiones al día**, así que el listado se cachea 5 minutos y el refresco es manual (tirar de la lista o el botón de actualizar). No hay polling automático.
+- Un día completo de partidos se obtiene con **una sola petición**; el detalle consume como máximo 4 (una por pestaña visitada).
+- Si `EXPO_PUBLIC_USE_MOCKS=true` la app usa datos simulados deterministas (partidos finalizados, en directo y programados) sin gastar cuota.
 
 ## 🧰 Scripts
 
@@ -96,13 +103,14 @@ AFFutbol/
 │  ├─ app/                  # Rutas de Expo Router
 │  │  ├─ _layout.tsx        # Providers, tema y splash
 │  │  ├─ (tabs)/            # Partidos, Noticias, Predicciones, Ranking, Perfil
+│  │  ├─ match/[id].tsx     # Detalle de partido
 │  │  └─ +not-found.tsx
 │  ├─ components/           # Design system reutilizable
 │  ├─ constants/            # Tokens de diseño y tema de navegación
-│  ├─ features/             # Lógica por dominio (partidos, noticias, ...)
+│  ├─ features/             # Lógica por dominio (matches, noticias, ...)
 │  ├─ hooks/                # Hooks compartidos
 │  ├─ lib/                  # Entorno, query client y utilidades
-│  └─ services/             # Clientes de APIs externas
+│  └─ services/             # Clientes de APIs externas (api-football)
 ├─ assets/
 ├─ app.json
 ├─ eas.json
@@ -112,7 +120,7 @@ AFFutbol/
 ## 🗺️ Roadmap
 
 - [x] **Fase 0:** cimientos, branding, navegación y tooling
-- [ ] **Fase 1:** partidos del día y detalle de partido
+- [x] **Fase 1:** partidos del día y detalle de partido
 - [ ] **Fase 2:** noticias, estadísticas y rumores
 - [ ] **Fase 3:** autenticación y perfil
 - [ ] **Fase 4:** sistema de predicciones
