@@ -117,12 +117,14 @@ export default function NewsScreen() {
 
             {featured ? <ArticleCard item={featured} featured /> : null}
 
-            <View style={styles.listHeading}>
-              <ThemedText type="smallBold">{heading}</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                {listItems.length} {listItems.length === 1 ? 'contenido' : 'contenidos'}
-              </ThemedText>
-            </View>
+            {!isPending && !isError ? (
+              <View style={styles.listHeading}>
+                <ThemedText type="smallBold">{heading}</ThemedText>
+                <ThemedText type="small" themeColor="textSecondary">
+                  {listItems.length} {listItems.length === 1 ? 'contenido' : 'contenidos'}
+                </ThemedText>
+              </View>
+            ) : null}
           </View>
         }
         renderItem={({ item }) => (

@@ -34,6 +34,7 @@ npx expo-doctor               # dependency/config health
 ## Routing and tabs
 
 - Routes live in `src/app/`; `_layout.tsx` files define navigators. The root `Stack` is `src/app/_layout.tsx`; the tab group is `src/app/(tabs)/`. Keep non-route code outside `src/app/`.
+- Stacked routes outside the tabs: `match/[id]` (match detail), `article/[id]` (news or rumour detail) and `statistics` (standings/scorers). Register new stacked routes in the root `Stack`.
 - Tabs are `index` (Partidos), `news` (Noticias), `predictions` (Predicciones), `rankings` (Ranking), and `profile` (Perfil). Trigger names must match the route filenames.
 - Native tabs: `src/components/app-tabs.tsx` uses `expo-router/native-tabs` (SDK 58 name, not `unstable-native-tabs`). Icons use `sf` for iOS and `md` Material Symbols for Android.
 - Web has a separate headless tab bar: `src/components/app-tabs.web.tsx` (`expo-router/ui`, `TABS` array). Any tab add/rename/reorder must be done in both files.
@@ -52,6 +53,7 @@ npx expo-doctor               # dependency/config health
 
 - Football data comes from API-Football (`https://v3.football.api-sports.io`). The client lives in `src/services/api-football/` (typed errors, mock dataset in `mocks-data.ts`) and the query hooks, mappers and components in `src/features/matches/`. Keep API calls out of route files.
 - The current API-Football plan is **Free**: 100 requests/day, `fixtures?date=` / `fixtures?id=` only (league+season queries outside 2022–2024 are rejected). Do not add automatic polling; the matches screen refreshes manually.
+- Phase 2 news/rumours and statistics are **curated local sample data** (`src/features/news/data.ts`, `src/features/statistics/data.ts`), labelled as sample in the UI. Keep it that way until Supabase or a real API exists; replace the query functions in `src/features/*/api.ts` without changing screen props. Do not present sample standings or rumour players as real.
 - Server state uses TanStack Query (`src/lib/query-client.ts`). Dates use date-fns with the `es` locale (`src/lib/format.ts`); do not add dayjs/moment.
 - `EXPO_PUBLIC_*` values must be read with static dot notation (`process.env.EXPO_PUBLIC_X`) to be inlined; see `src/lib/env.ts`.
 - Mocks default to on when no API key is set; `EXPO_PUBLIC_USE_MOCKS=true|false` overrides that. `.env` is gitignored; `.env.example` is the template. Never commit a real key.

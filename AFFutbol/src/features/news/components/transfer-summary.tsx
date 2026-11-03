@@ -69,7 +69,6 @@ function ClubColumn({
   label: string;
   align?: 'left' | 'right';
 }) {
-  const theme = useTheme();
   const right = align === 'right';
 
   return (

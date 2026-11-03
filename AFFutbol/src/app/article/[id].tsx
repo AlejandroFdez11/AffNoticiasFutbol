@@ -135,17 +135,14 @@ export default function ArticleScreen() {
                 {item.position} · {item.age} años
               </ThemedText>
             </View>
-            <ThemedText type="smallBold" style={{ color: theme.accent }}>
-              {item.fee}
-            </ThemedText>
           </View>
           <TransferSummary rumor={item as FeedRumor} />
         </View>
       ) : null}
 
       <View style={styles.body}>
-        {item.body.map((paragraph) => (
-          <ThemedText key={paragraph.slice(0, 32)} style={styles.paragraph}>
+        {item.body.map((paragraph, index) => (
+          <ThemedText key={`${item.id}-${index}`} style={styles.paragraph}>
             {paragraph}
           </ThemedText>
         ))}

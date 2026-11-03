@@ -6,6 +6,8 @@ import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import type { FixtureLineup, LineupPlayer } from '@/services/api-football/types';
 
+import { getLineupPlayerKey } from '../lineups';
+
 const POSITION_LABELS: Record<string, string> = {
   G: 'POR',
   D: 'DEF',
@@ -16,8 +18,8 @@ const POSITION_LABELS: Record<string, string> = {
 export function LineupsView({ lineups }: { lineups: FixtureLineup[] }) {
   return (
     <View style={styles.container}>
-      {lineups.map((lineup) => (
-        <LineupCard key={lineup.team.id} lineup={lineup} />
+      {lineups.map((lineup, index) => (
+        <LineupCard key={`${lineup.team.id}-${index}`} lineup={lineup} />
       ))}
     </View>
   );
@@ -69,8 +71,8 @@ function PlayerList({ title, players }: { title: string; players: LineupPlayer[]
       <ThemedText type="smallBold" themeColor="textSecondary">
         {title}
       </ThemedText>
-      {players.map((player) => (
-        <View key={player.id} style={styles.player}>
+      {players.map((player, index) => (
+        <View key={getLineupPlayerKey(player, index)} style={styles.player}>
           <ThemedText type="small" themeColor="textSecondary" style={styles.number}>
             {player.number}
           </ThemedText>

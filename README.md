@@ -5,9 +5,8 @@
 ## ✨ Características
 
 - **Partidos del día:** todos los encuentros de la jornada en un solo lugar, agrupados por competición, con marcador en directo y detalle de cada partido (eventos, alineaciones y estadísticas).
-- **Noticias:** actualidad futbolística centralizada.
-- **Estadísticas:** datos de equipos, jugadores y competiciones.
-- **Rumores:** mercado de fichajes y últimas filtraciones.
+- **Noticias y rumores:** actualidad, análisis y mercado en un mismo feed, con filtros y detalle de cada contenido.
+- **Estadísticas:** clasificación, goleadores y resumen de cada competición, con acceso desde Partidos y Noticias.
 - **Predicciones:** pronostica los partidos de tu equipo favorito y suma puntos según tus aciertos.
 - **Rankings:**
   - 🌍 **Ranking mundial** entre todos los usuarios.
@@ -19,8 +18,8 @@
 | --- | --- |
 | Fase 0 — Cimientos y navegación | ✅ Completada |
 | Fase 1 — Partidos del día y detalle | ✅ Completada |
-| Fase 2 — Noticias, estadísticas y rumores | 🚧 Siguiente |
-| Fase 3 — Autenticación y perfil | ⏳ Pendiente |
+| Fase 2 — Noticias, estadísticas y rumores | ✅ Completada |
+| Fase 3 — Autenticación y perfil | 🚧 Siguiente |
 | Fase 4 — Predicciones | ⏳ Pendiente |
 | Fase 5 — Rankings y ligas privadas | ⏳ Pendiente |
 | Fase 6 — Notificaciones push | ⏳ Pendiente |
@@ -81,6 +80,7 @@ Escanea el QR con Expo Go o pulsa `i` / `a` para abrir un simulador.
 - La app solo usa los endpoints `fixtures?date=` y `fixtures?id=` (más `events`, `lineups` y `statistics` por partido). El plan Free de API-Football **no permite consultar ligas por temporada** fuera de 2022–2024.
 - El plan Free incluye **100 peticiones al día**, así que el listado se cachea 5 minutos y el refresco es manual (tirar de la lista o el botón de actualizar). No hay polling automático.
 - Un día completo de partidos se obtiene con **una sola petición**; el detalle consume como máximo 4 (una por pestaña visitada).
+- **Fase 2 (noticias, rumores y estadísticas):** se sirven datos de muestra curados en local (`src/features/news/data.ts` y `src/features/statistics/data.ts`). No gastan cuota ni necesitan red, y la interfaz los etiqueta como «Datos de muestra». Se sustituirán por Supabase o una API real en fases posteriores.
 - Si `EXPO_PUBLIC_USE_MOCKS=true` la app usa datos simulados deterministas (partidos finalizados, en directo y programados) sin gastar cuota.
 
 ## 🧰 Scripts
@@ -104,10 +104,12 @@ AFFutbol/
 │  │  ├─ _layout.tsx        # Providers, tema y splash
 │  │  ├─ (tabs)/            # Partidos, Noticias, Predicciones, Ranking, Perfil
 │  │  ├─ match/[id].tsx     # Detalle de partido
+│  │  ├─ article/[id].tsx   # Detalle de noticia o rumor
+│  │  ├─ statistics.tsx     # Clasificación, goleadores y resumen
 │  │  └─ +not-found.tsx
 │  ├─ components/           # Design system reutilizable
 │  ├─ constants/            # Tokens de diseño y tema de navegación
-│  ├─ features/             # Lógica por dominio (matches, noticias, ...)
+│  ├─ features/             # Lógica por dominio (matches, news, statistics)
 │  ├─ hooks/                # Hooks compartidos
 │  ├─ lib/                  # Entorno, query client y utilidades
 │  └─ services/             # Clientes de APIs externas (api-football)
@@ -121,7 +123,7 @@ AFFutbol/
 
 - [x] **Fase 0:** cimientos, branding, navegación y tooling
 - [x] **Fase 1:** partidos del día y detalle de partido
-- [ ] **Fase 2:** noticias, estadísticas y rumores
+- [x] **Fase 2:** noticias, estadísticas y rumores
 - [ ] **Fase 3:** autenticación y perfil
 - [ ] **Fase 4:** sistema de predicciones
 - [ ] **Fase 5:** ranking mundial y ligas privadas

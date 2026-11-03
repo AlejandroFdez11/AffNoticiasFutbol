@@ -1,4 +1,10 @@
-import { formatLongDate, formatMatchTime, relativeDayLabel, toDateKey } from '../format';
+import {
+  formatLongDate,
+  formatMatchTime,
+  formatRelativeTime,
+  relativeDayLabel,
+  toDateKey,
+} from '../format';
 
 describe('date formatting', () => {
   const friday = new Date(2026, 9, 30, 12, 0, 0);
@@ -17,5 +23,12 @@ describe('date formatting', () => {
 
   it('formats match times as HH:mm', () => {
     expect(formatMatchTime('2026-10-30T21:00:00')).toBe('21:00');
+  });
+
+  it('formats publication times relative to now in Spanish', () => {
+    const now = new Date('2026-10-30T12:00:00.000Z');
+
+    expect(formatRelativeTime('2026-10-30T10:00:00.000Z', now)).toBe('hace 2 horas');
+    expect(formatRelativeTime('2026-10-30T12:00:00.000Z', now)).toBe('hace 0 segundos');
   });
 });

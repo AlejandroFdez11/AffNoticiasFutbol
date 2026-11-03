@@ -133,7 +133,8 @@ export type FixtureEvent = {
 };
 
 export type LineupPlayer = {
-  id: number;
+  /** API-Football can return `null` for players without a registered id. */
+  id: number | null;
   name: string;
   number: number;
   pos: string;
