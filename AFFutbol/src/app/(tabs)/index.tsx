@@ -115,7 +115,7 @@ export default function MatchesScreen() {
     <EmptyState
       icon={{ ios: 'calendar', android: 'calendar_month', web: 'calendar_month' }}
       title="No hay partidos"
-      description={`No hay encuentros programados para el ${formatLongDate(selectedDate).toLowerCase()}.`}
+      description={`No hay encuentros de las competiciones incluidas para el ${formatLongDate(selectedDate).toLowerCase()}.`}
     />
   );
 

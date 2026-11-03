@@ -9,6 +9,7 @@ import {
 } from '@/services/api-football/fixtures';
 
 import { FINISHED_MATCH_STALE_TIME_MS, LIVE_REFETCH_INTERVAL_MS, MATCHES_STALE_TIME_MS } from './constants';
+import { filterFixturesByLeague } from './league-filter';
 import { isFinishedMatch } from './mappers';
 
 export const matchKeys = {
@@ -24,6 +25,7 @@ export function useFixturesByDate(dateKey: string) {
   return useQuery({
     queryKey: matchKeys.byDate(dateKey),
     queryFn: () => getFixturesByDate(dateKey),
+    select: filterFixturesByLeague,
     staleTime: MATCHES_STALE_TIME_MS,
     // `0` disables polling; see `LIVE_REFETCH_INTERVAL_MS`.
     refetchInterval: LIVE_REFETCH_INTERVAL_MS,

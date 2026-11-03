@@ -4,7 +4,7 @@
 
 ## ✨ Características
 
-- **Partidos del día:** todos los encuentros de la jornada en un solo lugar, agrupados por competición, con marcador en directo y detalle de cada partido (eventos, alineaciones y estadísticas).
+- **Partidos del día:** los encuentros de las competiciones seleccionadas, agrupados por competición, con marcador en directo y detalle de cada partido (eventos, alineaciones y estadísticas).
 - **Noticias y rumores:** actualidad, análisis y mercado en un mismo feed, con filtros y detalle de cada contenido.
 - **Estadísticas:** clasificación, goleadores y resumen de cada competición, con acceso desde Partidos y Noticias.
 - **Predicciones:** pronostica los partidos de tu equipo favorito y suma puntos según tus aciertos.
@@ -78,6 +78,7 @@ Escanea el QR con Expo Go o pulsa `i` / `a` para abrir un simulador.
 ### Datos y límites de la API
 
 - La app solo usa los endpoints `fixtures?date=` y `fixtures?id=` (más `events`, `lineups` y `statistics` por partido). El plan Free de API-Football **no permite consultar ligas por temporada** fuera de 2022–2024.
+- El listado de partidos se filtra en el dispositivo con una lista blanca de competiciones (`src/features/matches/league-filter.ts`): 5 grandes ligas y sus segundas divisiones, copas nacionales, copas europeas, Brasil, Argentina, Libertadores y selecciones. Este filtro no gasta peticiones adicionales.
 - El plan Free incluye **100 peticiones al día**, así que el listado se cachea 5 minutos y el refresco es manual (tirar de la lista o el botón de actualizar). No hay polling automático.
 - Un día completo de partidos se obtiene con **una sola petición**; el detalle consume como máximo 4 (una por pestaña visitada).
 - **Fase 2 (noticias, rumores y estadísticas):** se sirven datos de muestra curados en local (`src/features/news/data.ts` y `src/features/statistics/data.ts`). No gastan cuota ni necesitan red, y la interfaz los etiqueta como «Datos de muestra». Se sustituirán por Supabase o una API real en fases posteriores.

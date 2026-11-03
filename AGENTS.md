@@ -53,6 +53,7 @@ npx expo-doctor               # dependency/config health
 
 - Football data comes from API-Football (`https://v3.football.api-sports.io`). The client lives in `src/services/api-football/` (typed errors, mock dataset in `mocks-data.ts`) and the query hooks, mappers and components in `src/features/matches/`. Keep API calls out of route files.
 - The current API-Football plan is **Free**: 100 requests/day, `fixtures?date=` / `fixtures?id=` only (league+season queries outside 2022–2024 are rejected). Do not add automatic polling; the matches screen refreshes manually.
+- The matches feed is filtered on the device to the curated competition allowlist in `src/features/matches/league-filter.ts`. Filtering costs no extra requests; do not fetch competitions one by one on the Free plan.
 - Phase 2 news/rumours and statistics are **curated local sample data** (`src/features/news/data.ts`, `src/features/statistics/data.ts`), labelled as sample in the UI. Keep it that way until Supabase or a real API exists; replace the query functions in `src/features/*/api.ts` without changing screen props. Do not present sample standings or rumour players as real.
 - Server state uses TanStack Query (`src/lib/query-client.ts`). Dates use date-fns with the `es` locale (`src/lib/format.ts`); do not add dayjs/moment.
 - `EXPO_PUBLIC_*` values must be read with static dot notation (`process.env.EXPO_PUBLIC_X`) to be inlined; see `src/lib/env.ts`.
