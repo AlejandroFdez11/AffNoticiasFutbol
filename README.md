@@ -19,7 +19,7 @@
 | Fase 0 — Cimientos y navegación | ✅ Completada |
 | Fase 1 — Partidos del día y detalle | ✅ Completada |
 | Fase 2 — Noticias, estadísticas y rumores | ✅ Completada |
-| Fase 3 — Autenticación y perfil | 🚧 Siguiente |
+| Fase 3 — Autenticación y perfil | ✅ Completada |
 | Fase 4 — Predicciones | ⏳ Pendiente |
 | Fase 5 — Rankings y ligas privadas | ⏳ Pendiente |
 | Fase 6 — Notificaciones push | ⏳ Pendiente |
@@ -125,7 +125,7 @@ AFFutbol/
 - [x] **Fase 0:** cimientos, branding, navegación y tooling
 - [x] **Fase 1:** partidos del día y detalle de partido
 - [x] **Fase 2:** noticias, estadísticas y rumores
-- [ ] **Fase 3:** autenticación y perfil
+- [x] **Fase 3:** autenticación y perfil
 - [ ] **Fase 4:** sistema de predicciones
 - [ ] **Fase 5:** ranking mundial y ligas privadas
 - [ ] **Fase 6:** notificaciones push

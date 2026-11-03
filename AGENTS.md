@@ -6,13 +6,15 @@
 - One npm package (`AFFutbol/package.json` + `package-lock.json`); no workspaces and no bun/pnpm/yarn. Use `npm`/`npx`.
 - `README.md` is the product/roadmap source of truth; update it when a phase changes.
 - All `src/...` paths below are relative to `AFFutbol/`.
+- Day-to-day work happens on the `develop` branch; `main` is only updated on release. Never commit `.env`.
 
 ## Setup and verification (from `AFFutbol/`)
 
 ```bash
 npm install
 Copy-Item .env.example .env   # PowerShell; use cp on macOS/Linux
-npx expo start                # Expo Go is enough for current modules
+npx expo start                # Expo Go is enough for email and Google auth
+npx expo start -c             # clear the cache after editing .env
 npm run lint
 npm run typecheck
 npm test -- --ci              # full suite
@@ -22,7 +24,7 @@ npx expo-doctor               # dependency/config health
 
 - Use `npx expo install <pkg>` (not `npm install <pkg>`) for Expo/React Native packages so versions match SDK 58. `npx expo install --fix` repairs mismatches.
 - There is no CI workflow. Lint, typecheck, and tests are the gate; run them before declaring work done.
-- Jest is configured in `package.json` (`jest-expo`, `@/` and `@/assets/` aliases). Tests live next to the code, e.g. `src/lib/__tests__/format-test.ts`.
+- Jest is configured in `package.json` (`jest-expo`, `@/` and `@/assets/` aliases). Tests live next to the code in `__tests__/` folders, e.g. `src/lib/__tests__/format-test.ts`, `src/features/auth/__tests__/validation-test.ts`.
 - Optional bundle smoke test without a simulator: `npx expo export --platform ios` or `--platform web`.
 
 ## Expo version discipline
@@ -34,7 +36,7 @@ npx expo-doctor               # dependency/config health
 ## Routing and tabs
 
 - Routes live in `src/app/`; `_layout.tsx` files define navigators. The root `Stack` is `src/app/_layout.tsx`; the tab group is `src/app/(tabs)/`. Keep non-route code outside `src/app/`.
-- Stacked routes outside the tabs: `match/[id]` (match detail), `article/[id]` (news or rumour detail) and `statistics` (standings/scorers). Register new stacked routes in the root `Stack`.
+- Stacked routes outside the tabs: `match/[id]` (match detail), `article/[id]` (news or rumour detail), `statistics` (standings/scorers), and the account routes `auth`, `auth-callback`, `reset-password` and `edit-profile`. `auth`, `reset-password` and `edit-profile` open as modals. Register new stacked routes in the root `Stack`.
 - Tabs are `index` (Partidos), `news` (Noticias), `predictions` (Predicciones), `rankings` (Ranking), and `profile` (Perfil). Trigger names must match the route filenames.
 - Native tabs: `src/components/app-tabs.tsx` uses `expo-router/native-tabs` (SDK 58 name, not `unstable-native-tabs`). Icons use `sf` for iOS and `md` Material Symbols for Android.
 - Web has a separate headless tab bar: `src/components/app-tabs.web.tsx` (`expo-router/ui`, `TABS` array). Any tab add/rename/reorder must be done in both files.
@@ -43,7 +45,8 @@ npx expo-doctor               # dependency/config health
 ## UI and theme
 
 - Design tokens live in `src/constants/theme.ts` (`Colors`, `Spacing`, `Radii`, `Brand`, `MaxContentWidth`). Every color key must exist in both `light` and `dark`; `ThemeColor` is the intersection of the two palettes.
-- Use `useTheme()`, `ThemedText`, and `ThemedView`; do not hardcode palette hex values in screens. Navigation themes live in `src/constants/navigation-theme.ts`.
+- Use `useTheme()`, `ThemedText`, and `ThemedView`; do not hardcode palette hex values in screens (the Google "G" badge in `oauth-buttons.tsx` is the only brand-mandated exception). Navigation themes live in `src/constants/navigation-theme.ts`.
+- Reuse the shared components in `src/components/` before creating new ones: `Button` (variants `primary`/`secondary`/`ghost`, `loading`, `disabled`), `IconButton`, `TextField`, `SegmentedControl`, `Avatar`, `TeamBadge`, `StateCard`, `ScreenHeader`, `BrandMark`.
 - Standalone icons use `SymbolView` (`expo-symbols`) with `name={{ ios, android, web }}`: SF Symbols on iOS, Material Symbols on Android/web.
 - `Screen` (`src/components/screen.tsx`) handles safe area, scrolling, and max width. Use `ScreenHeader` for page headers and `PlaceholderScreen` for unfinished sections.
 - UI copy is Spanish; code identifiers and comments are English.
@@ -54,13 +57,33 @@ npx expo-doctor               # dependency/config health
 - Football data comes from API-Football (`https://v3.football.api-sports.io`). The client lives in `src/services/api-football/` (typed errors, mock dataset in `mocks-data.ts`) and the query hooks, mappers and components in `src/features/matches/`. Keep API calls out of route files.
 - The current API-Football plan is **Free**: 100 requests/day, `fixtures?date=` / `fixtures?id=` only (league+season queries outside 2022–2024 are rejected). Do not add automatic polling; the matches screen refreshes manually.
 - The matches feed is filtered on the device to the curated competition allowlist in `src/features/matches/league-filter.ts`. Filtering costs no extra requests; do not fetch competitions one by one on the Free plan.
-- Phase 2 news/rumours and statistics are **curated local sample data** (`src/features/news/data.ts`, `src/features/statistics/data.ts`), labelled as sample in the UI. Keep it that way until Supabase or a real API exists; replace the query functions in `src/features/*/api.ts` without changing screen props. Do not present sample standings or rumour players as real.
+- Phase 2 news/rumours and statistics are **curated local sample data** (`src/features/news/data.ts`, `src/features/statistics/data.ts`), labelled as sample in the UI. Keep it that way until a real source exists; replace the query functions in `src/features/*/api.ts` without changing screen props. Do not present sample standings or rumour players as real.
 - Server state uses TanStack Query (`src/lib/query-client.ts`). Dates use date-fns with the `es` locale (`src/lib/format.ts`); do not add dayjs/moment.
-- `EXPO_PUBLIC_*` values must be read with static dot notation (`process.env.EXPO_PUBLIC_X`) to be inlined; see `src/lib/env.ts`.
+- `EXPO_PUBLIC_*` values must be read with static dot notation (`process.env.EXPO_PUBLIC_X`) to be inlined; see `src/lib/env.ts`. A misspelled variable name fails silently as `undefined`.
 - Mocks default to on when no API key is set; `EXPO_PUBLIC_USE_MOCKS=true|false` overrides that. `.env` is gitignored; `.env.example` is the template. Never commit a real key.
-- `EXPO_PUBLIC_*` is bundled and public. Before publishing, API-Football calls must move behind a Supabase Edge Function (Supabase/auth is planned for Phase 3).
+- `EXPO_PUBLIC_*` is bundled and public. Before publishing, API-Football calls must move behind a Supabase Edge Function (not built yet).
+
+## Supabase, auth and profiles (Phase 3)
+
+- Env vars: `EXPO_PUBLIC_SUPABASE_URL` and `EXPO_PUBLIC_SUPABASE_ANON_KEY` (`EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY` is accepted as a fallback; see `src/lib/env.ts`). Both are public. Never put the `service_role`/secret key in the app or in `.env`.
+- The single Supabase client lives in `src/features/auth/supabase.ts` and is `null` when env vars are missing, so the football screens still boot. Always obtain it through `requireSupabase()`; do not call `createClient` anywhere else (a second client causes "Multiple GoTrueClient" warnings and inconsistent sessions).
+- Session storage: native uses `expo-secure-store` with chunking (`src/features/auth/storage.ts`, values are split because Keychain rejects large values); web uses `localStorage` with an in-memory fallback (`storage.web.ts`). Auth flow is PKCE with `detectSessionInUrl: false`; the code is exchanged explicitly in `completeAuthFromUrl`.
+- Auth state comes only from `useAuth()` in `src/features/auth/auth-context.tsx` (`status`, `session`, `user`, `profile`, `signIn`, `signUp`, `signInWithGoogle`, `signInWithApple`, `signOut`, `requestPasswordReset`, `updatePassword`, `completeAuthFromUrl`, `updateProfile`, `refreshProfile`). Do not add a second provider or a parallel session hook.
+- The app is usable without an account: Partidos, Noticias and Estadísticas never require a session. Predicciones, Ranking and Perfil must check `useAuth().status` and send signed-out users to `/auth`.
+- `/auth-callback` is the single deep-link target for OAuth, email confirmation and password recovery. Build the URL only with `getAuthRedirectUrl()` (`Linking.createURL('auth-callback')`). Redirect URLs must be allowed in Supabase → Authentication → URL Configuration: `exp://**` for Expo Go (development only, remove before release) and `affutbol://**` for builds (`scheme` is `affutbol` in `app.json`).
+- Google: browser OAuth through `supabase.auth.signInWithOAuth` + `expo-web-browser`; works in Expo Go. Requires a **Web application** OAuth client in Google Cloud whose authorized redirect URI is `https://<project-ref>.supabase.co/auth/v1/callback`, and both Client ID **and Client Secret** saved in the Supabase Google provider. While the Google consent screen is in Testing, only listed test users can sign in.
+- Apple: the code path exists (`signInWithApple`, `expo-apple-authentication`, `usesAppleSignIn` in `app.json`) but it needs a paid Apple Developer account and a development build with bundle id `com.alejandroff.affutbol`. Treat it as untested; do not claim it works in Expo Go.
+- Database: SQL migrations live in `supabase/migrations/` (run in the Supabase SQL editor or `supabase db push`). Do not commit empty migration files. `public.profiles` is 1:1 with `auth.users` (`id` is the user id) with `display_name`, `username` (unique, `^[a-z0-9._]{3,20}$`), `favorite_team_id/name/logo`, `avatar_url`, timestamps. RLS is on: anyone can read, users can insert/update only their own row. The `handle_new_user` trigger creates the row on sign-up; `fetchProfile` also creates it if missing.
+- Profile code is in `src/features/profile/`: `types.ts` maps snake_case rows to camelCase (`mapProfile`), `api.ts` does the queries, `validation.ts` validates usernames. The favourite-team picker uses the local `TEAM_OPTIONS` list in `teams.ts` (IDs match API-Football, so it costs no requests).
+- Every new table must ship with RLS enabled and explicit policies in the same migration. Never rely on the client to enforce ownership.
+- Not built yet: multiple profiles per account (the Netflix-style picker is a design reference, the model is one profile per account), following several teams (needs its own table), avatar upload.
+
+## Predictions and rankings (Phases 4–5, not implemented)
+
+- Scoring rules: exact score = 10 points; correct goals for only one team = 5 points; otherwise 0.
+- Predictions are for the user's favourite team's matches. The Predicciones and Ranking tabs are still `PlaceholderScreen`s.
 
 ## EAS
 
-- `eas.json` only defines `preview` and `production`; there is no `development` profile and `expo-dev-client` is not installed. Do not suggest `eas build --profile development` until that is added.
+- `eas.json` only defines `preview` and `production`; there is no `development` profile and `expo-dev-client` is not installed. Do not suggest `eas build --profile development` until that is added (it is required for Apple Sign In).
 - Use `npx eas-cli@latest ...`; no global EAS CLI is assumed.
