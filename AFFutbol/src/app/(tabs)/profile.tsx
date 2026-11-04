@@ -13,6 +13,7 @@ import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 import { describeAuthError, useAuth } from '@/features/auth/auth-context';
+import { usePredictionSummary } from '@/features/predictions/api';
 import { FavoriteTeamCard } from '@/features/profile/components/favorite-team-card';
 import { PointsSummary } from '@/features/profile/components/points-summary';
 import { ProfileHero } from '@/features/profile/components/profile-hero';
@@ -33,6 +34,7 @@ export default function ProfileScreen() {
     refreshProfile,
   } = useAuth();
   const [actionError, setActionError] = useState<string | null>(null);
+  const predictionsQuery = usePredictionSummary();
 
   const handleSignOut = async () => {
     setActionError(null);
@@ -81,7 +83,10 @@ export default function ProfileScreen() {
       {isConfigured && status === 'authenticated' && user ? (
         <View style={styles.content}>
           <ProfileSummary user={user} profile={profile} />
-          <PointsSummary />
+          <PointsSummary
+            summary={predictionsQuery.summary}
+            loading={predictionsQuery.isPending}
+          />
 
           {profileError ? (
             <ErrorState
@@ -123,8 +128,8 @@ export default function ProfileScreen() {
           </View>
 
           <ThemedText type="small" themeColor="textSecondary" style={styles.footer}>
-            AFFutbol guarda tu cuenta con Supabase. Tus predicciones y rankings llegarán en las
-            próximas fases.
+            AFFutbol guarda tu cuenta y tus pronósticos con Supabase. El ranking mundial llegará en
+            la Fase 5.
           </ThemedText>
         </View>
       ) : null}

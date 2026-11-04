@@ -4,14 +4,22 @@ import { ThemedText } from '@/components/themed-text';
 import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-const STATS = [
-  { key: 'points', label: 'Puntos', value: '0' },
-  { key: 'predictions', label: 'Predicciones', value: '0' },
-  { key: 'rank', label: 'Ranking', value: '—' },
-] as const;
+import type { PredictionSummary } from '@/features/predictions/scoring';
 
-export function PointsSummary() {
+type PointsSummaryProps = {
+  summary: PredictionSummary;
+  loading?: boolean;
+};
+
+export function PointsSummary({ summary, loading = false }: PointsSummaryProps) {
   const theme = useTheme();
+  const placeholder = loading ? '·' : null;
+
+  const stats = [
+    { key: 'points', label: 'Puntos', value: placeholder ?? String(summary.totalPoints) },
+    { key: 'predictions', label: 'Pronósticos', value: placeholder ?? String(summary.predictions) },
+    { key: 'rank', label: 'Ranking', value: '—' },
+  ];
 
   return (
     <View
@@ -20,7 +28,7 @@ export function PointsSummary() {
         { backgroundColor: theme.backgroundElement, borderColor: theme.border },
       ]}>
       <View style={styles.stats}>
-        {STATS.map((stat) => (
+        {stats.map((stat) => (
           <View key={stat.key} style={styles.stat}>
             <ThemedText type="subtitle" style={{ color: theme.brand }}>
               {stat.value}
@@ -32,7 +40,7 @@ export function PointsSummary() {
         ))}
       </View>
       <ThemedText type="small" themeColor="textSecondary" style={styles.note}>
-        Tus puntos y tu posición se activarán con el sistema de predicciones de la Fase 4.
+        Tus puntos se actualizan al terminar cada partido. El ranking mundial llega en la Fase 5.
       </ThemedText>
     </View>
   );
