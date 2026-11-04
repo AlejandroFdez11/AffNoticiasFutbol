@@ -16,7 +16,7 @@ export const MAX_PREDICTED_GOALS = 20;
  * date-based queries on the Free plan, so every day is one request: keep this
  * window small.
  */
-export const PREDICTION_WINDOW_DAYS = 3;
+export const PREDICTION_WINDOW_DAYS = 2;
 
 /** Upcoming fixtures are cheap to reuse; each day costs one request. */
 export const PREDICTION_FIXTURES_STALE_TIME_MS = 15 * 60_000;

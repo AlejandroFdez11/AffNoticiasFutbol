@@ -205,8 +205,8 @@ export function useUpcomingTeamFixtures(teamId: number | null) {
 
   return {
     fixtures: getPredictableFixtures(fixtures, teamId),
-    isPending: results.some((result) => result.isPending),
-    isError: results.some((result) => result.isError),
+    isPending: results.every((result) => result.isPending),
+    isError: results.every((result) => result.isError),
     refetch: () => Promise.all(results.map((result) => result.refetch())),
   };
 }
