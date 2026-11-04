@@ -54,7 +54,13 @@ export function decideSettlement(result: FixtureResult): SettlementDecision {
 type ApiFixture = {
   fixture?: { id?: number; status?: { short?: string } };
   goals?: { home?: number | null; away?: number | null };
+  score?: { fulltime?: { home?: number | null; away?: number | null } };
 };
+
+function pickGoals(preferred: unknown, fallback: unknown): number | null {
+  if (typeof preferred === 'number') return preferred;
+  return typeof fallback === 'number' ? fallback : null;
+}
 
 /**
  * Reads the first fixture of an API-Football `/fixtures?id=` response. Returns
@@ -76,11 +82,12 @@ export function readFixtureResult(payload: unknown): FixtureResult | null {
   }
 
   const goals = (first as ApiFixture).goals;
+  const fulltime = (first as ApiFixture).score?.fulltime;
 
   return {
     fixtureId,
     status,
-    homeGoals: typeof goals?.home === 'number' ? goals.home : null,
-    awayGoals: typeof goals?.away === 'number' ? goals.away : null,
+    homeGoals: pickGoals(fulltime?.home, goals?.home),
+    awayGoals: pickGoals(fulltime?.away, goals?.away),
   };
 }

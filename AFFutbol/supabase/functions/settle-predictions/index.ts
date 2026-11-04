@@ -29,8 +29,10 @@ import { createClient } from 'npm:@supabase/supabase-js@2';
 import { decideSettlement, readFixtureResult, type FixtureResult } from '../_shared/settle.ts';
 
 const BASE_URL = 'https://v3.football.api-sports.io';
-const MAX_FIXTURES = 100;
+const MAX_FIXTURES = 20;
 const FETCH_TIMEOUT_MS = 15_000;
+const MIN_MINUTES_AFTER_KICKOFF = 150;
+const MAX_AGE_DAYS = 7;
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
@@ -125,7 +127,8 @@ Deno.serve(async (request: Request) => {
       .from('predictions')
       .select('fixture_id')
       .eq('status', 'pending')
-      .lt('kickoff_at', new Date().toISOString())
+      .lt('kickoff_at', new Date(Date.now() - MIN_MINUTES_AFTER_KICKOFF * 60_000).toISOString())
+      .gt('kickoff_at', new Date(Date.now() - MAX_AGE_DAYS * 86_400_000).toISOString())
       .order('kickoff_at', { ascending: true })
       .limit(MAX_FIXTURES * 5);
 
