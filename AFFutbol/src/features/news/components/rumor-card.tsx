@@ -14,6 +14,8 @@ export function RumorCard({ item }: { item: FeedRumor }) {
   const theme = useTheme();
   const router = useRouter();
 
+  const credit = item.player ? `${item.source} · ${item.player}` : item.source;
+
   return (
     <Pressable
       accessibilityRole="button"
@@ -36,16 +38,16 @@ export function RumorCard({ item }: { item: FeedRumor }) {
 
       <ThemedText style={styles.title}>{item.title}</ThemedText>
 
-      <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
-        {item.summary}
-      </ThemedText>
-
-      <View style={[styles.divider, { backgroundColor: theme.border }]} />
+      {item.summary ? (
+        <ThemedText type="small" themeColor="textSecondary" numberOfLines={2}>
+          {item.summary}
+        </ThemedText>
+      ) : null}
 
       <TransferSummary rumor={item} />
 
       <ThemedText type="small" themeColor="textSecondary">
-        {item.source} · {item.player}, {item.age} años
+        {credit}
       </ThemedText>
     </Pressable>
   );
@@ -70,10 +72,6 @@ const styles = StyleSheet.create({
     fontSize: 17,
     lineHeight: 23,
     fontWeight: 700,
-  },
-  divider: {
-    height: 1,
-    marginVertical: Spacing.one,
   },
   pressed: {
     opacity: 0.7,

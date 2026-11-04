@@ -1,9 +1,12 @@
 /**
  * News and transfer-rumour domain types.
  *
- * Phase 2 serves curated sample content from `data.ts`. The shapes are already
- * the ones a future Supabase table (or a news API) should return, so swapping
- * the query functions in `api.ts` will not touch the screens.
+ * Live content comes from the `news_items` table, which the `news-refresh`
+ * Edge Function fills from Spanish RSS feeds. `data.ts` keeps a small curated
+ * set for development when Supabase is not configured.
+ *
+ * We only store and show a headline, a short excerpt and a link back to the
+ * outlet: the article body is never republished.
  */
 
 export type ContentTopic =
@@ -12,30 +15,12 @@ export type ContentTopic =
   | 'Serie A'
   | 'Bundesliga'
   | 'Champions League'
+  | 'Ligue 1'
   | 'Mercado'
-  | 'Análisis';
-
-type ContentBase = {
-  id: string;
-  kind: ContentKind;
-  title: string;
-  summary: string;
-  body: string[];
-  topic: ContentTopic;
-  source: string;
-  /** Used to derive a fresh-looking `publishedAt` on every fetch. */
-  publishedHoursAgo: number;
-};
+  | 'Análisis'
+  | 'Otras ligas';
 
 export type ContentKind = 'news' | 'rumor';
-
-export type NewsArticle = ContentBase & {
-  kind: 'news';
-  author: string;
-  readingMinutes: number;
-  tags: string[];
-  featured?: boolean;
-};
 
 export type RumorStatus = 'rumor' | 'negociando' | 'avanzado' | 'descartado';
 
@@ -44,24 +29,39 @@ export type RumorClub = {
   logo?: string;
 };
 
-export type TransferRumor = ContentBase & {
-  kind: 'rumor';
-  player: string;
-  position: string;
-  age: number;
-  from: RumorClub;
-  to: RumorClub;
-  fee: string;
-  /** Confidence in the operation, 0–100. */
-  probability: number;
-  status: RumorStatus;
+type FeedBase = {
+  id: string;
+  title: string;
+  summary: string;
+  topic: ContentTopic;
+  /** Outlet name, always shown as attribution. */
+  source: string;
+  /** Canonical URL of the original article. */
+  sourceUrl?: string;
+  imageUrl?: string;
+  author?: string;
+  publishedAt: string;
 };
 
-export type ContentItem = NewsArticle | TransferRumor;
+export type FeedArticle = FeedBase & {
+  kind: 'news';
+  tags: string[];
+  featured?: boolean;
+  /** Only present in the local sample content; live items link out instead. */
+  body?: string[];
+};
 
-/** Content with a concrete publication date, ready to render. */
-export type FeedItem = ContentItem & { publishedAt: string };
-export type FeedArticle = NewsArticle & { publishedAt: string };
-export type FeedRumor = TransferRumor & { publishedAt: string };
+export type FeedRumor = FeedBase & {
+  kind: 'rumor';
+  status: RumorStatus;
+  /** Derived from the headline; `null` when it could not be identified. */
+  player: string | null;
+  from: RumorClub | null;
+  to: RumorClub | null;
+  fee: string | null;
+  body?: string[];
+};
+
+export type FeedItem = FeedArticle | FeedRumor;
 
 export type NewsFilter = 'all' | 'news' | 'rumor';

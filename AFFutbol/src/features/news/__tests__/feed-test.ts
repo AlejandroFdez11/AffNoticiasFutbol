@@ -36,13 +36,12 @@ describe('news feed', () => {
     expect(findFeedItem(feed, 'missing')).toBeNull();
   });
 
-  it('keeps ids unique and rumour probabilities in range', () => {
+  it('keeps ids unique and every rumour carries a status', () => {
     const ids = [...ARTICLES, ...RUMORS].map((item) => item.id);
 
     expect(new Set(ids).size).toBe(ids.length);
     for (const rumor of RUMORS) {
-      expect(rumor.probability).toBeGreaterThanOrEqual(0);
-      expect(rumor.probability).toBeLessThanOrEqual(100);
+      expect(rumor.status).toBeTruthy();
       expect(rumor.body.length).toBeGreaterThan(0);
     }
   });

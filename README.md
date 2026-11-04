@@ -81,8 +81,24 @@ Escanea el QR con Expo Go o pulsa `i` / `a` para abrir un simulador.
 - El listado de partidos se filtra en el dispositivo con una lista blanca de competiciones (`src/features/matches/league-filter.ts`): 5 grandes ligas y sus segundas divisiones, copas nacionales, copas europeas, Brasil, Argentina, Libertadores y selecciones. Este filtro no gasta peticiones adicionales.
 - El plan Free incluye **100 peticiones al día**, así que el listado se cachea 5 minutos y el refresco es manual (tirar de la lista o el botón de actualizar). No hay polling automático.
 - Un día completo de partidos se obtiene con **una sola petición**; el detalle consume como máximo 4 (una por pestaña visitada).
-- **Fase 2 (noticias, rumores y estadísticas):** se sirven datos de muestra curados en local (`src/features/news/data.ts` y `src/features/statistics/data.ts`). No gastan cuota ni necesitan red, y la interfaz los etiqueta como «Datos de muestra». Se sustituirán por Supabase o una API real en fases posteriores.
+- **Noticias y rumores:** se leen de la tabla `news_items` de Supabase, que rellena la Edge Function `news-refresh` a partir de feeds RSS de medios españoles. La app solo muestra titular, extracto y enlace al medio original; nunca reproduce el artículo completo. Sin Supabase configurado se usa el contenido de muestra local.
+- **Estadísticas (Fase 2):** siguen siendo datos de muestra curados en local (`src/features/statistics/data.ts`). No gastan cuota ni necesitan red, y la interfaz los etiqueta como «Datos de muestra». Se sustituirán por una fuente real en una fase posterior.
 - Si `EXPO_PUBLIC_USE_MOCKS=true` la app usa datos simulados deterministas (partidos finalizados, en directo y programados) sin gastar cuota.
+
+### Fuentes de noticias
+
+| Fuente | Feed | Uso |
+| --- | --- | --- |
+| Marca | `portada.xml`, `primera-division.xml`, `futbol-internacional.xml` | Noticias |
+| Marca | `mercado-fichajes.xml` | Rumores de fichajes |
+| Mundo Deportivo | `rss/futbol` | Noticias |
+| Relevo | `rss` | Noticias |
+
+- Los feeds viven en la tabla `news_sources`, no en el código: desactivar uno que se rompa es un `UPDATE`, sin desplegar nada.
+- `supabase/functions/news-refresh` descarga y normaliza los feeds, deduplica entre medios y hace upsert en `news_items`. Se despliega con `npx supabase functions deploy news-refresh` y aplica un throttle de 10 minutos por fuente (los medios no son nuestra CDN).
+- La normalización está en `supabase/functions/_shared/normalize.ts`: funciones puras, sin APIs de Deno, cubiertas por Jest. Los rumores salen de heurísticas sobre el titular (club, jugador, importe y estado); cuando algo no se puede deducir, el campo queda vacío en vez de inventarse.
+- Solo se guardan titular, extracto e imagen con enlace al medio original. El cuerpo del artículo no se reproduce.
+- Retención de 14 días en `news_items`. La app lee como máximo 60 piezas.
 
 ## 🧰 Scripts
 

@@ -3,59 +3,49 @@ import { StyleSheet, View } from 'react-native';
 
 import { TeamBadge } from '@/components/team-badge';
 import { ThemedText } from '@/components/themed-text';
-import { Radii, Spacing } from '@/constants/theme';
+import { Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 import type { FeedRumor, RumorClub } from '../types';
 
-function probabilityColor(probability: number): 'brand' | 'accent' | 'textSecondary' {
-  if (probability >= 70) return 'brand';
-  if (probability >= 40) return 'accent';
-  return 'textSecondary';
-}
-
+/**
+ * Clubs and fee are derived from the headline by the `news-refresh` function,
+ * so any of them can be missing. We render what we know and nothing else: no
+ * invented percentages or player ages.
+ */
 export function TransferSummary({ rumor }: { rumor: FeedRumor }) {
   const theme = useTheme();
-  const tone = probabilityColor(rumor.probability);
-  const color = theme[tone];
+
+  if (!rumor.from && !rumor.to && !rumor.fee) {
+    return null;
+  }
 
   return (
     <View style={styles.container}>
-      <View style={styles.clubs}>
-        <ClubColumn club={rumor.from} label="De" />
-        <SymbolView
-          name={{ ios: 'arrow.right', android: 'arrow_forward', web: 'arrow_forward' }}
-          size={16}
-          tintColor={theme.textSecondary}
-        />
-        <ClubColumn club={rumor.to} label="A" align="right" />
-      </View>
+      {rumor.from && rumor.to ? (
+        <View style={styles.clubs}>
+          <ClubColumn club={rumor.from} label="De" />
+          <SymbolView
+            name={{ ios: 'arrow.right', android: 'arrow_forward', web: 'arrow_forward' }}
+            size={16}
+            tintColor={theme.textSecondary}
+          />
+          <ClubColumn club={rumor.to} label="A" align="right" />
+        </View>
+      ) : rumor.to ? (
+        <ClubColumn club={rumor.to} label="Destino" />
+      ) : rumor.from ? (
+        <ClubColumn club={rumor.from} label="Origen" />
+      ) : null}
 
-      <View style={styles.figures}>
-        <View>
+      {rumor.fee ? (
+        <View style={styles.figures}>
           <ThemedText type="small" themeColor="textSecondary">
             Coste estimado
           </ThemedText>
           <ThemedText type="smallBold">{rumor.fee}</ThemedText>
         </View>
-        <View style={styles.probability}>
-          <ThemedText type="small" themeColor="textSecondary">
-            Probabilidad
-          </ThemedText>
-          <ThemedText type="smallBold" style={{ color }}>
-            {rumor.probability}%
-          </ThemedText>
-        </View>
-      </View>
-
-      <View style={[styles.track, { backgroundColor: theme.border }]}>
-        <View
-          style={[
-            styles.fill,
-            { width: `${Math.min(100, Math.max(0, rumor.probability))}%`, backgroundColor: color },
-          ]}
-        />
-      </View>
+      ) : null}
     </View>
   );
 }
@@ -113,19 +103,8 @@ const styles = StyleSheet.create({
   },
   figures: {
     flexDirection: 'row',
+    alignItems: 'baseline',
     justifyContent: 'space-between',
     gap: Spacing.three,
-  },
-  probability: {
-    alignItems: 'flex-end',
-  },
-  track: {
-    height: 6,
-    borderRadius: Radii.pill,
-    overflow: 'hidden',
-  },
-  fill: {
-    height: '100%',
-    borderRadius: Radii.pill,
   },
 });

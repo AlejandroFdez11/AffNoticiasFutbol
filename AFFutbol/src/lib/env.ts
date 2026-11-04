@@ -9,7 +9,10 @@ const apiFootballKey = process.env.EXPO_PUBLIC_API_FOOTBALL_KEY?.trim();
 const apiFootballBaseUrl = process.env.EXPO_PUBLIC_API_FOOTBALL_BASE_URL?.trim();
 const useMocks = process.env.EXPO_PUBLIC_USE_MOCKS?.trim().toLowerCase();
 const supabaseUrl = process.env.EXPO_PUBLIC_SUPABASE_URL?.trim();
-const supabaseAnonKey = process.env.EXPO_PUBLIC_SUPABASE_KEY?.trim();
+const supabaseAnonKey =
+  process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.trim() ||
+  process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() ||
+  process.env.EXPO_PUBLIC_SUPABASE_KEY?.trim();
 
 export const env = {
   apiFootballKey,

@@ -1,3 +1,4 @@
+import { Image } from 'expo-image';
 import { useRouter } from 'expo-router';
 import { Pressable, StyleSheet, View } from 'react-native';
 
@@ -34,6 +35,16 @@ export function ArticleCard({ item, featured = false }: ArticleCardProps) {
         featured && styles.featured,
         pressed && styles.pressed,
       ]}>
+      {item.imageUrl ? (
+        <Image
+          source={{ uri: item.imageUrl }}
+          style={[styles.image, { backgroundColor: theme.border }]}
+          contentFit="cover"
+          transition={150}
+          accessibilityIgnoresInvertColors
+        />
+      ) : null}
+
       <View style={styles.meta}>
         <TopicBadge topic={item.topic} />
         {featured ? (
@@ -53,15 +64,17 @@ export function ArticleCard({ item, featured = false }: ArticleCardProps) {
         {item.title}
       </ThemedText>
 
-      <ThemedText
-        type="small"
-        themeColor="textSecondary"
-        numberOfLines={featured ? 3 : 2}>
-        {item.summary}
-      </ThemedText>
+      {item.summary ? (
+        <ThemedText
+          type="small"
+          themeColor="textSecondary"
+          numberOfLines={featured ? 3 : 2}>
+          {item.summary}
+        </ThemedText>
+      ) : null}
 
       <ThemedText type="small" themeColor="textSecondary">
-        {item.source} · {item.readingMinutes} min de lectura
+        {item.author ? `${item.source} · ${item.author}` : item.source}
       </ThemedText>
     </Pressable>
   );
@@ -77,6 +90,11 @@ const styles = StyleSheet.create({
   featured: {
     padding: Spacing.four,
     gap: Spacing.three,
+  },
+  image: {
+    width: '100%',
+    aspectRatio: 16 / 9,
+    borderRadius: Radii.medium,
   },
   meta: {
     flexDirection: 'row',

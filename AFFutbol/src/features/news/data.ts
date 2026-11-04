@@ -1,15 +1,49 @@
-import type { NewsArticle, TransferRumor } from './types';
+import type { ContentTopic, RumorClub, RumorStatus } from './types';
 
 const teamLogo = (teamId: number) => `https://media.api-sports.io/football/teams/${teamId}.png`;
 
 /**
- * Curated sample content for Phase 2.
+ * Curated sample content, used only when Supabase is not configured (fresh
+ * clone without `.env`) and by the Jest suite.
  *
- * Everything here is fictional demo material (the rumours use invented
- * players) and is labelled as such in the UI. It keeps the newsroom experience
- * testable without an API key or extra quota until Supabase lands in Phase 3.
+ * Everything here is fictional demo material and the UI labels it as such.
+ * Real content lives in the `news_items` table, filled from Spanish RSS feeds
+ * by the `news-refresh` Edge Function.
  */
-export const ARTICLES: NewsArticle[] = [
+
+export type SampleArticle = {
+  id: string;
+  kind: 'news';
+  topic: ContentTopic;
+  title: string;
+  summary: string;
+  body: string[];
+  source: string;
+  author: string;
+  publishedHoursAgo: number;
+  tags: string[];
+  featured?: boolean;
+};
+
+export type SampleRumor = {
+  id: string;
+  kind: 'rumor';
+  topic: ContentTopic;
+  title: string;
+  summary: string;
+  body: string[];
+  source: string;
+  publishedHoursAgo: number;
+  player: string;
+  from: RumorClub;
+  to: RumorClub;
+  fee: string;
+  status: RumorStatus;
+};
+
+export type SampleItem = SampleArticle | SampleRumor;
+
+export const ARTICLES: SampleArticle[] = [
   {
     id: 'derbi-betis-sevilla',
     kind: 'news',
@@ -25,7 +59,6 @@ export const ARTICLES: NewsArticle[] = [
     source: 'Redacción AFFutbol',
     author: 'Alejandro Fernández',
     publishedHoursAgo: 2,
-    readingMinutes: 4,
     tags: ['Derbi', 'LaLiga', 'Betis'],
     featured: true,
   },
@@ -44,7 +77,6 @@ export const ARTICLES: NewsArticle[] = [
     source: 'Redacción AFFutbol',
     author: 'Marta Ruiz',
     publishedHoursAgo: 4,
-    readingMinutes: 3,
     tags: ['Premier League', 'Arsenal', 'Chelsea'],
   },
   {
@@ -62,7 +94,6 @@ export const ARTICLES: NewsArticle[] = [
     source: 'Redacción AFFutbol',
     author: 'Luca Ferri',
     publishedHoursAgo: 6,
-    readingMinutes: 4,
     tags: ['Serie A', 'Inter', 'Milan'],
   },
   {
@@ -80,7 +111,6 @@ export const ARTICLES: NewsArticle[] = [
     source: 'Redacción AFFutbol',
     author: 'Jonas Weber',
     publishedHoursAgo: 9,
-    readingMinutes: 3,
     tags: ['Bundesliga', 'Bayern', 'Dortmund'],
   },
   {
@@ -98,7 +128,6 @@ export const ARTICLES: NewsArticle[] = [
     source: 'Redacción AFFutbol',
     author: 'Marta Ruiz',
     publishedHoursAgo: 14,
-    readingMinutes: 5,
     tags: ['Champions League', 'Octavos'],
   },
   {
@@ -116,7 +145,6 @@ export const ARTICLES: NewsArticle[] = [
     source: 'Redacción AFFutbol',
     author: 'Alejandro Fernández',
     publishedHoursAgo: 20,
-    readingMinutes: 4,
     tags: ['Mercado', 'Fichajes'],
   },
   {
@@ -134,12 +162,11 @@ export const ARTICLES: NewsArticle[] = [
     source: 'Redacción AFFutbol',
     author: 'Pablo Serrano',
     publishedHoursAgo: 26,
-    readingMinutes: 5,
     tags: ['Análisis', 'xG', 'Estadísticas'],
   },
 ];
 
-export const RUMORS: TransferRumor[] = [
+export const RUMORS: SampleRumor[] = [
   {
     id: 'rumor-riva-arsenal',
     kind: 'rumor',
@@ -154,12 +181,9 @@ export const RUMORS: TransferRumor[] = [
     source: 'Mercado AFFutbol',
     publishedHoursAgo: 3,
     player: 'Matteo Riva',
-    position: 'Mediocentro',
-    age: 22,
     from: { name: 'AC Milan', logo: teamLogo(489) },
     to: { name: 'Arsenal', logo: teamLogo(42) },
     fee: '45 M€',
-    probability: 62,
     status: 'negociando',
   },
   {
@@ -167,8 +191,7 @@ export const RUMORS: TransferRumor[] = [
     kind: 'rumor',
     topic: 'Mercado',
     title: 'El Liverpool acelera por Noah Berg',
-    summary:
-      'El extremo alemán ha pasado a ser la prioridad del Liverpool para la banda derecha.',
+    summary: 'El extremo alemán ha pasado a ser la prioridad del Liverpool para la banda derecha.',
     body: [
       'El Liverpool quiere cerrar cuanto antes un extremo que le permita rotar sin perder velocidad en ataque. Noah Berg, de 24 años, encaja en el perfil: juega a pierna cambiada, encara en el uno contra uno y llega al área con facilidad.',
       'El RB Leipzig ha fijado su precio en 60 millones de euros y no parece dispuesto a bajar. El Liverpool estudia una oferta con una parte fija y otra en variables ligadas a objetivos colectivos.',
@@ -176,12 +199,9 @@ export const RUMORS: TransferRumor[] = [
     source: 'Mercado AFFutbol',
     publishedHoursAgo: 5,
     player: 'Noah Berg',
-    position: 'Extremo derecho',
-    age: 24,
     from: { name: 'RB Leipzig', logo: teamLogo(173) },
     to: { name: 'Liverpool', logo: teamLogo(40) },
     fee: '60 M€',
-    probability: 78,
     status: 'avanzado',
   },
   {
@@ -198,12 +218,9 @@ export const RUMORS: TransferRumor[] = [
     source: 'Mercado AFFutbol',
     publishedHoursAgo: 8,
     player: 'Iker Salas',
-    position: 'Lateral izquierdo',
-    age: 19,
     from: { name: 'Real Betis', logo: teamLogo(543) },
     to: { name: 'Manchester City', logo: teamLogo(50) },
     fee: '35 M€',
-    probability: 34,
     status: 'rumor',
   },
   {
@@ -220,12 +237,9 @@ export const RUMORS: TransferRumor[] = [
     source: 'Mercado AFFutbol',
     publishedHoursAgo: 12,
     player: 'Diego Marín',
-    position: 'Delantero centro',
-    age: 27,
     from: { name: 'Sevilla FC', logo: teamLogo(536) },
     to: { name: 'Napoli', logo: teamLogo(492) },
     fee: '28 M€',
-    probability: 55,
     status: 'negociando',
   },
   {
@@ -242,12 +256,9 @@ export const RUMORS: TransferRumor[] = [
     source: 'Mercado AFFutbol',
     publishedHoursAgo: 22,
     player: 'Youssef Amrani',
-    position: 'Portero',
-    age: 21,
     from: { name: 'Ajax', logo: teamLogo(194) },
     to: { name: 'Bayern München', logo: teamLogo(157) },
     fee: '22 M€',
-    probability: 12,
     status: 'descartado',
   },
   {
@@ -264,12 +275,9 @@ export const RUMORS: TransferRumor[] = [
     source: 'Mercado AFFutbol',
     publishedHoursAgo: 30,
     player: 'Thiago Nunes',
-    position: 'Mediapunta',
-    age: 25,
     from: { name: 'Benfica', logo: teamLogo(211) },
     to: { name: 'Barcelona', logo: teamLogo(529) },
     fee: '70 M€',
-    probability: 41,
     status: 'rumor',
   },
 ];

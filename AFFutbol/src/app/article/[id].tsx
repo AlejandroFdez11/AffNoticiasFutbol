@@ -1,6 +1,8 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
+import * as WebBrowser from 'expo-web-browser';
 import { StyleSheet, View } from 'react-native';
 
+import { Button } from '@/components/button';
 import { IconButton } from '@/components/icon-button';
 import { Screen } from '@/components/screen';
 import { ScreenHeader } from '@/components/screen-header';
@@ -16,7 +18,7 @@ import { RumorCard } from '@/features/news/components/rumor-card';
 import { RumorStatusBadge } from '@/features/news/components/rumor-status-badge';
 import { TopicBadge } from '@/features/news/components/topic-badge';
 import { TransferSummary } from '@/features/news/components/transfer-summary';
-import type { FeedArticle, FeedItem, FeedRumor } from '@/features/news/types';
+import type { FeedArticle, FeedItem } from '@/features/news/types';
 
 export default function ArticleScreen() {
   const theme = useTheme();
@@ -91,15 +93,17 @@ export default function ArticleScreen() {
         <EmptyState
           icon={{ ios: 'doc.text.magnifyingglass', android: 'search_off', web: 'search_off' }}
           title="Noticia no encontrada"
-          description="Puede que el contenido haya cambiado de identificador o ya no esté disponible."
+          description="Puede que el contenido haya salido de la ventana de 14 días que guarda la app."
         />
       </Screen>
     );
   }
 
-  const related = (feedQuery.data ?? [])
+  const related = (feedQuery.data?.items ?? [])
     .filter((candidate) => candidate.id !== item.id && candidate.topic === item.topic)
     .slice(0, 3);
+
+  const sourceUrl = item.sourceUrl;
 
   return (
     <Screen>
@@ -116,37 +120,34 @@ export default function ArticleScreen() {
 
       <ThemedText style={styles.title}>{item.title}</ThemedText>
 
-      <ThemedText style={styles.lead} themeColor="textSecondary">
-        {item.summary}
-      </ThemedText>
+      {item.summary ? (
+        <ThemedText style={styles.lead} themeColor="textSecondary">
+          {item.summary}
+        </ThemedText>
+      ) : null}
 
       <View style={[styles.divider, { backgroundColor: theme.border }]} />
 
-      {item.kind === 'rumor' ? (
+      {item.kind === 'rumor' && (item.player || item.from || item.to || item.fee) ? (
         <View
           style={[
             styles.card,
             { backgroundColor: theme.backgroundElement, borderColor: theme.border },
           ]}>
-          <View style={styles.playerRow}>
-            <View style={styles.playerText}>
-              <ThemedText type="smallBold">{item.player}</ThemedText>
-              <ThemedText type="small" themeColor="textSecondary">
-                {item.position} · {item.age} años
-              </ThemedText>
-            </View>
-          </View>
-          <TransferSummary rumor={item as FeedRumor} />
+          {item.player ? <ThemedText type="smallBold">{item.player}</ThemedText> : null}
+          <TransferSummary rumor={item} />
         </View>
       ) : null}
 
-      <View style={styles.body}>
-        {item.body.map((paragraph, index) => (
-          <ThemedText key={`${item.id}-${index}`} style={styles.paragraph}>
-            {paragraph}
-          </ThemedText>
-        ))}
-      </View>
+      {item.body && item.body.length > 0 ? (
+        <View style={styles.body}>
+          {item.body.map((paragraph, index) => (
+            <ThemedText key={`${item.id}-${index}`} style={styles.paragraph}>
+              {paragraph}
+            </ThemedText>
+          ))}
+        </View>
+      ) : null}
 
       {item.kind === 'rumor' ? (
         <View
@@ -155,11 +156,11 @@ export default function ArticleScreen() {
             { backgroundColor: theme.brandMuted, borderColor: theme.border },
           ]}>
           <ThemedText type="smallBold" style={{ color: theme.accent }}>
-            Rumor de muestra
+            Información de mercado
           </ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Este contenido es ficticio y forma parte de los datos de demostración de AFFutbol. No
-            procede de una fuente real.
+            Este contenido lo publica {item.source} y describe un rumor, no un fichaje
+            confirmado.
           </ThemedText>
         </View>
       ) : null}
@@ -171,10 +172,16 @@ export default function ArticleScreen() {
         ]}>
         <ThemedText type="smallBold">{item.source}</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          {item.kind === 'news'
-            ? `Por ${item.author} · ${item.readingMinutes} min de lectura`
-            : 'Información de mercado · contenido de muestra'}
+          {item.author ? `Por ${item.author} · ` : ''}
+          {formatRelativeTime(item.publishedAt)}
         </ThemedText>
+        {sourceUrl ? (
+          <Button
+            label={`Abrir en ${item.source}`}
+            variant="secondary"
+            onPress={() => void WebBrowser.openBrowserAsync(sourceUrl)}
+          />
+        ) : null}
       </View>
 
       {related.length > 0 ? (
@@ -225,16 +232,6 @@ const styles = StyleSheet.create({
     borderRadius: Radii.large,
     borderWidth: 1,
   },
-  playerRow: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'space-between',
-    gap: Spacing.three,
-  },
-  playerText: {
-    flex: 1,
-    gap: 1,
-  },
   body: {
     gap: Spacing.three,
   },
@@ -248,7 +245,7 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   sourceCard: {
-    gap: Spacing.one,
+    gap: Spacing.two,
     padding: Spacing.three,
     borderRadius: Radii.medium,
     borderWidth: 1,

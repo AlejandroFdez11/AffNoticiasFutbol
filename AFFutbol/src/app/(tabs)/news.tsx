@@ -11,7 +11,7 @@ import { ThemedText } from '@/components/themed-text';
 import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
-import { useNewsFeed } from '@/features/news/api';
+import { refreshNews, useNewsFeed } from '@/features/news/api';
 import { ArticleCard } from '@/features/news/components/article-card';
 import { RumorCard } from '@/features/news/components/rumor-card';
 import { NEWS_FILTERS } from '@/features/news/constants';
@@ -22,24 +22,53 @@ export default function NewsScreen() {
   const theme = useTheme();
   const router = useRouter();
   const [filter, setFilter] = useState<NewsFilter>('all');
+  const [isManualRefreshing, setIsManualRefreshing] = useState(false);
 
   const { data, error, isError, isPending, isRefetching, refetch } = useNewsFeed();
 
-  const items = useMemo(() => filterFeed(data ?? [], filter), [data, filter]);
+  const isRefreshing = isManualRefreshing || isRefetching;
 
-  const featured = useMemo(
-    () =>
-      filter === 'all'
-        ? items.find(
-            (item): item is FeedArticle => item.kind === 'news' && Boolean(item.featured)
-          )
-        : undefined,
-    [filter, items]
-  );
+  const handleRefresh = async () => {
+    setIsManualRefreshing(true);
+    try {
+      await refreshNews();
+      await refetch();
+    } finally {
+      setIsManualRefreshing(false);
+    }
+  };
+
+  const items = useMemo(() => filterFeed(data?.items ?? [], filter), [data, filter]);
+
+  const isSample = data?.isSample === true;
+
+  const featured = useMemo(() => {
+    if (filter !== 'all') {
+      return undefined;
+    }
+
+    const flagged = items.find(
+      (item): item is FeedArticle => item.kind === 'news' && Boolean(item.featured)
+    );
+
+    if (flagged) {
+      return flagged;
+    }
+
+    // Live feeds have no editorial flag: promote the newest story instead.
+    return isSample
+      ? undefined
+      : items.find((item): item is FeedArticle => item.kind === 'news');
+  }, [filter, isSample, items]);
 
   const listItems = useMemo(
     () => (featured ? items.filter((item) => item.id !== featured.id) : items),
     [featured, items]
+  );
+
+  const sources = useMemo(
+    () => Array.from(new Set((data?.items ?? []).map((item) => item.source))),
+    [data]
   );
 
   const heading =
@@ -78,8 +107,8 @@ export default function NewsScreen() {
         contentContainerStyle={styles.content}
         refreshControl={
           <RefreshControl
-            refreshing={isRefetching}
-            onRefresh={() => void refetch()}
+            refreshing={isRefreshing}
+            onRefresh={() => void handleRefresh()}
             tintColor={theme.brand}
             colors={[theme.brand]}
           />
@@ -100,18 +129,20 @@ export default function NewsScreen() {
                   <IconButton
                     icon={{ ios: 'arrow.clockwise', android: 'refresh', web: 'refresh' }}
                     label="Actualizar noticias"
-                    busy={isRefetching}
-                    onPress={() => void refetch()}
+                    busy={isRefreshing}
+                    onPress={() => void handleRefresh()}
                   />
                 </View>
               }
             />
 
-            <View style={[styles.demo, { backgroundColor: theme.brandMuted }]}>
-              <ThemedText type="small" style={{ color: theme.brand }}>
-                Contenido de muestra · noticias y rumores de ejemplo hasta conectar la fuente real
-              </ThemedText>
-            </View>
+            {isSample ? (
+              <View style={[styles.demo, { backgroundColor: theme.brandMuted }]}>
+                <ThemedText type="small" style={{ color: theme.brand }}>
+                  Contenido de muestra · configura Supabase para leer las fuentes reales
+                </ThemedText>
+              </View>
+            ) : null}
 
             <SegmentedControl options={NEWS_FILTERS} value={filter} onChange={setFilter} />
 
@@ -137,8 +168,8 @@ export default function NewsScreen() {
           items.length > 0 ? (
             <View style={styles.footer}>
               <ThemedText type="small" themeColor="textSecondary">
-                {items.length} {items.length === 1 ? 'contenido' : 'contenidos'} · contenido de
-                muestra
+                {items.length} {items.length === 1 ? 'contenido' : 'contenidos'}
+                {sources.length > 0 ? ` · ${sources.slice(0, 3).join(', ')}` : ''}
               </ThemedText>
             </View>
           ) : undefined
