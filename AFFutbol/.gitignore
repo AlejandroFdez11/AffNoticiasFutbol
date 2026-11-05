@@ -43,3 +43,7 @@ coverage/
 # generated native folders
 /ios
 /android
+
+# Firebase / credenciales
+google-services.json
+*firebase-adminsdk*.json
