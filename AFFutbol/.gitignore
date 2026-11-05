@@ -45,5 +45,4 @@ coverage/
 /android
 
 # Firebase / credenciales
-google-services.json
 *firebase-adminsdk*.json

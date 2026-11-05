@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "736443585165",
+    "project_id": "affutbol-2fec4",
+    "storage_bucket": "affutbol-2fec4.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:736443585165:android:5e8ccd4d27b11c1c8908c4",
+        "android_client_info": {
+          "package_name": "com.alejandroff.affutbol"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBEUTwkN-65H0Sa5yVkx-ybFzt_MO3pdW0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
