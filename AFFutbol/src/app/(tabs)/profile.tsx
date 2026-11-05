@@ -13,6 +13,7 @@ import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 import { describeAuthError, useAuth } from '@/features/auth/auth-context';
+import { NotificationsCard } from '@/features/notifications/components/notifications-card';
 import { usePredictionSummary } from '@/features/predictions/api';
 import { FavoriteTeamCard } from '@/features/profile/components/favorite-team-card';
 import { PointsSummary } from '@/features/profile/components/points-summary';
@@ -106,6 +107,8 @@ export default function ProfileScreen() {
             teamLogo={profile?.favoriteTeamLogo}
             onPress={() => router.push('/edit-profile')}
           />
+
+          <NotificationsCard />
 
           <View
             style={[

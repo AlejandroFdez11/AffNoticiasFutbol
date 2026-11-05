@@ -22,6 +22,7 @@ import {
   supabase,
 } from './supabase';
 import { normalizeEmail } from './validation';
+import { releaseStoredPushToken } from '@/features/notifications/device';
 import { fetchProfile, updateProfile as updateProfileRow } from '@/features/profile/api';
 import type { Profile, ProfilePatch } from '@/features/profile/types';
 
@@ -374,6 +375,11 @@ export function AuthProvider({ children }: PropsWithChildren) {
 
   const signOut = useCallback(async () => {
     const client = requireSupabase();
+
+    // Unregister this device first: the session is still valid, and the next
+    // account on this phone must not inherit the notifications.
+    await releaseStoredPushToken();
+
     const { error } = await client.auth.signOut();
 
     if (error) {

@@ -7,6 +7,7 @@ import { useColorScheme } from 'react-native';
 import { AnimatedSplashOverlay } from '@/components/animated-splash';
 import { NavigationDarkTheme, NavigationLightTheme } from '@/constants/navigation-theme';
 import { AuthProvider } from '@/features/auth/auth-context';
+import { NotificationBridge } from '@/features/notifications/notification-bridge';
 import { queryClient } from '@/lib/query-client';
 
 SplashScreen.preventAutoHideAsync();
@@ -21,6 +22,7 @@ export default function RootLayout() {
         <ThemeProvider value={isDark ? NavigationDarkTheme : NavigationLightTheme}>
           <StatusBar style={isDark ? 'light' : 'dark'} />
           <AnimatedSplashOverlay />
+          <NotificationBridge />
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(tabs)" />
             <Stack.Screen name="match/[id]" />

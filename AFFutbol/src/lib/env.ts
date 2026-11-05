@@ -13,6 +13,7 @@ const supabaseAnonKey =
   process.env.EXPO_PUBLIC_SUPABASE_ANON_KEY?.trim() ||
   process.env.EXPO_PUBLIC_SUPABASE_PUBLISHABLE_KEY?.trim() ||
   process.env.EXPO_PUBLIC_SUPABASE_KEY?.trim();
+const easProjectId = process.env.EXPO_PUBLIC_EAS_PROJECT_ID?.trim();
 
 export const env = {
   apiFootballKey,
@@ -23,6 +24,8 @@ export const env = {
   supabaseAnonKey: supabaseAnonKey || undefined,
   /** Authentication needs a Supabase URL and a publishable/anon key. */
   isSupabaseConfigured: Boolean(supabaseUrl && supabaseAnonKey),
+  /** Expo push tokens need the EAS project id (`eas init` writes it to app.json). */
+  easProjectId: easProjectId || undefined,
 } as const;
 
 export const hasFootballApiKey = Boolean(env.apiFootballKey);
