@@ -20,6 +20,7 @@ import { ProfileHero } from '@/features/profile/components/profile-hero';
 import { ProfileSummary } from '@/features/profile/components/profile-summary';
 import { getProfileDisplayName } from '@/features/profile/format';
 import { findTeamOption } from '@/features/profile/teams';
+import { useGlobalRanking } from '@/features/rankings/api';
 
 export default function ProfileScreen() {
   const theme = useTheme();
@@ -35,6 +36,8 @@ export default function ProfileScreen() {
   } = useAuth();
   const [actionError, setActionError] = useState<string | null>(null);
   const predictionsQuery = usePredictionSummary();
+  const rankingQuery = useGlobalRanking();
+  const myRank = rankingQuery.data?.find((entry) => entry.isMe)?.rank ?? null;
 
   const handleSignOut = async () => {
     setActionError(null);
@@ -85,7 +88,8 @@ export default function ProfileScreen() {
           <ProfileSummary user={user} profile={profile} />
           <PointsSummary
             summary={predictionsQuery.summary}
-            loading={predictionsQuery.isPending}
+            rank={myRank}
+            loading={predictionsQuery.isPending || rankingQuery.isPending}
           />
 
           {profileError ? (
@@ -128,8 +132,8 @@ export default function ProfileScreen() {
           </View>
 
           <ThemedText type="small" themeColor="textSecondary" style={styles.footer}>
-            AFFutbol guarda tu cuenta y tus pronósticos con Supabase. El ranking mundial llegará en
-            la Fase 5.
+            AFFutbol guarda tu cuenta, tus pronósticos y tus ligas con Supabase. Consulta tu
+            posición en la pestaña Ranking.
           </ThemedText>
         </View>
       ) : null}

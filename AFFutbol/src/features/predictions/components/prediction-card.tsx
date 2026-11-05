@@ -1,6 +1,6 @@
 import { SymbolView } from 'expo-symbols';
 import { parseISO } from 'date-fns';
-import { useEffect, useState, type ComponentProps } from 'react';
+import { useState, type ComponentProps } from 'react';
 import { Pressable, StyleSheet, View } from 'react-native';
 
 import { Button } from '@/components/button';
@@ -27,20 +27,9 @@ export function PredictionCard({ fixture, prediction, saving = false, onSave }: 
   const [homeGoals, setHomeGoals] = useState(prediction?.homeGoals ?? 0);
   const [awayGoals, setAwayGoals] = useState(prediction?.awayGoals ?? 0);
 
-  // Re-sync with the server when the saved score changes, without wiping the
-  // user's edits on every background refetch.
-  const savedHome = prediction?.homeGoals;
-  const savedAway = prediction?.awayGoals;
-
-  useEffect(() => {
-    if (savedHome === undefined || savedAway === undefined) {
-      return;
-    }
-
-    setHomeGoals(savedHome);
-    setAwayGoals(savedAway);
-  }, [savedHome, savedAway]);
-
+  // The list remounts this card when the prediction row is created (see the
+  // `key` in the predictions screen), so the initial state is always the saved
+  // score and background refetches never wipe the user's edits.
   const dirty = !prediction || prediction.homeGoals !== homeGoals || prediction.awayGoals !== awayGoals;
   const kickoffLabel = `${relativeDayLabel(parseISO(fixture.fixture.date))} · ${formatMatchTime(
     fixture.fixture.date

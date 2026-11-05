@@ -79,10 +79,22 @@ npx expo-doctor               # dependency/config health
 - Every new table must ship with RLS enabled and explicit policies in the same migration. Never rely on the client to enforce ownership.
 - Not built yet: multiple profiles per account (the Netflix-style picker is a design reference, the model is one profile per account), following several teams (needs its own table), avatar upload.
 
-## Predictions and rankings (Phases 4–5, not implemented)
+## Predictions (Phase 4)
 
-- Scoring rules: exact score = 10 points; correct goals for only one team = 5 points; otherwise 0.
-- Predictions are for the user's favourite team's matches. The Predicciones and Ranking tabs are still `PlaceholderScreen`s.
+- Scoring rules: exact score = 10 points; correct goals for only one team = 5 points; otherwise 0. They live in `public.prediction_points()` and are mirrored read-only in `src/features/predictions/scoring.ts`.
+- Predictions are for the user's favourite team's matches. The client can only insert/update `home_goals` and `away_goals` before kickoff: `public.predictions` RLS + column grants reject writes to `status`, `points`, `settled_at` and the final-score columns. Never let the app compute and store points.
+- Settlement runs server-side: `supabase/functions/settle-predictions/` asks API-Football for each pending fixture (`fixtures?id=`, batch capped at 20), then calls `settle_fixture()` or `void_fixture()` as the service role. `_shared/settle.ts` holds the pure decision logic and is covered by Jest. The cron job in `20261107000000_settle_cron.sql` calls it every 30 minutes with the secret stored in Supabase Vault (`settle_secret`, same value as `PREDICTIONS_SETTLE_SECRET`).
+- Client code is in `src/features/predictions/`: `api.ts` (queries/mutations), `fixtures.ts` (kickoff window), `scoring.ts` (summary/outcome copy), plus the screen components. The match list reuses the matches query cache, so opening Predicciones costs no extra API-Football requests. The fixture date window is `PREDICTION_WINDOW_DAYS`.
+- `settle_fixture` stores `final_home_goals`/`final_away_goals` with the prediction so the history never needs another API request. Voided matches keep `points = null`.
+
+## Rankings and private leagues (Phase 5)
+
+- Database: `public.leagues` (name, unique 6-character `invite_code`, `owner_id`) and `public.league_members` (PK `league_id, user_id`, `role` owner/member). Both have RLS: only members can read a league and its member list. There are no direct insert/delete grants.
+- Writes go through `SECURITY DEFINER` RPCs in `20261108000000_leagues_rankings.sql`: `create_league(p_name)`, `join_league(p_code)`, `leave_league(p_league_id)` and `my_leagues()`. The owner leaving deletes the league. Invite codes are generated server-side (`generate_invite_code()`, alphabet without O/0/I/1) and must never be enumerated by the client.
+- Leaderboards are aggregates computed in SQL, never by exposing predictions: `global_ranking(p_limit)` (users with at least one prediction, top N plus the caller's own row) and `league_ranking(p_league_id)` (every member, including members with 0 points, guarded by `is_league_member()`). Both return points/counters only and are executable by `authenticated` only.
+- Client code is in `src/features/rankings/`: `types.ts` (snake_case rows + bigint-to-number mapping), `validation.ts` (league name and invite code), `api.ts` (TanStack Query hooks and error copy) and `components/`. The Ranking tab has two scopes: `Mundial` and `Mis ligas`. The profile summary reuses `useGlobalRanking()` to show the user's position.
+- Any new leaderboard column must be added to both SQL functions and `RankingRow`/`RankingEntry`; keep the SQL aggregate and the client copy of it in sync. No API-Football requests are involved in rankings.
+- Not built yet: public/discoverable leagues, per-league seasons or resets, roles beyond owner/member, push notifications for league invites.
 
 ## EAS
 

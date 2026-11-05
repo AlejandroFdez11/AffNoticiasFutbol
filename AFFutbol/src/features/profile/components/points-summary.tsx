@@ -8,17 +8,18 @@ import type { PredictionSummary } from '@/features/predictions/scoring';
 
 type PointsSummaryProps = {
   summary: PredictionSummary;
+  rank?: number | null;
   loading?: boolean;
 };
 
-export function PointsSummary({ summary, loading = false }: PointsSummaryProps) {
+export function PointsSummary({ summary, rank = null, loading = false }: PointsSummaryProps) {
   const theme = useTheme();
   const placeholder = loading ? '·' : null;
 
   const stats = [
     { key: 'points', label: 'Puntos', value: placeholder ?? String(summary.totalPoints) },
     { key: 'predictions', label: 'Pronósticos', value: placeholder ?? String(summary.predictions) },
-    { key: 'rank', label: 'Ranking', value: '—' },
+    { key: 'rank', label: 'Ranking', value: placeholder ?? (rank === null ? '—' : `#${rank}`) },
   ];
 
   return (
@@ -40,7 +41,9 @@ export function PointsSummary({ summary, loading = false }: PointsSummaryProps) 
         ))}
       </View>
       <ThemedText type="small" themeColor="textSecondary" style={styles.note}>
-        Tus puntos se actualizan al terminar cada partido. El ranking mundial llega en la Fase 5.
+        {rank === null
+          ? 'Haz tu primer pronóstico para entrar en el ranking mundial.'
+          : 'Tu posición en el ranking mundial. Los puntos se actualizan al terminar cada partido.'}
       </ThemedText>
     </View>
   );

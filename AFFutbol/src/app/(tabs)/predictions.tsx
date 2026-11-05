@@ -171,7 +171,7 @@ export default function PredictionsScreen() {
           ) : (
             upcomingQuery.fixtures.map((fixture) => (
               <PredictionCard
-                key={fixture.fixture.id}
+                key={`${fixture.fixture.id}-${predictionsByFixture.get(fixture.fixture.id)?.id ?? 'new'}`}
                 fixture={fixture}
                 prediction={predictionsByFixture.get(fixture.fixture.id)}
                 saving={

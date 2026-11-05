@@ -7,10 +7,10 @@
 - **Partidos del día:** los encuentros de las competiciones seleccionadas, agrupados por competición, con marcador en directo y detalle de cada partido (eventos, alineaciones y estadísticas).
 - **Noticias y rumores:** actualidad, análisis y mercado en un mismo feed, con filtros y detalle de cada contenido.
 - **Estadísticas:** clasificación, goleadores y resumen de cada competición, con acceso desde Partidos y Noticias.
-- **Predicciones:** pronostica los partidos de tu equipo favorito y suma puntos según tus aciertos.
+- **Predicciones:** pronostica el marcador de los partidos de tu equipo favorito antes del inicio y suma puntos cuando termina el partido (10 por marcador exacto, 5 por acertar los goles de un equipo).
 - **Rankings:**
-  - 🌍 **Ranking mundial** entre todos los usuarios.
-  - 👥 **Ranking privado** para competir con tus colegas o compañeros del curro.
+  - 🌍 **Ranking mundial** entre todos los usuarios con pronósticos, con tu posición destacada.
+  - 👥 **Ligas privadas** para competir con colegas o compañeros del curro: crea una liga, comparte su código de invitación de 6 caracteres y consulta la tabla de miembros.
 
 ## 📊 Estado del proyecto
 
@@ -20,8 +20,8 @@
 | Fase 1 — Partidos del día y detalle | ✅ Completada |
 | Fase 2 — Noticias, estadísticas y rumores | ✅ Completada |
 | Fase 3 — Autenticación y perfil | ✅ Completada |
-| Fase 4 — Predicciones | ⏳ Pendiente |
-| Fase 5 — Rankings y ligas privadas | ⏳ Pendiente |
+| Fase 4 — Predicciones | ✅ Completada |
+| Fase 5 — Rankings y ligas privadas | ✅ Completada |
 | Fase 6 — Notificaciones push | ⏳ Pendiente |
 | Fase 7 — Pulido y publicación | ⏳ Pendiente |
 
@@ -82,6 +82,7 @@ Escanea el QR con Expo Go o pulsa `i` / `a` para abrir un simulador.
 - El plan Free incluye **100 peticiones al día**, así que el listado se cachea 5 minutos y el refresco es manual (tirar de la lista o el botón de actualizar). No hay polling automático.
 - Un día completo de partidos se obtiene con **una sola petición**; el detalle consume como máximo 4 (una por pestaña visitada).
 - **Noticias y rumores:** se leen de la tabla `news_items` de Supabase, que rellena la Edge Function `news-refresh` a partir de feeds RSS de medios españoles. La app solo muestra titular, extracto y enlace al medio original; nunca reproduce el artículo completo. Sin Supabase configurado se usa el contenido de muestra local.
+- **Predicciones y rankings:** las predicciones, sus puntos y las ligas privadas viven en Supabase. Los puntos los calcula el servidor al terminar el partido (la Edge Function `settle-predictions`); el cliente nunca puede escribirlos. Los rankings son agregados calculados en SQL y no gastan cuota de API-Football.
 - **Estadísticas (Fase 2):** siguen siendo datos de muestra curados en local (`src/features/statistics/data.ts`). No gastan cuota ni necesitan red, y la interfaz los etiqueta como «Datos de muestra». Se sustituirán por una fuente real en una fase posterior.
 - Si `EXPO_PUBLIC_USE_MOCKS=true` la app usa datos simulados deterministas (partidos finalizados, en directo y programados) sin gastar cuota.
 
@@ -126,7 +127,7 @@ AFFutbol/
 │  │  └─ +not-found.tsx
 │  ├─ components/           # Design system reutilizable
 │  ├─ constants/            # Tokens de diseño y tema de navegación
-│  ├─ features/             # Lógica por dominio (matches, news, statistics)
+│  ├─ features/             # Lógica por dominio (matches, news, statistics, predictions, rankings)
 │  ├─ hooks/                # Hooks compartidos
 │  ├─ lib/                  # Entorno, query client y utilidades
 │  └─ services/             # Clientes de APIs externas (api-football)
@@ -142,8 +143,8 @@ AFFutbol/
 - [x] **Fase 1:** partidos del día y detalle de partido
 - [x] **Fase 2:** noticias, estadísticas y rumores
 - [x] **Fase 3:** autenticación y perfil
-- [ ] **Fase 4:** sistema de predicciones
-- [ ] **Fase 5:** ranking mundial y ligas privadas
+- [x] **Fase 4:** sistema de predicciones
+- [x] **Fase 5:** ranking mundial y ligas privadas
 - [ ] **Fase 6:** notificaciones push
 - [ ] **Fase 7:** publicación en App Store
 
