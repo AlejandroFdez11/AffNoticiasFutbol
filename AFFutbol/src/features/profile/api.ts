@@ -2,6 +2,7 @@ import type { User } from '@supabase/supabase-js';
 
 import { requireSupabase } from '@/features/auth/supabase';
 
+import { DELETE_ACCOUNT_CONFIRMATION } from './delete-account';
 import { mapProfile, type Profile, type ProfilePatch, type ProfileRow } from './types';
 
 type UserMetadata = Record<string, unknown>;
@@ -117,4 +118,23 @@ export async function updateProfile(userId: string, patch: ProfilePatch): Promis
   }
 
   return mapProfile(data);
+}
+
+/**
+ * Permanently deletes the signed-in account.
+ *
+ * The Edge Function `delete-account` verifies the JWT, deletes the row from
+ * `auth.users` with the service role and lets the `on delete cascade` foreign
+ * keys remove the profile, predictions, leagues, push tokens and preferences.
+ * The client never holds the service-role key.
+ */
+export async function deleteAccount(): Promise<void> {
+  const client = requireSupabase();
+  const { error } = await client.functions.invoke('delete-account', {
+    body: { confirm: DELETE_ACCOUNT_CONFIRMATION },
+  });
+
+  if (error) {
+    throw error;
+  }
 }

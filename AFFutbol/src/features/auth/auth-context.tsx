@@ -23,7 +23,11 @@ import {
 } from './supabase';
 import { normalizeEmail } from './validation';
 import { releaseStoredPushToken } from '@/features/notifications/device';
-import { fetchProfile, updateProfile as updateProfileRow } from '@/features/profile/api';
+import {
+  deleteAccount as deleteAccountOnServer,
+  fetchProfile,
+  updateProfile as updateProfileRow,
+} from '@/features/profile/api';
 import type { Profile, ProfilePatch } from '@/features/profile/types';
 
 WebBrowser.maybeCompleteAuthSession();
@@ -64,6 +68,8 @@ type AuthContextValue = {
   signInWithGoogle: () => Promise<void>;
   signInWithApple: () => Promise<void>;
   signOut: () => Promise<void>;
+  /** Deletes the account and all its data on the server, then clears the session. */
+  deleteAccount: () => Promise<void>;
   requestPasswordReset: (email: string) => Promise<void>;
   updatePassword: (password: string) => Promise<void>;
   completeAuthFromUrl: (url: string) => Promise<void>;
@@ -390,6 +396,24 @@ export function AuthProvider({ children }: PropsWithChildren) {
     setProfileError(null);
   }, []);
 
+  /**
+   * Irreversible. The push token is released first (it needs a valid session),
+   * then the Edge Function deletes the auth row and every cascaded table. The
+   * local session is cleared with `scope: 'local'` because the server no longer
+   * knows this user and a global sign-out would fail.
+   */
+  const deleteAccount = useCallback(async () => {
+    const client = requireSupabase();
+
+    await releaseStoredPushToken();
+    await deleteAccountOnServer();
+
+    setProfile(null);
+    setProfileError(null);
+
+    await client.auth.signOut({ scope: 'local' });
+  }, []);
+
   const requestPasswordReset = useCallback(async (email: string) => {
     const client = requireSupabase();
     const { error } = await client.auth.resetPasswordForEmail(normalizeEmail(email), {
@@ -448,6 +472,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       signInWithGoogle,
       signInWithApple,
       signOut,
+      deleteAccount,
       requestPasswordReset,
       updatePassword,
       completeAuthFromUrl,
@@ -465,6 +490,7 @@ export function AuthProvider({ children }: PropsWithChildren) {
       signInWithGoogle,
       signInWithApple,
       signOut,
+      deleteAccount,
       requestPasswordReset,
       updatePassword,
       completeAuthFromUrl,
