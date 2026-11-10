@@ -15,6 +15,15 @@ function compareTeams(
 }
 
 /**
+ * Label for the tight tables: football-data.org ships a compact `shortName`
+ * ("Barça", "Atleti") next to the full official name, which is what the club
+ * matching uses. Scorers have no short name, so they keep their Wikipedia name.
+ */
+export function teamLabel(team: { name: string; shortName?: string }): string {
+  return team.shortName ?? team.name;
+}
+
+/**
  * Orders a table with the same criteria used in football: points, goal
  * difference, goals scored and finally the team name to keep the result stable.
  */
@@ -35,7 +44,7 @@ export function sortScorers(rows: readonly ScorerRow[]): ScorerRow[] {
   return [...rows].sort(
     (a, b) =>
       b.goals - a.goals ||
-      b.assists - a.assists ||
+      (b.assists ?? 0) - (a.assists ?? 0) ||
       a.player.localeCompare(b.player, 'es')
   );
 }
@@ -66,7 +75,10 @@ export function buildLeagueSummary(standings: readonly PositionedStanding[]): Le
 }
 
 /** Turns a stored snapshot into the fully resolved table the screens render. */
-export function resolveLeagueSnapshot(snapshot: StoredLeagueSnapshot): LeagueSnapshot {
+export function resolveLeagueSnapshot(
+  snapshot: StoredLeagueSnapshot,
+  isSample = false
+): LeagueSnapshot {
   const standings = buildStandings(snapshot.standings);
 
   return {
@@ -74,5 +86,6 @@ export function resolveLeagueSnapshot(snapshot: StoredLeagueSnapshot): LeagueSna
     standings,
     scorers: sortScorers(snapshot.scorers),
     summary: buildLeagueSummary(standings),
+    isSample,
   };
 }

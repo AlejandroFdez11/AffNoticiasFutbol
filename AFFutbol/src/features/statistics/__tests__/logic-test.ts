@@ -1,5 +1,5 @@
 import { LEAGUE_IDS, LEAGUE_SNAPSHOTS } from '../data';
-import { buildLeagueSummary, buildStandings, resolveLeagueSnapshot, sortScorers } from '../logic';
+import { buildLeagueSummary, buildStandings, resolveLeagueSnapshot, sortScorers, teamLabel } from '../logic';
 import type { StandingRow, StoredLeagueSnapshot } from '../types';
 
 function standing(
@@ -91,7 +91,19 @@ describe('statistics logic', () => {
     expect(resolved.standings.map((row) => row.position)).toEqual([1, 2]);
     expect(resolved.standings[0].team.name).toBe('A');
     expect(resolved.scorers.map((scorer) => scorer.player)).toEqual(['A', 'Z']);
+    expect(resolved.isSample).toBe(false);
+    expect(resolveLeagueSnapshot(snapshot, true).isSample).toBe(true);
     expect(snapshot.standings.map((row) => row.team.name)).toEqual(original);
+  });
+
+  it('sorts scorers without assists by goals and name', () => {
+    const sorted = sortScorers([
+      { player: 'B', team: { name: 'X' }, goals: 2 },
+      { player: 'A', team: { name: 'X' }, goals: 2 },
+      { player: 'C', team: { name: 'X' }, goals: 4 },
+    ]);
+
+    expect(sorted.map((scorer) => scorer.player)).toEqual(['C', 'A', 'B']);
   });
 
   it('sorts scorers by goals, assists and name', () => {
@@ -123,6 +135,11 @@ describe('statistics logic', () => {
       const goals = resolved.scorers.map((scorer) => scorer.goals);
       expect(goals).toEqual([...goals].sort((a, b) => b - a));
     }
+  });
+
+  it('prefers the compact short name for display', () => {
+    expect(teamLabel({ name: 'FC Barcelona', shortName: 'Barça' })).toBe('Barça');
+    expect(teamLabel({ name: 'Barcelona' })).toBe('Barcelona');
   });
 
   it('rejects an empty table when building a summary', () => {

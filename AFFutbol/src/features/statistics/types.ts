@@ -1,16 +1,19 @@
 /**
  * Statistics domain types.
  *
- * Phase 2 serves a curated sample snapshot per competition. The resolved shape
- * (positions, goal difference and summary) is what the screens render, so a
- * future API-Football standings/scorers integration only needs to produce the
- * stored snapshot and reuse `logic.ts`.
+ * Standings come from football-data.org and scorers from Wikipedia; the
+ * `sync-statistics` Edge Function stores one snapshot per league in Supabase.
+ * `data.ts` is only the offline sample fallback. The resolved shape (positions,
+ * goal difference and summary) is what the screens render, so the screens only
+ * need `logic.ts`.
  */
 
 export type LeagueId = 'laliga' | 'premier' | 'seriea' | 'bundesliga';
 
 export type TeamRef = {
   name: string;
+  /** Compact label for tight UI (tables). `name` stays the matching key. */
+  shortName?: string;
   logo?: string;
 };
 
@@ -33,8 +36,10 @@ export type ScorerRow = {
   player: string;
   team: TeamRef;
   goals: number;
-  assists: number;
-  matches: number;
+  /** Not published by the free sources; the UI hides the column when absent. */
+  assists?: number;
+  /** Not published by the free sources. */
+  matches?: number;
 };
 
 export type LeagueInfo = {
@@ -69,4 +74,6 @@ export type LeagueSummary = {
 export type LeagueSnapshot = Omit<StoredLeagueSnapshot, 'standings'> & {
   standings: PositionedStanding[];
   summary: LeagueSummary;
+  /** True when the numbers come from the bundled sample set, not Supabase. */
+  isSample: boolean;
 };

@@ -6,6 +6,7 @@ import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 import type { PositionedStanding } from '../types';
+import { teamLabel } from '../logic';
 import { FormStrip } from './form-strip';
 
 export function StandingsTable({ standings }: { standings: PositionedStanding[] }) {
@@ -37,11 +38,12 @@ export function StandingsTable({ standings }: { standings: PositionedStanding[] 
 
       {standings.map((row, index) => {
         const leader = row.position === 1;
+        const label = teamLabel(row.team);
 
         return (
           <View
             key={row.team.name}
-            accessibilityLabel={`${row.position}. ${row.team.name}, ${row.points} puntos`}
+            accessibilityLabel={`${row.position}. ${label}, ${row.points} puntos`}
             style={[
               styles.row,
               index > 0 && { borderTopColor: theme.border, borderTopWidth: 1 },
@@ -55,10 +57,10 @@ export function StandingsTable({ standings }: { standings: PositionedStanding[] 
             </ThemedText>
 
             <View style={styles.team}>
-              <TeamBadge name={row.team.name} logo={row.team.logo} size={22} />
+              <TeamBadge name={label} logo={row.team.logo} size={22} />
               <View style={styles.teamText}>
                 <ThemedText type="small" numberOfLines={1}>
-                  {row.team.name}
+                  {label}
                 </ThemedText>
                 <FormStrip form={row.form} />
               </View>

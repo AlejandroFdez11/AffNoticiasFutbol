@@ -6,7 +6,8 @@ import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 import type { FixtureLineup, LineupPlayer } from '@/services/api-football/types';
 
-import { getLineupPlayerKey } from '../lineups';
+import { buildLineupRows, getLineupPlayerKey } from '../lineups';
+import { LineupPitch } from './lineup-pitch';
 
 const POSITION_LABELS: Record<string, string> = {
   G: 'POR',
@@ -27,6 +28,8 @@ export function LineupsView({ lineups }: { lineups: FixtureLineup[] }) {
 
 function LineupCard({ lineup }: { lineup: FixtureLineup }) {
   const theme = useTheme();
+  const starters = lineup.startXI.map((item) => item.player);
+  const rows = buildLineupRows(starters);
 
   return (
     <View
@@ -55,7 +58,11 @@ function LineupCard({ lineup }: { lineup: FixtureLineup }) {
         ) : null}
       </View>
 
-      <PlayerList title="Titulares" players={lineup.startXI.map((item) => item.player)} />
+      {rows ? (
+        <LineupPitch rows={rows} />
+      ) : (
+        <PlayerList title="Titulares" players={starters} />
+      )}
       <PlayerList title="Suplentes" players={lineup.substitutes.map((item) => item.player)} />
     </View>
   );

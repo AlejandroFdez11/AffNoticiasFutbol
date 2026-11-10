@@ -4,9 +4,9 @@
 
 ## ✨ Características
 
-- **Partidos del día:** los encuentros de las competiciones seleccionadas, agrupados por competición, con marcador en directo y detalle de cada partido (eventos, alineaciones y estadísticas).
+- **Partidos del día:** los encuentros de las competiciones seleccionadas, agrupados por competición, con marcador en directo y detalle de cada partido (eventos, alineaciones dibujadas sobre el campo y estadísticas).
 - **Noticias y rumores:** actualidad, análisis y mercado en un mismo feed, con filtros y detalle de cada contenido.
-- **Estadísticas:** clasificación, goleadores y resumen de cada competición, con acceso desde Partidos y Noticias.
+- **Estadísticas:** clasificación real (puntos, diferencia de goles, forma y escudos) y tabla de goleadores de las cuatro grandes ligas, con acceso desde Partidos y Noticias.
 - **Predicciones:** pronostica el marcador de los partidos de tu equipo favorito antes del inicio y suma puntos cuando termina el partido (10 por marcador exacto, 5 por acertar los goles de un equipo).
 - **Rankings:**
   - 🌍 **Ranking mundial** entre todos los usuarios con pronósticos, con tu posición destacada.
@@ -33,8 +33,8 @@
 - **UI:** React Native + Expo Router (native tabs)
 - **Estado del servidor:** TanStack Query
 - **Fechas:** date-fns (locale español)
-- **Backend / auth / push:** [Supabase](https://supabase.com/) (Fases 3–6)
-- **Datos de fútbol:** [API-Football](https://www.api-football.com/) (api-sports)
+- **Backend / auth / push / estadísticas:** [Supabase](https://supabase.com/) (Fases 3–7)
+- **Datos de fútbol:** [API-Football](https://www.api-football.com/) (api-sports), [football-data.org](https://www.football-data.org/) y Wikipedia (estadísticas)
 
 ## 🚀 Instalación
 
@@ -89,7 +89,7 @@ Escanea el QR con Expo Go o pulsa `i` / `a` para abrir un simulador.
 - **Noticias y rumores:** se leen de la tabla `news_items` de Supabase, que rellena la Edge Function `news-refresh` a partir de feeds RSS de medios españoles. La app solo muestra titular, extracto y enlace al medio original; nunca reproduce el artículo completo. Sin Supabase configurado se usa el contenido de muestra local.
 - **Predicciones y rankings:** las predicciones, sus puntos y las ligas privadas viven en Supabase. Los puntos los calcula el servidor al terminar el partido (la Edge Function `settle-predictions`); el cliente nunca puede escribirlos. Los rankings son agregados calculados en SQL y no gastan cuota de API-Football.
 - **Notificaciones:** los recordatorios leen la caché de partidos de Supabase (2 peticiones a API-Football al día), los resultados salen de las predicciones ya liquidadas y los avisos de ranking de agregados SQL. Enviar notificaciones no gasta cuota adicional.
-- **Estadísticas (Fase 2):** siguen siendo datos de muestra curados en local (`src/features/statistics/data.ts`). No gastan cuota ni necesitan red, y la interfaz los etiqueta como «Datos de muestra». Se sustituirán por una fuente real en una fase posterior.
+- **Estadísticas:** reales y gratis para siempre. La clasificación (puntos, diferencia de goles, forma y escudos) sale de football-data.org y los goleadores de la Wikipedia inglesa; ambas fuentes son gratuitas y sin límite diario. Las descarga la Edge Function `sync-statistics` dos veces al día y la app solo lee la tabla `statistics_snapshots` de Supabase, así que el móvil no gasta peticiones. Si Supabase no está configurado o la tabla aún no existe, la app muestra el contenido de muestra local (`src/features/statistics/data.ts`) etiquetado como «Datos de muestra». La fuente gratuita solo publica **goles**, no asistencias ni partidos jugados: cuando faltan, la columna de asistencias se oculta en vez de rellenarse con ceros.
 - Si `EXPO_PUBLIC_USE_MOCKS=true` la app usa datos simulados deterministas (partidos finalizados, en directo y programados) sin gastar cuota.
 
 ### Fuentes de noticias
@@ -106,6 +106,37 @@ Escanea el QR con Expo Go o pulsa `i` / `a` para abrir un simulador.
 - La normalización está en `supabase/functions/_shared/normalize.ts`: funciones puras, sin APIs de Deno, cubiertas por Jest. Los rumores salen de heurísticas sobre el titular (club, jugador, importe y estado); cuando algo no se puede deducir, el campo queda vacío en vez de inventarse.
 - Solo se guardan titular, extracto e imagen con enlace al medio original. El cuerpo del artículo no se reproduce.
 - Retención de 14 días en `news_items`. La app lee como máximo 60 piezas.
+
+## 📈 Estadísticas reales (Fase 2)
+
+La pestaña de estadísticas muestra la clasificación y los goleadores reales de LaLiga, Premier League, Serie A y Bundesliga. Todo se apoya en fuentes **gratuitas sin límite diario**, y el móvil solo lee Supabase.
+
+| Dato | Fuente | Coste |
+| --- | --- | --- |
+| Clasificación (puntos, goles, forma y escudos) | football-data.org `/v4/competitions/{PD,PL,SA,BL1}/standings` | Gratis: 12 competiciones, 10 peticiones/minuto, sin tope diario |
+| Goleadores (solo goles) | Tabla «Top goalscorers» de la Wikipedia inglesa | Gratis (4 peticiones por sincronización) |
+
+- **Tabla:** `statistics_snapshots` guarda una fila por liga con `payload` (jsonb) que contiene la instantánea completa (liga, clasificación y goleadores). RLS activa y solo `select` para clientes: la escribe el service role de la Edge Function, nunca la app.
+- **Sincronización:** `supabase/functions/sync-statistics` acepta `{ "leagues": ["laliga"], "dryRun": true }`. En una ejecución normal descarga las cuatro ligas en serie (4 peticiones a football-data.org + 4 a Wikipedia), resuelve los escudos de los goleadores a partir de la clasificación y hace upsert en la tabla. Con `dryRun` no escribe nada y devuelve una vista previa: es la forma de comprobar el parser contra los artículos reales. Un cuerpo vacío sincroniza las cuatro ligas, pero un JSON roto o una lista de `leagues` sin ningún id conocido responde `400` para que una errata no acabe en una escritura real.
+- **Sin romperse si falla una fuente:** cada lado falla por separado. Si Wikipedia cambia el formato de la tabla, se conservan los goleadores anteriores; si football-data.org devuelve un error o una tabla vacía, se conserva la clasificación anterior. La app nunca se queda en blanco por un fallo puntual.
+- **Cron:** el job `statistics-sync` (migración `20261110000100_statistics_cron.sql`) llama a la función a las 03:30 y a las 15:30 UTC, después de las jornadas. Usa el secreto compartido `statistics_secret` guardado en Vault.
+- **Goleadores sin asistencias:** la fuente gratuita solo publica goles. `ScorerRow.assists` y `matches` son opcionales; si no llegan, la columna de asistencias no se pinta. Los datos de muestra sí las tienen.
+- **Nombres compactos:** cada equipo guarda `name` (nombre oficial completo, que es la clave para casar los escudos con la tabla de goleadores) y `shortName` («Barça», «Atleti»), que es lo que se pinta en la clasificación para que quepa en el móvil. Las instantáneas antiguas sin `shortName` siguen funcionando: se muestra el nombre completo.
+- **Parser cubierto por tests:** `supabase/functions/_shared/wikipedia-scorers.ts` entiende las variantes reales del wikitexto (`Top goalscorers` / `Top scorers`, `rowspan` en goles y en club, plantillas de bandera y enlaces con pipe). Los fixtures de `src/features/statistics/__tests__/wikipedia-scorers-test.ts` son wikitexto real de la temporada 2026–27.
+
+**Puesta en marcha**
+
+1. Crea un token gratuito en [football-data.org](https://www.football-data.org/client/register).
+2. `npx supabase secrets set FOOTBALL_DATA_TOKEN=<token> STATISTICS_SYNC_SECRET=<secreto> WIKI_USER_AGENT="AFFutbol/1.0 (statistics sync; +https://affutbol.app)"`.
+3. `npx supabase db push` (tabla y cron) y guarda el mismo secreto en Vault:
+   `select vault.create_secret('<secreto>', 'statistics_secret', 'Secreto compartido de sync-statistics');`
+4. `npx supabase functions deploy sync-statistics --no-verify-jwt`.
+5. Comprueba la primera descarga:
+   `curl -X POST https://<project-ref>.supabase.co/functions/v1/sync-statistics -H "x-statistics-secret: <secreto>" -H "Content-Type: application/json" -d '{"dryRun":true}'`.
+   En PowerShell escribe el cuerpo entre comillas simples (`-d '{"dryRun":true}'`): con comillas dobles y `\"` el cuerpo llega roto y la función responde `400 Invalid JSON body` en vez de escribir datos sin querer.
+6. Lanza la primera sincronización real con `-d '{}'` (o espera al cron). Hasta entonces la app enseña los datos de muestra.
+
+> ⚠️ Los secretos viven solo en el servidor. `FOOTBALL_DATA_TOKEN`, `STATISTICS_SYNC_SECRET` y `WIKI_USER_AGENT` **no** son `EXPO_PUBLIC_*` y nunca deben acabar en `.env` ni en el bundle.
 
 ## 🔔 Notificaciones push (Fase 6)
 
@@ -140,6 +171,8 @@ Cuatro trabajos de `pg_cron` llaman a la función con el secreto compartido `not
 3. `npx supabase functions deploy send-push --no-verify-jwt`.
 4. `npx eas-cli init` (escribe `extra.eas.projectId` en `app.json`) y sube las credenciales de FCM/APNs a EAS.
 5. `npx eas-cli build --profile development` y arranca con `npx expo start --dev-client`.
+
+> ⚠️ Si rotas `PUSH_NOTIFY_SECRET` o `PREDICTIONS_SETTLE_SECRET`, actualiza también el secreto de Vault (`notify_secret`, `settle_secret`) en el mismo momento. Si no coinciden, el cron recibe `401 Unauthorized` en cada ejecución y deja de enviar avisos (o de liquidar pronósticos). Se comprueba comparando el digest SHA-256 de ambos valores.
 
 > Las notificaciones push **no funcionan en Expo Go** (desde SDK 53) ni en la versión web: necesitan un development build o una build instalada.
 

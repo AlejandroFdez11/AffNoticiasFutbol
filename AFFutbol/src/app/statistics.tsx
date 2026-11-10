@@ -47,13 +47,6 @@ export default function StatisticsScreen() {
         }
       />
 
-      <View style={[styles.demo, { backgroundColor: theme.brandMuted }]}>
-        <ThemedText type="small" style={{ color: theme.brand }}>
-          Datos de muestra · la clasificación en vivo se activará cuando el plan de API-Football lo
-          permita
-        </ThemedText>
-      </View>
-
       <SegmentedControl options={LEAGUE_OPTIONS} value={leagueId} onChange={setLeagueId} />
 
       {query.isPending ? (
@@ -70,6 +63,15 @@ export default function StatisticsScreen() {
         />
       ) : data ? (
         <>
+          {data.isSample ? (
+            <View style={[styles.demo, { backgroundColor: theme.brandMuted }]}>
+              <ThemedText type="small" style={{ color: theme.brand }}>
+                Datos de muestra · la clasificación real aparecerá cuando el servicio de
+                estadísticas publique la temporada
+              </ThemedText>
+            </View>
+          ) : null}
+
           <LeagueSummaryCard summary={data.summary} />
 
           <View style={styles.sectionHeading}>
@@ -84,7 +86,9 @@ export default function StatisticsScreen() {
 
           <View style={styles.footer}>
             <ThemedText type="small" themeColor="textSecondary">
-              Temporada {data.league.season} · datos de muestra
+              {data.isSample
+                ? `Temporada ${data.league.season} · datos de muestra`
+                : `Temporada ${data.league.season} · football-data.org · Wikipedia`}
             </ThemedText>
           </View>
         </>

@@ -24,6 +24,9 @@ export const Colors = {
     success: '#12A05C',
     warning: '#B54708',
     inverseText: '#FFFFFF',
+    pitch: '#0F6B43',
+    pitchLine: 'rgba(255, 255, 255, 0.55)',
+    pitchText: '#FFFFFF',
   },
   dark: {
     text: '#F2F7F4',
@@ -39,6 +42,9 @@ export const Colors = {
     success: '#3DD68C',
     warning: '#FFB547',
     inverseText: '#04140C',
+    pitch: '#0B2418',
+    pitchLine: 'rgba(255, 255, 255, 0.16)',
+    pitchText: '#EAF5EF',
   },
 } as const;
 

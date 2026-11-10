@@ -6,6 +6,7 @@ import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 import type { LeagueSummary } from '../types';
+import { teamLabel } from '../logic';
 
 function goalsPerMatch(value: number) {
   return value.toFixed(2).replace('.', ',');
@@ -13,6 +14,7 @@ function goalsPerMatch(value: number) {
 
 export function LeagueSummaryCard({ summary }: { summary: LeagueSummary }) {
   const theme = useTheme();
+  const leaderLabel = teamLabel(summary.leader.team);
 
   return (
     <View
@@ -27,12 +29,12 @@ export function LeagueSummaryCard({ summary }: { summary: LeagueSummary }) {
           </ThemedText>
           <View style={styles.leaderTeam}>
             <TeamBadge
-              name={summary.leader.team.name}
+              name={leaderLabel}
               logo={summary.leader.team.logo}
               size={26}
             />
             <ThemedText type="smallBold" numberOfLines={1} style={styles.leaderName}>
-              {summary.leader.team.name}
+              {leaderLabel}
             </ThemedText>
           </View>
         </View>
@@ -57,12 +59,12 @@ export function LeagueSummaryCard({ summary }: { summary: LeagueSummary }) {
       <View style={styles.leaders}>
         <LeaderRow
           label="Mejor ataque"
-          team={summary.bestAttack.team.name}
+          team={teamLabel(summary.bestAttack.team)}
           value={`${summary.bestAttack.goalsFor} goles`}
         />
         <LeaderRow
           label="Mejor defensa"
-          team={summary.bestDefense.team.name}
+          team={teamLabel(summary.bestDefense.team)}
           value={`${summary.bestDefense.goalsAgainst} encajados`}
         />
       </View>

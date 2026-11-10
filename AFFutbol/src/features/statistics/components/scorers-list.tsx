@@ -6,9 +6,13 @@ import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 import type { ScorerRow } from '../types';
+import { teamLabel } from '../logic';
 
 export function ScorersList({ scorers }: { scorers: ScorerRow[] }) {
   const theme = useTheme();
+  // Wikipedia only publishes goals, so the assists column is hidden instead of
+  // rendering a blank one. Sample snapshots still carry assists.
+  const showAssists = scorers.some((scorer) => typeof scorer.assists === 'number');
 
   return (
     <View
@@ -19,7 +23,7 @@ export function ScorersList({ scorers }: { scorers: ScorerRow[] }) {
       <View style={styles.titleRow}>
         <ThemedText type="smallBold">Goleadores</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Goles · Asist.
+          {showAssists ? 'Goles · Asist.' : 'Goles'}
         </ThemedText>
       </View>
 
@@ -30,21 +34,23 @@ export function ScorersList({ scorers }: { scorers: ScorerRow[] }) {
           <ThemedText type="smallBold" themeColor="textSecondary" style={styles.position}>
             {index + 1}
           </ThemedText>
-          <TeamBadge name={scorer.team.name} logo={scorer.team.logo} size={24} />
+          <TeamBadge name={teamLabel(scorer.team)} logo={scorer.team.logo} size={24} />
           <View style={styles.player}>
             <ThemedText type="small" numberOfLines={1}>
               {scorer.player}
             </ThemedText>
             <ThemedText type="small" themeColor="textSecondary" numberOfLines={1}>
-              {scorer.team.name}
+              {teamLabel(scorer.team)}
             </ThemedText>
           </View>
           <ThemedText type="smallBold" style={styles.metric}>
             {scorer.goals}
           </ThemedText>
-          <ThemedText type="small" themeColor="textSecondary" style={styles.metric}>
-            {scorer.assists}
-          </ThemedText>
+          {showAssists ? (
+            <ThemedText type="small" themeColor="textSecondary" style={styles.metric}>
+              {scorer.assists ?? '—'}
+            </ThemedText>
+          ) : null}
         </View>
       ))}
     </View>
