@@ -1,5 +1,4 @@
 import * as AppleAuthentication from 'expo-apple-authentication';
-import { SymbolView } from 'expo-symbols';
 import { useEffect, useState } from 'react';
 import { Platform, StyleSheet, Text, View } from 'react-native';
 
@@ -57,7 +56,9 @@ export function OAuthButtons({ mode, busy, onGoogle, onApple }: OAuthButtonsProp
         }
       />
 
-      {Platform.OS === 'ios' && appleAvailable ? (
+      {/* Apple Sign In is iOS-only: `expo-apple-authentication` is a native
+          module, so offering the button on Android or web would only fail. */}
+      {appleAvailable ? (
         <View
           pointerEvents={busy ? 'none' : 'auto'}
           style={[styles.appleButton, busy === 'apple' && styles.disabled]}>
@@ -73,22 +74,7 @@ export function OAuthButtons({ mode, busy, onGoogle, onApple }: OAuthButtonsProp
             onPress={onApple}
           />
         </View>
-      ) : (
-        <Button
-          label={mode === 'signUp' ? 'Registrarme con Apple' : 'Continuar con Apple'}
-          variant="secondary"
-          loading={busy === 'apple'}
-          disabled={busy !== null && busy !== 'apple'}
-          onPress={onApple}
-          icon={
-            <SymbolView
-              name={{ ios: 'apple.logo', android: 'phone_iphone', web: 'phone_iphone' }}
-              size={20}
-              tintColor={theme.text}
-            />
-          }
-        />
-      )}
+      ) : null}
     </View>
   );
 }

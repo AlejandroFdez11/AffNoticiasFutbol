@@ -401,6 +401,11 @@ verify_jwt = false
 [functions.sync-statistics]
 verify_jwt = false
 
+# The app calls this proxy with its public anon key, so JWT verification stays
+# on: only a request carrying a valid project JWT reaches the function.
+[functions.api-football]
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327

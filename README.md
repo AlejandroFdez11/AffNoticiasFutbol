@@ -70,18 +70,20 @@ Escanea el QR con Expo Go o pulsa `i` / `a` para abrir un simulador.
 
 | Variable | Descripción | Por defecto |
 | --- | --- | --- |
-| `EXPO_PUBLIC_API_FOOTBALL_KEY` | API key de API-Football | vacío |
+| `EXPO_PUBLIC_API_FOOTBALL_PROXY_URL` | Edge Function `api-football` de Supabase; es el transporte de producción y la clave vive en el servidor | vacío |
+| `EXPO_PUBLIC_API_FOOTBALL_KEY` | API key de API-Football; **solo desarrollo local** sin proxy | vacío |
 | `EXPO_PUBLIC_API_FOOTBALL_BASE_URL` | URL base de la API | `https://v3.football.api-sports.io` |
-| `EXPO_PUBLIC_USE_MOCKS` | Fuerza el uso de datos simulados (`true`/`false`) | `true` si no hay key |
+| `EXPO_PUBLIC_USE_MOCKS` | Fuerza el uso de datos simulados (`true`/`false`) | `true` si no hay proxy ni key |
 | `EXPO_PUBLIC_SUPABASE_URL` | URL del proyecto de Supabase | vacío |
 | `EXPO_PUBLIC_SUPABASE_ANON_KEY` | Publishable/anon key de Supabase (pública) | vacío |
 | `EXPO_PUBLIC_EAS_PROJECT_ID` | Project id de EAS para el push token; `eas init` lo escribe en `app.json` | vacío |
 | `EXPO_TOKEN` | Solo para la CLI de EAS (`npx eas-cli build`); no se incluye en el bundle | vacío |
 
-> ⚠️ Las variables `EXPO_PUBLIC_*` se incluyen en el bundle. No guardes secretos privados ahí. Antes de publicar, las llamadas a API-Football se moverán a una Edge Function de Supabase.
+> ⚠️ Las variables `EXPO_PUBLIC_*` se incluyen en el bundle. No guardes secretos privados ahí. En producción la app no lleva clave de API-Football: llama a la Edge Function `api-football`, que la guarda en el servidor.
 
 ### Datos y límites de la API
 
+- Las peticiones salen de la Edge Function `api-football`, que guarda la clave en el servidor; el móvil no la lleva. Sin proxy ni clave, la app usa datos simulados.
 - La app solo usa los endpoints `fixtures?date=` y `fixtures?id=` (más `events`, `lineups` y `statistics` por partido). El plan Free de API-Football **no permite consultar ligas por temporada** fuera de 2022–2024.
 - El listado de partidos se filtra en el dispositivo con una lista blanca de competiciones (`src/features/matches/league-filter.ts`): 5 grandes ligas y sus segundas divisiones, copas nacionales, copas europeas, Brasil, Argentina, Libertadores y selecciones. Este filtro no gasta peticiones adicionales.
 - El plan Free incluye **100 peticiones al día**, así que el listado se cachea 5 minutos y el refresco es manual (tirar de la lista o el botón de actualizar). No hay polling automático.
@@ -211,6 +213,39 @@ AFFutbol/
 ├─ eas.json
 └─ package.json
 ```
+
+## 🚀 Publicación (Fase 7)
+
+El código ya está preparado; lo que queda son acciones en las consolas de Supabase, EAS y las tiendas.
+
+### Ya resuelto en el repositorio
+
+- **Variables de build:** `eas.json` declara `environment` y `channel` en los tres perfiles, así que las builds leen las environment variables de EAS (`production`, `preview`, `development`) y las OTA tienen canal. La configuración no se commitea.
+- **Clave de API-Football fuera del bundle:** la app llama a la Edge Function `api-football` (`EXPO_PUBLIC_API_FOOTBALL_PROXY_URL`) y la clave vive en el secreto `API_FOOTBALL_KEY`. La función solo acepta los endpoints y parámetros que usa la app (`supabase/functions/_shared/api-football-proxy.ts`), así que no es un proxy abierto.
+- **Apple Sign In** solo se muestra en iOS, donde existe el módulo nativo; en Android y web se oculta en vez de ofrecer un flujo que falla.
+
+### Pendiente (acción manual)
+
+1. **Desplegar el proxy y guardar la clave:**
+   ```bash
+   npx supabase secrets set API_FOOTBALL_KEY=...
+   npx supabase functions deploy api-football
+   ```
+2. **Subir de plan de API-Football.** El proxy oculta la clave, pero el plan Free sigue siendo 100 peticiones al día: con usuarios reales se agota el mismo día.
+3. **Variables en EAS** (entorno `production`): `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_API_FOOTBALL_PROXY_URL` y `EXPO_PUBLIC_EAS_PROJECT_ID`. Sin ellas la build publicada arranca con datos simulados y sin login.
+   ```bash
+   npx eas-cli env:set --environment production --name EXPO_PUBLIC_API_FOOTBALL_PROXY_URL --value https://<ref>.supabase.co/functions/v1/api-football --visibility plaintext
+   npx eas-cli env:list --environment production
+   ```
+4. **Supabase → Authentication → URL Configuration:** quitar `exp://**` (era solo para Expo Go) y dejar `affutbol://**`.
+5. **SMTP propio** en Supabase para la confirmación de email y el reset de contraseña; el SMTP por defecto tiene límites de prueba.
+6. **Proveedores de login:** publicar el consent screen de Google (deja de estar en *Testing*) y subir la APNs key a EAS para el push en iOS.
+
+### Bloque de tienda (siguiente)
+
+- Eliminar cuenta desde la app (Apple 5.1.1(v)): hoy solo existe «Cerrar sesión».
+- Política de privacidad y condiciones con URL pública, enlazadas desde `auth.tsx` (ahora solo se mencionan en el texto).
+- Iconos y splash definitivos, ficha de tienda con capturas de iPhone e iPad, licencia del repositorio y atribución de fuentes.
 
 ## 🗺️ Roadmap
 

@@ -11,6 +11,8 @@ jest.mock('@/lib/env', () => ({
   env: {
     apiFootballKey: 'test-key',
     apiFootballBaseUrl: 'https://api.test',
+    apiFootballProxyUrl: undefined,
+    supabaseAnonKey: 'anon-key',
     useMocks: false,
   },
 }));
@@ -18,6 +20,8 @@ jest.mock('@/lib/env', () => ({
 type TestEnv = {
   apiFootballKey: string | undefined;
   apiFootballBaseUrl: string;
+  apiFootballProxyUrl: string | undefined;
+  supabaseAnonKey: string | undefined;
   useMocks: boolean;
 };
 
@@ -48,6 +52,8 @@ afterEach(() => {
   jest.useRealTimers();
   testEnv.apiFootballKey = 'test-key';
   testEnv.apiFootballBaseUrl = 'https://api.test';
+  testEnv.apiFootballProxyUrl = undefined;
+  testEnv.supabaseAnonKey = 'anon-key';
 });
 
 describe('apiFootballRequest', () => {
@@ -152,6 +158,65 @@ describe('apiFootballRequest', () => {
     const error = await getError(apiFootballRequest('/fixtures'));
 
     expect(error.code).toBe('api');
+  });
+});
+
+describe('apiFootballRequest through the proxy', () => {
+  const proxyUrl = 'https://project.supabase.co/functions/v1/api-football';
+
+  beforeEach(() => {
+    testEnv.apiFootballProxyUrl = proxyUrl;
+  });
+
+  it('posts the path and params with the anon key instead of the API key', async () => {
+    fetchSpy.mockResolvedValue(jsonResponse({ errors: [], response: [{ id: 7 }] }));
+
+    const result = await apiFootballRequest('/fixtures', { date: '2026-11-10', empty: '' });
+
+    expect(result).toEqual([{ id: 7 }]);
+    expect(fetchSpy).toHaveBeenCalledTimes(1);
+
+    const [url, options] = fetchSpy.mock.calls[0];
+    expect(url).toBe(proxyUrl);
+    expect(options).toMatchObject({
+      method: 'POST',
+      headers: {
+        Accept: 'application/json',
+        'Content-Type': 'application/json',
+        Authorization: 'Bearer anon-key',
+        apikey: 'anon-key',
+      },
+    });
+    expect(options.headers).not.toHaveProperty('x-apisports-key');
+    expect(JSON.parse(options.body)).toEqual({
+      path: '/fixtures',
+      params: { date: '2026-11-10' },
+    });
+  });
+
+  it('works without an API key because the function holds it', async () => {
+    testEnv.apiFootballKey = undefined;
+    fetchSpy.mockResolvedValue(jsonResponse({ errors: [], response: [] }));
+
+    await expect(apiFootballRequest('/fixtures', { id: 3 })).resolves.toEqual([]);
+  });
+
+  it('fails when the Supabase anon key is missing', async () => {
+    testEnv.supabaseAnonKey = undefined;
+
+    const error = await getError(apiFootballRequest('/fixtures', { id: 3 }));
+
+    expect(error.code).toBe('missing-key');
+    expect(fetchSpy).not.toHaveBeenCalled();
+  });
+
+  it('maps a 429 from the proxy to a quota error', async () => {
+    fetchSpy.mockResolvedValue(jsonResponse(undefined, { ok: false, status: 429 }));
+
+    const error = await getError(apiFootballRequest('/fixtures', { id: 3 }));
+
+    expect(error.code).toBe('quota');
+    expect(error.status).toBe(429);
   });
 });
 

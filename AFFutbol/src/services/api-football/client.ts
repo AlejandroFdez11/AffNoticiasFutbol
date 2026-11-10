@@ -1,10 +1,17 @@
 /**
  * Minimal HTTP client for API-Football (v3).
  *
- * - Reads the key from the public Expo environment (see `src/lib/env.ts`).
- * - Converts API error payloads into a typed `ApiFootballError` so screens can
- *   show actionable Spanish messages (free plan, daily quota, bad key...).
- * - Never logs the API key.
+ * Two transports:
+ * - Proxy (production): POSTs `{ path, params }` to the `api-football` Supabase
+ *   Edge Function, which holds the API key server-side. The key never reaches
+ *   the phone, so it can be rotated or upgraded without shipping a new build.
+ * - Direct (local development only): reads the key from the public Expo
+ *   environment (see `src/lib/env.ts`).
+ *
+ * Both return the same API-Football envelope, so the error mapping below is
+ * shared. Errors become a typed `ApiFootballError` with a Spanish message the
+ * screens can render (free plan, daily quota, bad key...). The key is never
+ * logged.
  */
 
 import { env } from '@/lib/env';
@@ -68,9 +75,15 @@ function buildMessage(code: ApiFootballErrorCode, { status, details }: ApiFootba
 
 export type ApiFootballQuery = Record<string, string | number | boolean | null | undefined>;
 
+/** Drops the params API-Football should not receive. */
+function compactParams(params: ApiFootballQuery) {
+  return Object.entries(params).filter(
+    ([, value]) => value !== undefined && value !== null && value !== ''
+  );
+}
+
 function buildUrl(baseUrl: string, path: string, params: ApiFootballQuery) {
-  const query = Object.entries(params)
-    .filter(([, value]) => value !== undefined && value !== null && value !== '')
+  const query = compactParams(params)
     .map(([key, value]) => `${encodeURIComponent(key)}=${encodeURIComponent(String(value))}`)
     .join('&');
 
@@ -112,43 +125,79 @@ function classifyApiError(errors: ApiFootballErrors): ApiFootballErrorCode {
   return 'api';
 }
 
-/**
- * Performs a GET request against API-Football and returns the `response` payload.
- */
-export async function apiFootballRequest<T>(
-  path: string,
-  params: ApiFootballQuery = {}
-): Promise<T> {
-  const key = env.apiFootballKey;
+/** HTTP statuses that mean something more specific than "server error". */
+function classifyStatus(status: number): ApiFootballErrorCode {
+  if (status === 429) return 'quota';
+  if (status === 401 || status === 403) return 'auth';
+  return 'http';
+}
 
-  if (!key) {
-    throw new ApiFootballError('missing-key');
-  }
-
-  const url = buildUrl(env.apiFootballBaseUrl, path, params);
+async function fetchWithTimeout(url: string, init: RequestInit) {
   const controller = new AbortController();
   const timeout = setTimeout(() => controller.abort(), API_FOOTBALL_TIMEOUT_MS);
 
-  let response: Response;
-
   try {
-    response = await fetch(url, {
-      method: 'GET',
-      headers: {
-        Accept: 'application/json',
-        'x-apisports-key': key,
-      },
-      signal: controller.signal,
-    });
+    return await fetch(url, { ...init, signal: controller.signal });
   } catch (error) {
     const aborted = controller.signal.aborted;
     throw new ApiFootballError(aborted ? 'timeout' : 'network', { cause: error });
   } finally {
     clearTimeout(timeout);
   }
+}
 
+async function requestUpstream(path: string, params: ApiFootballQuery) {
+  const key = env.apiFootballKey;
+
+  if (!key) {
+    throw new ApiFootballError('missing-key');
+  }
+
+  return fetchWithTimeout(buildUrl(env.apiFootballBaseUrl, path, params), {
+    method: 'GET',
+    headers: {
+      Accept: 'application/json',
+      'x-apisports-key': key,
+    },
+  });
+}
+
+async function requestThroughProxy(path: string, params: ApiFootballQuery) {
+  const proxyUrl = env.apiFootballProxyUrl;
+  const anonKey = env.supabaseAnonKey;
+
+  if (!proxyUrl) {
+    throw new ApiFootballError('missing-key');
+  }
+
+  if (!anonKey) {
+    throw new ApiFootballError('missing-key', {
+      details: 'Falta la anon key de Supabase para llamar al proxy.',
+    });
+  }
+
+  const body: Record<string, string | number> = {};
+  for (const [key, value] of compactParams(params)) {
+    body[key] = String(value);
+  }
+
+  return fetchWithTimeout(proxyUrl, {
+    method: 'POST',
+    headers: {
+      Accept: 'application/json',
+      'Content-Type': 'application/json',
+      // The Edge Function verifies the JWT: the anon key is the only credential
+      // the app needs, and it is public by design.
+      Authorization: `Bearer ${anonKey}`,
+      apikey: anonKey,
+    },
+    body: JSON.stringify({ path, params: body }),
+  });
+}
+
+async function readResponse<T>(response: Response): Promise<T> {
   if (!response.ok) {
-    throw new ApiFootballError('http', { status: response.status });
+    throw new ApiFootballError(classifyStatus(response.status), { status: response.status });
   }
 
   let payload: ApiFootballResponse<T>;
@@ -170,6 +219,21 @@ export async function apiFootballRequest<T>(
   }
 
   return payload.response;
+}
+
+/**
+ * Performs a request against API-Football and returns the `response` payload.
+ * Uses the proxy when `EXPO_PUBLIC_API_FOOTBALL_PROXY_URL` is set.
+ */
+export async function apiFootballRequest<T>(
+  path: string,
+  params: ApiFootballQuery = {}
+): Promise<T> {
+  const response = env.apiFootballProxyUrl
+    ? await requestThroughProxy(path, params)
+    : await requestUpstream(path, params);
+
+  return readResponse<T>(response);
 }
 
 /** Maps any thrown value to a message we can render in the UI. */

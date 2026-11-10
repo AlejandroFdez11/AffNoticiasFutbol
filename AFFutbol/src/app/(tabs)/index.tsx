@@ -158,10 +158,11 @@ export default function MatchesScreen() {
               }
             />
 
-            {env.useMocks ? (
+            {__DEV__ && env.useMocks ? (
               <View style={[styles.demo, { backgroundColor: theme.brandMuted }]}>
                 <ThemedText type="small" style={{ color: theme.brand }}>
-                  Datos simulados · pon EXPO_PUBLIC_USE_MOCKS=false para usar la API real
+                  Datos simulados · configura EXPO_PUBLIC_API_FOOTBALL_PROXY_URL o pon
+                  EXPO_PUBLIC_USE_MOCKS=false
                 </ThemedText>
               </View>
             ) : null}
