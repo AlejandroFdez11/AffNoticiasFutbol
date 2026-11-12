@@ -194,24 +194,31 @@ Cuatro trabajos de `pg_cron` llaman a la función con el secreto compartido `not
 
 ```text
 AFFutbol/
-├─ src/
-│  ├─ app/                  # Rutas de Expo Router
-│  │  ├─ _layout.tsx        # Providers, tema y splash
-│  │  ├─ (tabs)/            # Partidos, Noticias, Predicciones, Ranking, Perfil
-│  │  ├─ match/[id].tsx     # Detalle de partido
-│  │  ├─ article/[id].tsx   # Detalle de noticia o rumor
-│  │  ├─ statistics.tsx     # Clasificación, goleadores y resumen
-│  │  └─ +not-found.tsx
-│  ├─ components/           # Design system reutilizable
-│  ├─ constants/            # Tokens de diseño y tema de navegación
-│  ├─ features/             # Lógica por dominio (matches, news, statistics, predictions, rankings, notifications)
-│  ├─ hooks/                # Hooks compartidos
-│  ├─ lib/                  # Entorno, query client y utilidades
-│  └─ services/             # Clientes de APIs externas (api-football)
-├─ assets/
-├─ app.json
-├─ eas.json
-└─ package.json
+├── src/
+│   ├── app/                          # Rutas de Expo Router
+│   │   ├── _layout.tsx               # Providers, tema y splash
+│   │   ├── (tabs)/                   # Partidos, Noticias, Predicciones, Ranking, Perfil
+│   │   ├── match/[id].tsx            # Detalle de partido
+│   │   ├── article/[id].tsx          # Detalle de noticia o rumor
+│   │   ├── statistics.tsx            # Clasificación, goleadores y resumen
+│   │   ├── auth.tsx                  # Acceso (modal)
+│   │   ├── auth-callback.tsx         # Retorno de OAuth y confirmación
+│   │   ├── reset-password.tsx        # Recuperar contraseña (modal)
+│   │   ├── edit-profile.tsx          # Editar perfil (modal)
+│   │   ├── delete-account.tsx        # Eliminar cuenta (modal)
+│   │   ├── legal/                    # Privacidad, condiciones y fuentes
+│   │   └── +not-found.tsx
+│   ├── components/                   # Design system reutilizable
+│   ├── constants/                    # Tokens de diseño y tema de navegación
+│   ├── features/                     # Lógica por dominio (matches, news, statistics, predictions, rankings, notifications, auth, profile, legal)
+│   ├── hooks/                        # Hooks compartidos
+│   ├── lib/                          # Entorno, query client y utilidades
+│   └── services/                     # Clientes de APIs externas (api-football)
+├── supabase/                         # Migraciones SQL y Edge Functions
+├── assets/
+├── app.json
+├── eas.json
+└── package.json
 ```
 
 ## 🚀 Publicación (Fase 7)
@@ -223,6 +230,8 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 - **Variables de build:** `eas.json` declara `environment` y `channel` en los tres perfiles, así que las builds leen las environment variables de EAS (`production`, `preview`, `development`) y las OTA tienen canal. La configuración no se commitea.
 - **Clave de API-Football fuera del bundle:** la app llama a la Edge Function `api-football` (`EXPO_PUBLIC_API_FOOTBALL_PROXY_URL`) y la clave vive en el secreto `API_FOOTBALL_KEY`. La función solo acepta los endpoints y parámetros que usa la app (`supabase/functions/_shared/api-football-proxy.ts`), así que no es un proxy abierto.
 - **Apple Sign In** solo se muestra en iOS, donde existe el módulo nativo; en Android y web se oculta en vez de ofrecer un flujo que falla.
+- **Eliminar cuenta desde la app** (Apple 5.1.1(v)): Perfil → Eliminar cuenta pide escribir `ELIMINAR` y la Edge Function `delete-account` borra la cuenta, el perfil, los pronósticos, las ligas y el token de notificaciones. Falta desplegar la función.
+- **Textos legales** de privacidad, condiciones de uso y fuentes con una única fuente (`src/features/legal/documents.ts`), enlazados desde Perfil y desde el acceso, y publicables en la web.
 
 ### Pendiente (acción manual)
 
@@ -240,12 +249,12 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 4. **Supabase → Authentication → URL Configuration:** quitar `exp://**` (era solo para Expo Go) y dejar `affutbol://**`.
 5. **SMTP propio** en Supabase para la confirmación de email y el reset de contraseña; el SMTP por defecto tiene límites de prueba.
 6. **Proveedores de login:** publicar el consent screen de Google (deja de estar en *Testing*) y subir la APNs key a EAS para el push en iOS.
+7. **Desplegar la baja de cuenta:** `npx supabase functions deploy delete-account`. La función verifica el JWT por defecto; sin desplegarla, Perfil → Eliminar cuenta responde 404.
 
 ### Bloque de tienda (siguiente)
 
-- Eliminar cuenta desde la app (Apple 5.1.1(v)): hoy solo existe «Cerrar sesión».
-- Política de privacidad y condiciones con URL pública, enlazadas desde `auth.tsx` (ahora solo se mencionan en el texto).
-- Iconos y splash definitivos, ficha de tienda con capturas de iPhone e iPad, licencia del repositorio y atribución de fuentes.
+- Iconos y splash definitivos, ficha de tienda con capturas de iPhone e iPad y atribución de fuentes.
+- Publicar las URLs legales del build web (`/legal/privacidad`, `/legal/terminos`, `/legal/fuentes`) y completar los datos pendientes de `docs/publicacion/legales.md` (buzones, región de hosting, revisión legal).
 
 ## 🗺️ Roadmap
 
@@ -268,4 +277,4 @@ Desarrollado por **Alejandro Fernández Franco**.
 
 ## 📄 Licencia
 
-Pendiente de definir.
+MIT. Consulta [`AFFutbol/LICENSE`](AFFutbol/LICENSE).

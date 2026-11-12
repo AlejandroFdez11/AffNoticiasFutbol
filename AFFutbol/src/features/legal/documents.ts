@@ -11,8 +11,8 @@
  * drift apart. Update `LEGAL_LAST_UPDATED` whenever the copy changes.
  *
  * This is not legal advice: run the final text past a lawyer before publishing,
- * and check `docs/publicacion/legales.md` for the details that must be filled in
- * (mailbox, hosting region, domain).
+ * and check `<repo>/docs/publicacion/legales.md` for the details that must be
+ * filled in (mailbox, hosting region, domain).
  */
 
 export type LegalDocumentId = 'privacidad' | 'terminos' | 'fuentes';
@@ -33,7 +33,7 @@ export type LegalDocument = {
 
 export const LEGAL_LAST_UPDATED = '10 de noviembre de 2026';
 
-/** Must exist before submitting: see docs/publicacion/legales.md. */
+/** Must exist before submitting: see `<repo>/docs/publicacion/legales.md`. */
 export const LEGAL_CONTACT_EMAIL = 'privacidad@affutbol.app';
 export const LEGAL_SUPPORT_EMAIL = 'soporte@affutbol.app';
 export const LEGAL_SITE_URL = 'https://affutbol.app';

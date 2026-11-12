@@ -1,6 +1,6 @@
 import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Pressable, StyleSheet, View } from 'react-native';
 
 import { BrandMark } from '@/components/brand-mark';
 import { Button } from '@/components/button';
@@ -358,9 +358,32 @@ export default function AuthScreen() {
             </>
           )}
 
-          <ThemedText type="small" themeColor="textSecondary" style={styles.legal}>
-            Al continuar aceptas las condiciones de uso y la política de privacidad de AFFutbol.
-          </ThemedText>
+          <View style={styles.legal}>
+            <ThemedText type="small" themeColor="textSecondary" style={styles.legalText}>
+              Al continuar aceptas las condiciones de uso y la política de privacidad de AFFutbol.
+            </ThemedText>
+            <View style={styles.legalLinks}>
+              <Pressable
+                accessibilityRole="link"
+                accessibilityLabel="Condiciones de uso"
+                onPress={() => router.push('/legal/terminos')}>
+                <ThemedText type="small" themeColor="brand">
+                  Condiciones de uso
+                </ThemedText>
+              </Pressable>
+              <ThemedText type="small" themeColor="textSecondary">
+                ·
+              </ThemedText>
+              <Pressable
+                accessibilityRole="link"
+                accessibilityLabel="Política de privacidad"
+                onPress={() => router.push('/legal/privacidad')}>
+                <ThemedText type="small" themeColor="brand">
+                  Política de privacidad
+                </ThemedText>
+              </Pressable>
+            </View>
+          </View>
         </View>
       ) : null}
     </Screen>
@@ -410,6 +433,15 @@ const styles = StyleSheet.create({
     height: 1,
   },
   legal: {
+    gap: Spacing.one,
+    alignItems: 'center',
+  },
+  legalText: {
     textAlign: 'center',
+  },
+  legalLinks: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    gap: Spacing.one,
   },
 });
