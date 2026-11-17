@@ -1,0 +1,23 @@
+Copyright (c) 2026 Alejandro Fernández Franco. Todos los derechos reservados.
+
+Este repositorio se publica con fines informativos y de revisión. El código fuente,
+la documentación, los textos, el diseño, los iconos, el splash, el nombre
+«AFFutbol» y el resto de elementos creados para este proyecto son propiedad
+exclusiva de su autor.
+
+No se concede ninguna licencia, expresa ni implícita, para copiar, modificar,
+distribuir, publicar, sublicenciar, vender, alquilar ni usar total o parcialmente
+el repositorio o cualquiera de sus elementos, con o sin fines comerciales, sin
+autorización previa y por escrito del titular. Quedan a salvo únicamente los
+derechos irrenunciables que la ley reconozca.
+
+Los datos, titulares, imágenes, escudos y marcas de terceros a los que hace
+referencia o que muestra la aplicación pertenecen a sus respectivos titulares y
+se rigen por sus propias licencias y condiciones. Su inclusión en este
+repositorio no supone ninguna cesión de derechos ni afiliación. Consulta
+`docs/publicacion/atribucion-fuentes.md` y las pantallas «Fuentes y atribución»
+de la aplicación.
+
+La política de privacidad y las condiciones de uso de AFFutbol se encuentran en
+`AFFutbol/src/features/legal/documents.ts` y se publican en
+https://affutbol.app/legal/privacidad y https://affutbol.app/legal/terminos.

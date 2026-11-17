@@ -12,6 +12,8 @@
   - 🌍 **Ranking mundial** entre todos los usuarios con pronósticos, con tu posición destacada.
   - 👥 **Ligas privadas** para competir con colegas o compañeros del curro: crea una liga, comparte su código de invitación de 6 caracteres y consulta la tabla de miembros.
 - **Notificaciones push:** recordatorio una hora antes de los partidos de tu equipo favorito, resultado de tus pronósticos cuando se liquidan y aviso cuando cambia tu posición en el ranking mundial o en una liga privada. Se pueden desactivar por tipo desde Perfil.
+- **Tu cuenta, bajo tu control:** perfil editable y borrado permanente de la cuenta desde Perfil → Eliminar cuenta (requiere escribir `ELIMINAR`). Los datos se eliminan en cascada en el servidor.
+- **Legal integrado:** política de privacidad, condiciones de uso y fuentes de datos accesibles desde el registro y Perfil, con las mismas URL pública en la versión web.
 
 ## 📊 Estado del proyecto
 
@@ -24,7 +26,7 @@
 | Fase 4 — Predicciones | ✅ Completada |
 | Fase 5 — Rankings y ligas privadas | ✅ Completada |
 | Fase 6 — Notificaciones push | ✅ Completada |
-| Fase 7 — Pulido y publicación | ⏳ Pendiente |
+| Fase 7 — Pulido y publicación | ⏳ Pendiente (código listo; faltan pasos en consolas y arte final) |
 
 ## 🛠️ Stack tecnológico
 
@@ -123,7 +125,7 @@ La pestaña de estadísticas muestra la clasificación y los goleadores reales d
 - **Sin romperse si falla una fuente:** cada lado falla por separado. Si Wikipedia cambia el formato de la tabla, se conservan los goleadores anteriores; si football-data.org devuelve un error o una tabla vacía, se conserva la clasificación anterior. La app nunca se queda en blanco por un fallo puntual.
 - **Cron:** el job `statistics-sync` (migración `20261110000100_statistics_cron.sql`) llama a la función a las 03:30 y a las 15:30 UTC, después de las jornadas. Usa el secreto compartido `statistics_secret` guardado en Vault.
 - **Goleadores sin asistencias:** la fuente gratuita solo publica goles. `ScorerRow.assists` y `matches` son opcionales; si no llegan, la columna de asistencias no se pinta. Los datos de muestra sí las tienen.
-- **Nombres compactos:** cada equipo guarda `name` (nombre oficial completo, que es la clave para casar los escudos con la tabla de goleadores) y `shortName` («Barça», «Atleti»), que es lo que se pinta en la clasificación para que quepa en el móvil. Las instantáneas antiguas sin `shortName` siguen funcionando: se muestra el nombre completo.
+- **Nombres compactos:** cada equipo guarda `name` (nombre oficial completo, que es la clave para casar los escudos con la tabla de goleadores) y `shortName` («Barça», «Atleti»), que es lo que se pinta en la clasificación para que quepa en el móvil. El sync real del 17/11/2026 ya guarda `shortName` en las cuatro ligas; las instantáneas antiguas que no lo tuvieron siguen funcionando: se muestra el nombre completo.
 - **Parser cubierto por tests:** `supabase/functions/_shared/wikipedia-scorers.ts` entiende las variantes reales del wikitexto (`Top goalscorers` / `Top scorers`, `rowspan` en goles y en club, plantillas de bandera y enlaces con pipe). Los fixtures de `src/features/statistics/__tests__/wikipedia-scorers-test.ts` son wikitexto real de la temporada 2026–27.
 
 **Puesta en marcha**
@@ -178,6 +180,19 @@ Cuatro trabajos de `pg_cron` llaman a la función con el secreto compartido `not
 
 > Las notificaciones push **no funcionan en Expo Go** (desde SDK 53) ni en la versión web: necesitan un development build o una build instalada.
 
+## 🗑️ Borrado de cuenta y documentos legales
+
+Apple exige el borrado de cuenta dentro de la app (guía 5.1.1(v)) y una URL pública de privacidad. Ambas cosas ya están implementadas:
+
+- **Perfil → Eliminar cuenta** abre una pantalla que lista qué se borra y pide escribir `ELIMINAR` para desbloquear el botón. El cliente llama a la Edge Function `delete-account` con el JWT del usuario; la función valida el token, borra `auth.users` con el service role y las claves foráneas `on delete cascade` eliminan perfiles, pronósticos, ligas, tokens push y preferencias. No hace falta migración nueva.
+  ```bash
+  npx supabase functions deploy delete-account
+  ```
+- **Textos legales:** una única fuente en `AFFutbol/src/features/legal/documents.ts`, renderizada por `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes` tanto en la app como en la web. Las URL públicas son `https://affutbol.app/legal/<documento>`. Los datos que se declaran a Apple y Google están en `docs/publicacion/app-privacy.md`.
+- La licencia del repositorio es **propietaria** (`LICENSE`). La atribución de fuentes vive en `/legal/fuentes` y en `docs/publicacion/atribucion-fuentes.md`.
+
+El resto de la documentación de lanzamiento (ítems 8–13) está en [`docs/publicacion/checklist-tiendas.md`](docs/publicacion/checklist-tiendas.md).
+
 ## 🧰 Scripts
 
 | Comando | Descripción |
@@ -201,10 +216,12 @@ AFFutbol/
 │  │  ├─ match/[id].tsx     # Detalle de partido
 │  │  ├─ article/[id].tsx   # Detalle de noticia o rumor
 │  │  ├─ statistics.tsx     # Clasificación, goleadores y resumen
+│  │  ├─ delete-account.tsx # Borrado de cuenta (Apple 5.1.1(v))
+│  │  ├─ legal/             # Privacidad, condiciones y fuentes (app + web)
 │  │  └─ +not-found.tsx
 │  ├─ components/           # Design system reutilizable
 │  ├─ constants/            # Tokens de diseño y tema de navegación
-│  ├─ features/             # Lógica por dominio (matches, news, statistics, predictions, rankings, notifications)
+│  ├─ features/             # Lógica por dominio (matches, news, statistics, predictions, rankings, notifications, legal)
 │  ├─ hooks/                # Hooks compartidos
 │  ├─ lib/                  # Entorno, query client y utilidades
 │  └─ services/             # Clientes de APIs externas (api-football)
@@ -223,13 +240,18 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 - **Variables de build:** `eas.json` declara `environment` y `channel` en los tres perfiles, así que las builds leen las environment variables de EAS (`production`, `preview`, `development`) y las OTA tienen canal. La configuración no se commitea.
 - **Clave de API-Football fuera del bundle:** la app llama a la Edge Function `api-football` (`EXPO_PUBLIC_API_FOOTBALL_PROXY_URL`) y la clave vive en el secreto `API_FOOTBALL_KEY`. La función solo acepta los endpoints y parámetros que usa la app (`supabase/functions/_shared/api-football-proxy.ts`), así que no es un proxy abierto.
 - **Apple Sign In** solo se muestra en iOS, donde existe el módulo nativo; en Android y web se oculta en vez de ofrecer un flujo que falla.
+- **Borrado de cuenta (Apple 5.1.1(v)):** Perfil → Eliminar cuenta + Edge Function `delete-account` con service role y cascada en todas las tablas de usuario.
+- **Legales con URL pública:** `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes`, enlazados desde el registro y Perfil, con una única fuente de texto para la app y la web.
+- **Licencia propietaria** (`LICENSE`) y atribución de API-Football, football-data.org, Wikipedia y los medios RSS.
+- **Declaración de privacidad** lista para copiar a App Store Connect y Google Play (`docs/publicacion/app-privacy.md`).
 
 ### Pendiente (acción manual)
 
-1. **Desplegar el proxy y guardar la clave:**
+1. **Desplegar el proxy, el borrado de cuenta y guardar la clave:**
    ```bash
    npx supabase secrets set API_FOOTBALL_KEY=...
    npx supabase functions deploy api-football
+   npx supabase functions deploy delete-account
    ```
 2. **Subir de plan de API-Football.** El proxy oculta la clave, pero el plan Free sigue siendo 100 peticiones al día: con usuarios reales se agota el mismo día.
 3. **Variables en EAS** (entorno `production`): `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_API_FOOTBALL_PROXY_URL` y `EXPO_PUBLIC_EAS_PROJECT_ID`. Sin ellas la build publicada arranca con datos simulados y sin login.
@@ -240,12 +262,21 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 4. **Supabase → Authentication → URL Configuration:** quitar `exp://**` (era solo para Expo Go) y dejar `affutbol://**`.
 5. **SMTP propio** en Supabase para la confirmación de email y el reset de contraseña; el SMTP por defecto tiene límites de prueba.
 6. **Proveedores de login:** publicar el consent screen de Google (deja de estar en *Testing*) y subir la APNs key a EAS para el push en iOS.
+7. **Supabase Pro y backups:** el plan Free se pausa por inactividad y no tiene copias de seguridad; ver `docs/publicacion/supabase-produccion.md`.
+8. **Publicar el sitio web** con las rutas `/legal/*` y crear los buzones `privacidad@` y `soporte@affutbol.app`.
+9. **Sustituir iconos y splash:** los PNG actuales son los de la plantilla de Expo. Ver `docs/publicacion/iconos-y-splash.md`.
+10. **Ficha de tienda, capturas y cuenta demo:** ver `docs/publicacion/ficha-app-store.md`.
 
-### Bloque de tienda (siguiente)
+### Documentación de lanzamiento
 
-- Eliminar cuenta desde la app (Apple 5.1.1(v)): hoy solo existe «Cerrar sesión».
-- Política de privacidad y condiciones con URL pública, enlazadas desde `auth.tsx` (ahora solo se mencionan en el texto).
-- Iconos y splash definitivos, ficha de tienda con capturas de iPhone e iPad, licencia del repositorio y atribución de fuentes.
+- [`docs/publicacion/checklist-tiendas.md`](docs/publicacion/checklist-tiendas.md) — estado de los ítems 8–13 y orden recomendado.
+- [`docs/publicacion/verificacion-y-pulido.md`](docs/publicacion/verificacion-y-pulido.md) — ítems 14–18: verificaciones locales, repaso en dispositivo, protección de Auth, monitorización y hosting.
+- [`docs/publicacion/legales.md`](docs/publicacion/legales.md) — dónde vive el texto legal y qué falta por rellenar.
+- [`docs/publicacion/app-privacy.md`](docs/publicacion/app-privacy.md) — App Privacy (Apple) y Data Safety (Google).
+- [`docs/publicacion/ficha-app-store.md`](docs/publicacion/ficha-app-store.md) — metadatos, descripción, capturas y cuenta demo.
+- [`docs/publicacion/iconos-y-splash.md`](docs/publicacion/iconos-y-splash.md) — arte final pendiente y requisitos técnicos.
+- [`docs/publicacion/atribucion-fuentes.md`](docs/publicacion/atribucion-fuentes.md) — fuentes, licencias y revisión de los RSS.
+- [`docs/publicacion/supabase-produccion.md`](docs/publicacion/supabase-produccion.md) — plan Pro, backups y secretos.
 
 ## 🗺️ Roadmap
 
@@ -260,7 +291,7 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 
 ## 🎨 Branding
 
-La app usa una paleta verde césped con acentos ámbar, en modo claro y oscuro. Los iconos y el splash son provisionales; se sustituirán por los definitivos antes de la publicación.
+La app usa una paleta verde césped con acentos ámbar, en modo claro y oscuro. El fondo del icono adaptativo de Android ya usa el verde de marca (`#0B7A4B`), pero **los PNG de icono, splash y favicon siguen siendo los de la plantilla de Expo**: hay que sustituirlos antes de publicar. Los tamaños y requisitos están en [`docs/publicacion/iconos-y-splash.md`](docs/publicacion/iconos-y-splash.md).
 
 ## 👤 Autor
 
@@ -268,4 +299,8 @@ Desarrollado por **Alejandro Fernández Franco**.
 
 ## 📄 Licencia
 
-Pendiente de definir.
+Copyright © 2026 Alejandro Fernández Franco. **Todos los derechos reservados.**
+
+El repositorio se publica solo a efectos informativos y de revisión: no se concede permiso para copiar, modificar, distribuir ni usar la app, el código, la marca o los recursos sin autorización por escrito. El texto completo está en [`LICENSE`](LICENSE).
+
+Los datos, escudos, imágenes y marcas de terceros pertenecen a sus titulares y se rigen por sus propias licencias; la app los atribuye en `/legal/fuentes` y en [`docs/publicacion/atribucion-fuentes.md`](docs/publicacion/atribucion-fuentes.md).

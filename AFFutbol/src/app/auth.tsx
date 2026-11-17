@@ -359,7 +359,28 @@ export default function AuthScreen() {
           )}
 
           <ThemedText type="small" themeColor="textSecondary" style={styles.legal}>
-            Al continuar aceptas las condiciones de uso y la política de privacidad de AFFutbol.
+            Al continuar aceptas las{' '}
+            <ThemedText
+              accessibilityRole="link"
+              style={{ color: theme.brand, textDecorationLine: 'underline' }}
+              onPress={() => router.push('/legal/terminos')}>
+              condiciones de uso
+            </ThemedText>{' '}
+            y la{' '}
+            <ThemedText
+              accessibilityRole="link"
+              style={{ color: theme.brand, textDecorationLine: 'underline' }}
+              onPress={() => router.push('/legal/privacidad')}>
+              política de privacidad
+            </ThemedText>{' '}
+            de AFFutbol. Consulta también las{' '}
+            <ThemedText
+              accessibilityRole="link"
+              style={{ color: theme.brand, textDecorationLine: 'underline' }}
+              onPress={() => router.push('/legal/fuentes')}>
+              fuentes y atribución
+            </ThemedText>
+            .
           </ThemedText>
         </View>
       ) : null}

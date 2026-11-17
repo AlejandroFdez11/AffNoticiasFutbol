@@ -31,7 +31,7 @@ export type LegalDocument = {
   blocks: LegalBlock[];
 };
 
-export const LEGAL_LAST_UPDATED = '10 de noviembre de 2026';
+export const LEGAL_LAST_UPDATED = '17 de noviembre de 2026';
 
 /** Must exist before submitting: see docs/publicacion/legales.md. */
 export const LEGAL_CONTACT_EMAIL = 'privacidad@affutbol.app';

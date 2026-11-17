@@ -406,6 +406,12 @@ verify_jwt = false
 [functions.api-football]
 verify_jwt = true
 
+# The app calls this function with the signed-in user's JWT so it can delete
+# that user with the service role (Apple 5.1.1(v)). The token is verified again
+# inside the function: the gateway only checks that it is a valid project JWT.
+[functions.delete-account]
+verify_jwt = true
+
 [analytics]
 enabled = true
 port = 54327

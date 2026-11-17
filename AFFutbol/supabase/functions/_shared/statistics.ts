@@ -10,10 +10,10 @@
  * client keeps its own copy so Metro never reaches into `supabase/`); the JSON
  * shape is the contract between both sides.
  *
- * Keeping the football-data.org mapper in this file too is deliberate: a local
- * `import ... from './other.ts'` is valid in Deno but rejected by `tsc` unless
- * `allowImportingTsExtensions` is on, and these modules are type-checked
- * through their Jest tests.
+ * Keeping the football-data.org mapper in this file too is deliberate: local
+ * relative imports with a `.ts` extension are valid in Deno but rejected by
+ * `tsc` unless `allowImportingTsExtensions` is on, and these modules are
+ * type-checked through their Jest tests.
  */
 
 export type LeagueId = 'laliga' | 'premier' | 'seriea' | 'bundesliga';

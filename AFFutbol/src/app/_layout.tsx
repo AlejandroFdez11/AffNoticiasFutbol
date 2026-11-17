@@ -32,6 +32,10 @@ export default function RootLayout() {
             <Stack.Screen name="auth-callback" />
             <Stack.Screen name="reset-password" options={{ presentation: 'modal' }} />
             <Stack.Screen name="edit-profile" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="delete-account" options={{ presentation: 'modal' }} />
+            <Stack.Screen name="legal/privacidad" />
+            <Stack.Screen name="legal/terminos" />
+            <Stack.Screen name="legal/fuentes" />
           </Stack>
         </ThemeProvider>
       </AuthProvider>

@@ -2,7 +2,7 @@
 
 ## Repo shape
 
-- The Expo app lives in `AFFutbol/`; the repo root is just the wrapper around that folder, `README.md`, and this file. Run npm/Expo commands from `AFFutbol/`.
+- The Expo app lives in `AFFutbol/`; the repo root holds that folder plus `README.md`, this file, the proprietary `LICENSE` and `docs/publicacion/` (store, legal and launch documentation). Run npm/Expo commands from `AFFutbol/`.
 - One npm package (`AFFutbol/package.json` + `package-lock.json`); no workspaces and no bun/pnpm/yarn. Use `npm`/`npx`.
 - `README.md` is the product/roadmap source of truth; update it when a phase changes.
 - All `src/...` paths below are relative to `AFFutbol/`.
@@ -36,7 +36,7 @@ npx expo-doctor               # dependency/config health
 ## Routing and tabs
 
 - Routes live in `src/app/`; `_layout.tsx` files define navigators. The root `Stack` is `src/app/_layout.tsx`; the tab group is `src/app/(tabs)/`. Keep non-route code outside `src/app/`.
-- Stacked routes outside the tabs: `match/[id]` (match detail), `article/[id]` (news or rumour detail), `statistics` (standings/scorers), and the account routes `auth`, `auth-callback`, `reset-password` and `edit-profile`. `auth`, `reset-password` and `edit-profile` open as modals. Register new stacked routes in the root `Stack`.
+- Stacked routes outside the tabs: `match/[id]` (match detail), `article/[id]` (news or rumour detail), `statistics` (standings/scorers), `delete-account`, the `legal/` group (`privacidad`, `terminos`, `fuentes`), and the account routes `auth`, `auth-callback`, `reset-password` and `edit-profile`. `auth`, `reset-password`, `edit-profile` and `delete-account` open as modals. Register new stacked routes in the root `Stack`.
 - Tabs are `index` (Partidos), `news` (Noticias), `predictions` (Predicciones), `rankings` (Ranking), and `profile` (Perfil). Trigger names must match the route filenames.
 - Native tabs: `src/components/app-tabs.tsx` uses `expo-router/native-tabs` (SDK 58 name, not `unstable-native-tabs`). Icons use `sf` for iOS and `md` Material Symbols for Android.
 - Web has a separate headless tab bar: `src/components/app-tabs.web.tsx` (`expo-router/ui`, `TABS` array). Any tab add/rename/reorder must be done in both files.
@@ -111,6 +111,16 @@ npx expo-doctor               # dependency/config health
 - `signOut` releases the push token before signing out (`src/features/auth/auth-context.tsx`), so the next account on the same phone does not inherit notifications.
 - Tokens need the EAS project id: `eas init` writes `extra.eas.projectId` into `app.json`; `EXPO_PUBLIC_EAS_PROJECT_ID` is the fallback (`src/lib/env.ts`).
 - Push does not work in Expo Go (from SDK 53) nor on web; it needs a development build or an installed build.
+
+## Store readiness (Phase 7)
+
+- **Account deletion is mandatory** (Apple 5.1.1(v)). UI: `src/app/delete-account.tsx` + Perfil → Eliminar cuenta; the user types `ELIMINAR`. Client helper in `src/features/profile/delete-account.ts` (pure, tested); network call `deleteAccount()` in `src/features/profile/api.ts`; `useAuth().deleteAccount` releases the push token, calls the function and clears the local session with `signOut({ scope: 'local' })`.
+- Server side is `supabase/functions/delete-account/` with `verify_jwt = true`. It resolves the user from the bearer token with `getUser(token)`, never from the body, then `admin.deleteUser()` with the service role. No migration is needed: every user table already has `references auth.users (id) on delete cascade`. Never move that delete to the client and never expose the service-role key.
+- The confirmation word is mirrored in `_shared/account-deletion.ts` and `src/features/profile/delete-account.ts`; `delete-account-test.ts` asserts they match.
+- **Legal copy has one source:** `src/features/legal/documents.ts`. Routes `src/app/legal/{privacidad,terminos,fuentes}.tsx` render it in the app and, through the web build, at `https://affutbol.app/legal/...` (the URLs submitted to the stores). Update `LEGAL_LAST_UPDATED` with any change; `legal/__tests__/documents-test.ts` guards content and URLs. `auth.tsx` and Perfil link to it — keep both.
+- Keep legal text and `docs/publicacion/app-privacy.md` in sync when data collection changes (new data, analytics, ads, purchases, retention). The repo license is proprietary (`LICENSE`); third-party data attribution lives in the `/legal/fuentes` document and `docs/publicacion/atribucion-fuentes.md`.
+- Store docs live in `docs/publicacion/` (checklist, listing, privacy declarations, icons, attribution, Supabase plan). Update them when a store step changes.
+- Icons and splash assets are still the Expo template: `app.json` only has the brand adaptive-icon background (`#0B7A4B`). Do not claim they are final; see `docs/publicacion/iconos-y-splash.md`.
 
 ## Statistics (Phase 2, real data)
 
