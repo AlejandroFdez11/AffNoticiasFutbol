@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 432" width="432" height="432">
+  <defs>
+    <mask id="ball-cut">
+      <rect width="432" height="432" fill="#fff"/>
+      <circle cx="216" cy="215" r="74" fill="#000"/>
+    </mask>
+  </defs>
+  <path d="M216 74 C177 100 145 112 115 119 L115 250 C115 302 159 342 216 362 C273 342 317 302 317 250 L317 119 C287 112 255 100 216 74 Z" fill="#fff" mask="url(#ball-cut)"/>
+  <circle cx="216" cy="215" r="30" fill="#fff"/>
+</svg>

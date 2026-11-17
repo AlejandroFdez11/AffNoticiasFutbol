@@ -8,7 +8,6 @@
     "scheme": "affutbol",
     "userInterfaceStyle": "automatic",
     "ios": {
-      "icon": "./assets/expo.icon",
       "bundleIdentifier": "com.alejandroff.affutbol",
       "supportsTablet": true,
       "usesAppleSignIn": true,

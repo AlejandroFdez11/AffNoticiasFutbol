@@ -269,7 +269,7 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 6. **Proveedores de login:** publicar el consent screen de Google (deja de estar en *Testing*) y subir la APNs key a EAS para el push en iOS.
 7. **Supabase Pro y backups:** el plan Free se pausa por inactividad y no tiene copias de seguridad; ver `docs/publicacion/supabase-produccion.md`.
 8. **Publicar el sitio web** con las rutas `/legal/*` y crear los buzones `privacidad@` y `soporte@affutbol.app`.
-9. **Sustituir iconos y splash:** los PNG actuales son los de la plantilla de Expo. Ver `docs/publicacion/iconos-y-splash.md`.
+9. **Verificar iconos y splash en la build instalada:** el arte propio ya está integrado; queda comprobarlo en Android real. Ver `docs/publicacion/iconos-y-splash.md`.
 10. **Ficha de tienda, capturas y cuenta demo:** ver `docs/publicacion/ficha-app-store.md`.
 
 ### Documentación de lanzamiento
@@ -296,7 +296,7 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 
 ## 🎨 Branding
 
-La app usa una paleta verde césped con acentos ámbar, en modo claro y oscuro. El fondo del icono adaptativo de Android ya usa el verde de marca (`#0B7A4B`), pero **los PNG de icono, splash y favicon siguen siendo los de la plantilla de Expo**: hay que sustituirlos antes de publicar. Los tamaños y requisitos están en [`docs/publicacion/iconos-y-splash.md`](docs/publicacion/iconos-y-splash.md).
+La app usa una paleta verde césped con acentos ámbar, en modo claro y oscuro. El icono, el splash y el favicon ya son arte propio con el concepto «escudo + balón» y los másteres SVG están en `AFFutbol/assets/brand/`. Queda verificarlos en una build real de Android. Los tamaños y el proceso de regeneración están en [`docs/publicacion/iconos-y-splash.md`](docs/publicacion/iconos-y-splash.md).
 
 ## 👤 Autor
 

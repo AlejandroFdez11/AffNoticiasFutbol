@@ -5,9 +5,9 @@ Estado del código en el repo y lo que queda como acción manual en consolas. La
 | Ítem | Estado en el repo | Pendiente fuera del repo |
 | --- | --- | --- |
 | 8. Eliminar cuenta | ✅ Hecho: UI en Perfil → Eliminar cuenta (confirmación escribiendo `ELIMINAR`), Edge Function `delete-account` con service role, RLS/cascada ya existente, tests | Desplegar la función; comprobar el borrado con la cuenta demo; adjuntar la captura del flujo si la tienda la pide |
-| 9. Privacidad y términos con URL pública | ✅ Hecho: textos en `src/features/legal/documents.ts`, rutas `/legal/*` (app + web), enlaces en `auth.tsx` y Perfil, declaración de privacidad documentada | Dominio + hosting web, buzones, revisión jurídica, rellenar App Privacy / Data Safety |
-| 10. Iconos y splash definitivos | ⚠️ Config arreglada (`backgroundColor` de marca), pero los PNG siguen siendo los de la plantilla de Expo | Encargar el arte final y sustituir los seis archivos; ver `iconos-y-splash.md` |
-| 11. Ficha de tienda y cuenta demo | ✅ Borrador listo: descripción, metadatos, guion de capturas, notas y plantilla de credenciales | Crear la cuenta demo, hacer las capturas de iPhone y iPad, crear la página de soporte, rellenar los campos |
+| 9. Privacidad y términos con URL pública | ✅ Hecho: textos en `src/features/legal/documents.ts`, rutas `/legal/*` (app + web), enlaces en `auth.tsx` y Perfil, declaración de privacidad documentada | Publicar las URLs (primero GitHub Pages), buzones reales, revisión jurídica, rellenar Data Safety de Google Play |
+| 10. Iconos y splash definitivos | ✅ Hecho: arte propio «escudo + balón» integrado; másteres en `assets/brand/` y PNG exportados | Verificar icono adaptativo/temático y splash en una build real de Android; ver `iconos-y-splash.md` |
+| 11. Ficha de tienda y cuenta demo | ✅ Borrador listo: descripción, metadatos, guion de capturas, notas y plantilla de credenciales | Crear la cuenta demo, hacer las capturas de Android, crear la página de soporte, rellenar los campos |
 | 12. Licencia y atribución | ✅ Hecho: `LICENSE` propietaria, pantalla `/legal/fuentes`, documento de revisión de RSS y marcas | Revisar los términos de Marca / Mundo Deportivo / Relevo y el uso de imágenes en caliente; validación jurídica |
 | 13. Plan de Supabase | 📝 Requisitos documentados | Pasar a Pro, SMTP propio, backups + PITR, spend cap, región, plan de API-Football |
 
