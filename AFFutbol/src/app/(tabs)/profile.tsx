@@ -132,7 +132,30 @@ export default function ProfileScreen() {
                 {actionError}
               </ThemedText>
             ) : null}
-            <Button label="Cerrar sesión" variant="danger" onPress={() => void handleSignOut()} />
+            <Button label="Cerrar sesión" variant="ghost" onPress={() => void handleSignOut()} />
+            <View style={[styles.cardDivider, { backgroundColor: theme.border }]} />
+            <ThemedText type="small" themeColor="textSecondary">
+              Eliminar tu cuenta borra tu perfil, tus pronósticos y tus ligas. No se puede deshacer.
+            </ThemedText>
+            <Button
+              label="Eliminar cuenta"
+              variant="danger"
+              onPress={() => router.push('/delete-account')}
+            />
+          </View>
+
+          <View
+            style={[
+              styles.actionsCard,
+              { backgroundColor: theme.backgroundElement, borderColor: theme.border },
+            ]}>
+            <View style={styles.actionsHeader}>
+              <ThemedText type="smallBold">Legal</ThemedText>
+              <ThemedText type="small" themeColor="textSecondary">
+                Privacidad, condiciones de uso y fuentes de datos.
+              </ThemedText>
+            </View>
+            <LegalLinks />
           </View>
 
           <View
@@ -190,6 +213,9 @@ const styles = StyleSheet.create({
   actionsHeader: {
     gap: Spacing.half,
     paddingBottom: Spacing.one,
+  },
+  cardDivider: {
+    height: 1,
   },
   footer: {
     textAlign: 'center',

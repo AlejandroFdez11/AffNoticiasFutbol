@@ -15,28 +15,42 @@ describe('account deletion confirmation', () => {
 
   it('accepts the word in any case and with surrounding spaces', () => {
     expect(isDeleteConfirmationValid('ELIMINAR')).toBe(true);
+    expect(isDeleteConfirmationValid('eliminar')).toBe(true);
+    expect(isDeleteConfirmationValid('  Eliminar  ')).toBe(true);
     expect(isDeleteConfirmationValid(' eliminar ')).toBe(true);
   });
 
   it('rejects anything else', () => {
     expect(isDeleteConfirmationValid('')).toBe(false);
-    expect(isDeleteConfirmationValid('eliminar cuenta')).toBe(false);
     expect(isDeleteConfirmationValid('BORRAR')).toBe(false);
+    expect(isDeleteConfirmationValid('eliminar cuenta')).toBe(false);
+    expect(isDeleteConfirmationValid('ELIMINAR TODO')).toBe(false);
   });
 });
 
 describe('parseDeletionRequest', () => {
-  it('accepts a confirmed body', () => {
+  it('accepts the documented body', () => {
+    expect(parseDeletionRequest({ confirm: 'ELIMINAR' })).toEqual({ ok: true });
+    expect(parseDeletionRequest({ confirm: '  eliminar ' })).toEqual({ ok: true });
     expect(parseDeletionRequest({ confirm: 'Eliminar' })).toEqual({ ok: true });
   });
 
-  it('rejects a body without the confirmation word', () => {
+  it('rejects a missing or non-string confirmation', () => {
+    expect(parseDeletionRequest(null)).toEqual({ ok: false, reason: 'invalid-body' });
+    expect(parseDeletionRequest('ELIMINAR')).toEqual({ ok: false, reason: 'invalid-body' });
     expect(parseDeletionRequest({})).toEqual({ ok: false, reason: 'invalid-body' });
+    expect(parseDeletionRequest({ confirm: 42 })).toEqual({ ok: false, reason: 'invalid-body' });
+  });
+
+  it('rejects the wrong word', () => {
+    expect(parseDeletionRequest({ confirm: 'BORRAR' })).toEqual({
+      ok: false,
+      reason: 'missing-confirmation',
+    });
     expect(parseDeletionRequest({ confirm: 'si' })).toEqual({
       ok: false,
       reason: 'missing-confirmation',
     });
-    expect(parseDeletionRequest(null)).toEqual({ ok: false, reason: 'invalid-body' });
   });
 });
 
@@ -49,7 +63,15 @@ describe('describeDeleteAccountError', () => {
     expect(describeDeleteAccountError({ context: { status: 404 } })).toContain('delete-account');
   });
 
-  it('maps network failures', () => {
+  it('asks for a retry on server errors', () => {
+    expect(describeDeleteAccountError({ context: { status: 500 } })).toContain('Vuelve a intentarlo');
+  });
+
+  it('explains an invalid confirmation', () => {
+    expect(describeDeleteAccountError({ context: { status: 400 } })).toContain('ELIMINAR');
+  });
+
+  it('detects network failures', () => {
     expect(
       describeDeleteAccountError({
         name: 'FunctionsFetchError',
@@ -58,7 +80,8 @@ describe('describeDeleteAccountError', () => {
     ).toContain('conexión');
   });
 
-  it('falls back to the auth copy', () => {
+  it('falls back to the generic operation message', () => {
     expect(describeDeleteAccountError(new Error('boom'))).toBe('boom');
+    expect(describeDeleteAccountError(undefined)).toContain('No se pudo completar');
   });
 });

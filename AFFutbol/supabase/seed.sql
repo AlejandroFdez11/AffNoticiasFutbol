@@ -1,0 +1,10 @@
+-- Seed de desarrollo local (`supabase db reset`).
+--
+-- AFFutbol no tiene filas semilla: los partidos llegan de API-Football, las
+-- noticias de los feeds RSS y las estadísticas de football-data.org/Wikipedia a
+-- través de las Edge Functions; los perfiles los crea el trigger
+-- `handle_new_user`. La app además funciona sin datos con sus fallbacks de
+-- muestra.
+--
+-- Mantén el archivo aunque esté vacío: `supabase/config.toml` lo declara en
+-- [db.seed] y `supabase db reset` espera encontrarlo.

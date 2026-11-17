@@ -209,26 +209,31 @@ El resto de la documentación de lanzamiento (ítems 8–13) está en [`docs/pub
 
 ```text
 AFFutbol/
-├─ src/
-│  ├─ app/                  # Rutas de Expo Router
-│  │  ├─ _layout.tsx        # Providers, tema y splash
-│  │  ├─ (tabs)/            # Partidos, Noticias, Predicciones, Ranking, Perfil
-│  │  ├─ match/[id].tsx     # Detalle de partido
-│  │  ├─ article/[id].tsx   # Detalle de noticia o rumor
-│  │  ├─ statistics.tsx     # Clasificación, goleadores y resumen
-│  │  ├─ delete-account.tsx # Borrado de cuenta (Apple 5.1.1(v))
-│  │  ├─ legal/             # Privacidad, condiciones y fuentes (app + web)
-│  │  └─ +not-found.tsx
-│  ├─ components/           # Design system reutilizable
-│  ├─ constants/            # Tokens de diseño y tema de navegación
-│  ├─ features/             # Lógica por dominio (matches, news, statistics, predictions, rankings, notifications, legal)
-│  ├─ hooks/                # Hooks compartidos
-│  ├─ lib/                  # Entorno, query client y utilidades
-│  └─ services/             # Clientes de APIs externas (api-football)
-├─ assets/
-├─ app.json
-├─ eas.json
-└─ package.json
+├── src/
+│   ├── app/                          # Rutas de Expo Router
+│   │   ├── _layout.tsx               # Providers, tema y splash
+│   │   ├── (tabs)/                   # Partidos, Noticias, Predicciones, Ranking, Perfil
+│   │   ├── match/[id].tsx            # Detalle de partido
+│   │   ├── article/[id].tsx          # Detalle de noticia o rumor
+│   │   ├── statistics.tsx            # Clasificación, goleadores y resumen
+│   │   ├── auth.tsx                  # Acceso (modal)
+│   │   ├── auth-callback.tsx         # Retorno de OAuth y confirmación
+│   │   ├── reset-password.tsx        # Recuperar contraseña (modal)
+│   │   ├── edit-profile.tsx          # Editar perfil (modal)
+│   │   ├── delete-account.tsx        # Eliminar cuenta (modal)
+│   │   ├── legal/                    # Privacidad, condiciones y fuentes (app + web)
+│   │   └── +not-found.tsx
+│   ├── components/                   # Design system reutilizable
+│   ├── constants/                    # Tokens de diseño y tema de navegación
+│   ├── features/                     # Lógica por dominio (matches, news, statistics, predictions, rankings, notifications, auth, profile, legal)
+│   ├── hooks/                        # Hooks compartidos
+│   ├── lib/                          # Entorno, query client y utilidades
+│   └── services/                     # Clientes de APIs externas (api-football)
+├── supabase/                         # Migraciones SQL y Edge Functions
+├── assets/
+├── app.json
+├── eas.json
+└── package.json
 ```
 
 ## 🚀 Publicación (Fase 7)
@@ -240,8 +245,8 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 - **Variables de build:** `eas.json` declara `environment` y `channel` en los tres perfiles, así que las builds leen las environment variables de EAS (`production`, `preview`, `development`) y las OTA tienen canal. La configuración no se commitea.
 - **Clave de API-Football fuera del bundle:** la app llama a la Edge Function `api-football` (`EXPO_PUBLIC_API_FOOTBALL_PROXY_URL`) y la clave vive en el secreto `API_FOOTBALL_KEY`. La función solo acepta los endpoints y parámetros que usa la app (`supabase/functions/_shared/api-football-proxy.ts`), así que no es un proxy abierto.
 - **Apple Sign In** solo se muestra en iOS, donde existe el módulo nativo; en Android y web se oculta en vez de ofrecer un flujo que falla.
-- **Borrado de cuenta (Apple 5.1.1(v)):** Perfil → Eliminar cuenta + Edge Function `delete-account` con service role y cascada en todas las tablas de usuario.
-- **Legales con URL pública:** `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes`, enlazados desde el registro y Perfil, con una única fuente de texto para la app y la web.
+- **Borrado de cuenta (Apple 5.1.1(v)):** Perfil → Eliminar cuenta pide escribir `ELIMINAR`; la Edge Function `delete-account` verifica el JWT y borra la cuenta, el perfil, los pronósticos, las ligas y el token de notificaciones (cascada en todas las tablas de usuario). Falta desplegar la función.
+- **Legales con URL pública:** `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes`, con una única fuente de texto (`src/features/legal/documents.ts`) para la app y la web, enlazados desde el acceso y Perfil.
 - **Licencia propietaria** (`LICENSE`) y atribución de API-Football, football-data.org, Wikipedia y los medios RSS.
 - **Declaración de privacidad** lista para copiar a App Store Connect y Google Play (`docs/publicacion/app-privacy.md`).
 
