@@ -4,10 +4,10 @@ Continuación de [`checklist-tiendas.md`](checklist-tiendas.md). Estado del repo
 
 | Ítem | Estado en el repo | Pendiente fuera del repo |
 | --- | --- | --- |
-| 14. Verificación técnica y repaso en dispositivos | ✅ Comprobaciones locales ejecutadas el 17/11/2026 | Recorrido manual de todos los flujos en build real (iOS y Android), con modo claro/oscuro y sin red |
+| 14. Verificación técnica y repaso en dispositivos | ✅ Comprobaciones locales ejecutadas el 17/11/2026 | Recorrido manual de todos los flujos en la build de Android, con modo claro/oscuro y sin red |
 | 15. Rate limits y CAPTCHA de Supabase Auth | ✅ Decidido: **solo rate limits**, sin CAPTCHA por ahora | Configurar límites por IP en Supabase y dejar CAPTCHA desactivado; si se activa en el futuro, implementar antes el widget en el cliente |
 | 16. Monitorización de errores | 📝 Decidido: **no implementar ahora**; queda documentado (no hay Sentry ni equivalente) | Si se añade más adelante: crear proyecto, SDK y DSN, subir source maps y actualizar la política de privacidad si se recogen datos de diagnóstico |
-| 17. Hosting de la web | ⚠️ Sin hosting: `web.output` es `"server"` | Publicar con un adaptador Node o servir las tres URL legales de otra forma; verificarlas sin sesión y por HTTPS |
+| 17. Hosting de la web | ✅ URLs legales publicadas en GitHub Pages desde `develop:/docs`, generadas desde `documents.ts` | Sustituir por el dominio definitivo cuando se registre `affutbol.app` |
 | 18. Instantáneas con `shortName` | ✅ Hecho: función redesplegada, `dryRun` y sync real correctos, `shortName` presente en las cuatro ligas | Nada; el cron `statistics-sync` ya mantendrá el campo en las siguientes ejecuciones |
 
 ## 14. Verificación técnica y pruebas en dispositivo
@@ -60,11 +60,14 @@ Requiere cuenta externa y DSN; no se ha tocado código.
 
 `AFFutbol/app.json` declara `"web": { "output": "server" }`, así que `npx expo export --platform web` genera una build que necesita un entorno Node con el adaptador de servidor correspondiente: no se puede dejar como archivos estáticos en cualquier CDN.
 
-Si no se va a publicar la app web, se puede ignorar el hosting **pero no las URL legales**: Apple y Google exigen una política de privacidad públicamente accesible. Las tres rutas `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes` deben responder sin iniciar sesión y con HTTPS válido en `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/...`. Alternativas:
+No se va a publicar la app web completa, pero **sí las URL legales**, que Google Play exige públicamente accesibles. La solución elegida es servir solo esas páginas como HTML estático en GitHub Pages, desde `develop:/docs`, con HTTPS válido:
 
-- Publicar la web con un adaptador Node (ej. un servidor Express con `@expo/server/adapters/express`).
-- Servir solo esas tres páginas como HTML estático desde cualquier hosting, manteniendo el mismo texto que `src/features/legal/documents.ts`.
-- Valorar `output: "static"` si no se usan rutas que necesiten servidor; simplifica el hosting, pero hay que comprobar que navegación y deep links siguen funcionando.
+- `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/privacidad`
+- `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/terminos`
+- `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/fuentes`
+- `https://alejandrofdez11.github.io/AffNoticiasFutbol/soporte`
+
+El texto se genera desde `src/features/legal/documents.ts` con `npx --yes tsx scripts/generate-legal-pages.ts`, así que no puede divergir del que muestra la app. Al registrar `affutbol.app` habrá que cambiar `LEGAL_SITE_URL`, regenerar las páginas y actualizar los tests.
 
 ## 18. Instantáneas con `shortName`
 
