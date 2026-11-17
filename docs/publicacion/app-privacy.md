@@ -23,7 +23,7 @@ Esta tabla describe **lo que la app hace hoy**. Cópiala a los cuestionarios de 
 - ¿Datos usados para seguimiento (tracking)? **No**. Por tanto no hace falta el prompting de ATT.
 - ¿Datos compartidos con terceros? **No** en el sentido de la tienda (no se venden ni se usan para fines propios de terceros). Supabase y Expo son proveedores que tratan los datos por nuestra cuenta, bajo contrato.
 - Finalidades: *App Functionality* para todo. No marcar *Analytics*, *Advertising*, *Personalization* ni *Product Improvement*.
-- App elimina datos: **Sí** (tienda: Perfil → Eliminar cuenta; por correo: `privacidad@affutbol.app`).
+- App elimina datos: **Sí** (tienda: Perfil → Eliminar cuenta; por correo: `alejandrofdezfr9@gmail.com`).
 
 **Google Play (Data safety)**
 

@@ -258,7 +258,7 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
    npx supabase functions deploy api-football
    npx supabase functions deploy delete-account
    ```
-2. **Subir de plan de API-Football.** El proxy oculta la clave, pero el plan Free sigue siendo 100 peticiones al día: con usuarios reales se agota el mismo día.
+2. **Plan de API-Football:** se mantiene el **Free (100 peticiones/día)** para el testing interno de Android. El proxy oculta la clave pero no aumenta la cuota; vigilar el consumo y subir de plan (o añadir caché servidor) antes de abrir la app al público.
 3. **Variables en EAS** (entorno `production`): `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_API_FOOTBALL_PROXY_URL` y `EXPO_PUBLIC_EAS_PROJECT_ID`. Sin ellas la build publicada arranca con datos simulados y sin login.
    ```bash
    npx eas-cli env:set --environment production --name EXPO_PUBLIC_API_FOOTBALL_PROXY_URL --value https://<ref>.supabase.co/functions/v1/api-football --visibility plaintext
@@ -266,9 +266,9 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
    ```
 4. **Supabase → Authentication → URL Configuration:** quitar `exp://**` (era solo para Expo Go) y dejar `affutbol://**`.
 5. **SMTP propio** en Supabase para la confirmación de email y el reset de contraseña; el SMTP por defecto tiene límites de prueba.
-6. **Proveedores de login:** publicar el consent screen de Google (deja de estar en *Testing*) y subir la APNs key a EAS para el push en iOS.
+6. **Proveedores de login:** publicar el consent screen de Google (deja de estar en *Testing*) y configurar FCM en EAS para el push en Android.
 7. **Supabase Pro y backups:** el plan Free se pausa por inactividad y no tiene copias de seguridad; ver `docs/publicacion/supabase-produccion.md`.
-8. **Publicar el sitio web** con las rutas `/legal/*` y crear los buzones `privacidad@` y `soporte@affutbol.app`.
+8. **Sitio web legal publicado** en GitHub Pages desde `develop:/docs`; el correo temporal confirmado es `alejandrofdezfr9@gmail.com`. Al registrar `affutbol.app` hay que cambiar `LEGAL_SITE_URL` y regenerar las páginas.
 9. **Verificar iconos y splash en la build instalada:** el arte propio ya está integrado; queda comprobarlo en Android real. Ver `docs/publicacion/iconos-y-splash.md`.
 10. **Ficha de tienda, capturas y cuenta demo:** ver `docs/publicacion/ficha-app-store.md`.
 

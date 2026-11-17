@@ -7,9 +7,9 @@ Estado del código en el repo y lo que queda como acción manual en consolas. La
 | 8. Eliminar cuenta | ✅ Hecho: UI en Perfil → Eliminar cuenta (confirmación escribiendo `ELIMINAR`), Edge Function `delete-account` con service role, RLS/cascada ya existente, tests | Desplegar la función; comprobar el borrado con la cuenta demo; adjuntar la captura del flujo si la tienda la pide |
 | 9. Privacidad y términos con URL pública | ✅ Hecho: textos en `src/features/legal/documents.ts`, rutas `/legal/*` (app + web), enlaces en `auth.tsx` y Perfil, declaración de privacidad documentada | Publicar las URLs (primero GitHub Pages), buzones reales, revisión jurídica, rellenar Data Safety de Google Play |
 | 10. Iconos y splash definitivos | ✅ Hecho: arte propio «escudo + balón» integrado; másteres en `assets/brand/` y PNG exportados | Verificar icono adaptativo/temático y splash en una build real de Android; ver `iconos-y-splash.md` |
-| 11. Ficha de tienda y cuenta demo | ✅ Borrador listo: descripción, metadatos, guion de capturas, notas y plantilla de credenciales | Crear la cuenta demo, hacer las capturas de Android, crear la página de soporte, rellenar los campos |
+| 11. Ficha de tienda y cuenta demo | ✅ Borrador listo: descripción, metadatos, guion de capturas, notas y plantilla de credenciales; página de soporte publicada | Crear la cuenta demo, hacer las capturas de Android y rellenar los campos de Play Console |
 | 12. Licencia y atribución | ✅ Hecho: `LICENSE` propietaria, pantalla `/legal/fuentes`, documento de revisión de RSS y marcas | Revisar los términos de Marca / Mundo Deportivo / Relevo y el uso de imágenes en caliente; validación jurídica |
-| 13. Plan de Supabase | 📝 Requisitos documentados | Pasar a Pro, SMTP propio, backups + PITR, spend cap, región, plan de API-Football |
+| 13. Plan de Supabase | 📝 Requisitos documentados; API-Football Free decidido para testing interno | Pasar a Pro, SMTP propio, backups + PITR, spend cap, región; subir de plan de API-Football antes de abrir al público |
 
 ## Orden recomendado
 

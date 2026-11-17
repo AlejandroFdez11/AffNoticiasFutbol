@@ -33,4 +33,4 @@ Variables públicas obligatorias en el entorno `production` de EAS: `EXPO_PUBLIC
 
 ## Cuota de API-Football
 
-El proxy oculta la clave pero **no aumenta el plan**: el plan Free de 100 peticiones/día se agota con pocos usuarios. La cuenta de producción necesita un plan de pago de API-Football (o una caché servidor que aún no está implementada) antes de abrir la app al público.
+El proxy oculta la clave pero **no aumenta el plan**: el plan Free de 100 peticiones/día se agota con pocos usuarios. **Decisión para el testing interno de Android: mantener el plan Free** y vigilar el consumo diario. Antes de abrir la app al público hará falta un plan de pago de API-Football (o una caché servidor que aún no está implementada).

@@ -31,11 +31,11 @@ export type LegalDocument = {
   blocks: LegalBlock[];
 };
 
-export const LEGAL_LAST_UPDATED = '17 de noviembre de 2026';
+export const LEGAL_LAST_UPDATED = '17 de noviembre de 2026 · revisión 2';
 
 /** Must exist before submitting: see `<repo>/docs/publicacion/legales.md`. */
-export const LEGAL_CONTACT_EMAIL = 'privacidad@affutbol.app';
-export const LEGAL_SUPPORT_EMAIL = 'soporte@affutbol.app';
+export const LEGAL_CONTACT_EMAIL = 'alejandrofdezfr9@gmail.com';
+export const LEGAL_SUPPORT_EMAIL = 'alejandrofdezfr9@gmail.com';
 export const LEGAL_SITE_URL = 'https://alejandrofdez11.github.io/AffNoticiasFutbol';
 
 export const LEGAL_PUBLIC_PATHS = {

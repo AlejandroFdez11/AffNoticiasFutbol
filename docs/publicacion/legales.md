@@ -16,14 +16,14 @@ La web de Expo (`output: "server"` en `app.json`) sirve esas mismas rutas, así 
 
 ## Por qué existe
 
-App Store Connect y Google Play exigen una **URL pública** de la política de privacidad y de las condiciones de uso. Al compartir una sola constante (`LEGAL_PUBLIC_PATHS`), la versión web y la versión nativa no pueden divergir. Las mismas pantallas se abren dentro de la app desde **Perfil → Legal** y desde la pantalla de acceso (`auth.tsx`).
+Google Play exige una **URL pública** de la política de privacidad. Al compartir una sola constante (`LEGAL_PUBLIC_PATHS`), la versión web y la versión nativa no pueden divergir. Las mismas pantallas se abren dentro de la app desde **Perfil → Legal** y desde la pantalla de acceso (`auth.tsx`).
 
 ## Datos que hay que rellenar
 
 | Dato | Constante en `documents.ts` | Estado |
 | --- | --- | --- |
-| Correo de privacidad | `LEGAL_CONTACT_EMAIL` | `privacidad@affutbol.app` (buzón aún no creado; hace falta una dirección temporal que se lea) |
-| Correo de soporte | `LEGAL_SUPPORT_EMAIL` | `soporte@affutbol.app` (buzón aún no creado; hace falta una dirección temporal que se lea) |
+| Correo de privacidad | `LEGAL_CONTACT_EMAIL` | `alejandrofdezfr9@gmail.com` (buzón real confirmado; sirve hasta crear `privacidad@affutbol.app`) |
+| Correo de soporte | `LEGAL_SUPPORT_EMAIL` | `alejandrofdezfr9@gmail.com` (buzón real confirmado; sirve hasta crear `soporte@affutbol.app`) |
 | Dominio | `LEGAL_SITE_URL` | `https://alejandrofdez11.github.io/AffNoticiasFutbol` (temporal; registrar `affutbol.app` más adelante) |
 | Región de hosting | — | Pendiente: Supabase (base de datos, auth y Edge Functions) y el hosting del build web |
 | Encargados del tratamiento | — | Supabase (auth, base de datos, funciones) y Expo/EAS (builds y push) |
@@ -34,7 +34,7 @@ Si cambia cualquiera de estos valores, hay que actualizar `LEGAL_LAST_UPDATED` e
 ## Antes de enviar a revisión
 
 - [ ] Publicar las tres rutas `/legal/*` y verificar que responden **sin iniciar sesión** y con HTTPS válido.
-- [ ] Crear los buzones `privacidad@affutbol.app` y `soporte@affutbol.app`, o sus equivalentes temporales. Si cambian, editar `LEGAL_CONTACT_EMAIL` y `LEGAL_SUPPORT_EMAIL` en `documents.ts` y la URL de soporte en la ficha de tienda.
+- [x] Usar `alejandrofdezfr9@gmail.com` como correo temporal de privacidad y soporte (confirmado por el titular). Si cambia, editar `LEGAL_CONTACT_EMAIL` y `LEGAL_SUPPORT_EMAIL` en `documents.ts`, regenerar las páginas y actualizar la ficha de tienda.
 - [ ] Confirmar la región real de alojamiento del proyecto de Supabase y añadirla al apartado 4 de la política de privacidad (ahora dice «la región configurada en Supabase»).
 - [ ] Confirmar la retención real de las copias de seguridad: la política dice «rotación máxima de 7 días», que es lo que incluye Supabase Pro por defecto. Si se contrata PITR o se cambia la retención, actualizar el apartado 5.
 - [ ] Revisar los textos con un profesional jurídico. Son documentos de una app española (RGPD + LOPDGDD), no asesoramiento legal.
@@ -44,7 +44,7 @@ Si cambia cualquiera de estos valores, hay que actualizar `LEGAL_LAST_UPDATED` e
 - [ ] `LEGAL_LAST_UPDATED` actualizado con la fecha de la última revisión.
 - [ ] Función `delete-account` desplegada y probada con una cuenta real de prueba.
 
-## Baja de cuenta (Apple 5.1.1(v))
+## Baja de cuenta (requisito de la tienda)
 
 Las tiendas exigen poder borrar la cuenta **desde dentro de la app**. El flujo es **Perfil → Eliminar cuenta**:
 

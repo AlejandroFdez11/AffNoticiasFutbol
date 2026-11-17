@@ -4,7 +4,7 @@ La app publica una versión resumida de este documento en `/legal/fuentes` (fuen
 
 | Fuente | Qué se usa | Cómo se usa | Atribución / condición |
 | --- | --- | --- | --- |
-| [API-Football](https://www.api-football.com/) (api-sports) | Partidos, marcadores, eventos, alineaciones, estadísticas | La Edge Function `api-football` consulta solo los endpoints permitidos; el móvil no lleva la clave | Plan Free (100 peticiones/día). Mantener el aviso «Datos de partidos: API-Football» y reconsiderar el plan antes de publicar. |
+| [API-Football](https://www.api-football.com/) (api-sports) | Partidos, marcadores, eventos, alineaciones, estadísticas | La Edge Function `api-football` consulta solo los endpoints permitidos; el móvil no lleva la clave | Plan Free (100 peticiones/día) decidido para testing interno. Mantener el aviso «Datos de partidos: API-Football» y reconsiderar el plan antes de publicar al público. |
 | [football-data.org](https://www.football-data.org/) | Clasificaciones de PD, PL, SA y BL1 | `sync-statistics` descarga `/v4/competitions/{code}/standings` dos veces al día y guarda la instantánea en Supabase | El plan gratuito pide atribución: «Football data provided by the Football-Data.org API». Ya está en la pantalla de fuentes. |
 | [Wikipedia en inglés](https://en.wikipedia.org/) | Tabla «Top goalscorers», solo goles | `sync-statistics` extrae jugador, club y goles; la app no reproduce el artículo | Texto bajo [CC BY-SA 4.0](https://creativecommons.org/licenses/by-sa/4.0/deed.es). Se enlaza la licencia y la fuente; si se copiara texto, habría que compartir bajo la misma licencia. |
 | Marca | Feeds `portada.xml`, `primera-division.xml`, `futbol-internacional.xml`, `mercado-fichajes.xml` | Solo titular, extracto, imagen enlazada y enlace al medio; 14 días de retención | Ver revisión más abajo. |
@@ -19,7 +19,7 @@ Antes de publicar, revisar **las condiciones de uso y la política de derechos d
 - [ ] Aceptan la reutilización de titulares y extracts mediante RSS y la creación de un agregador con enlace al original.
 - [ ] La imagen se está **enlazando en caliente** desde el CDN del medio (`image_url` viene del feed y `expo-image` la carga por URL). Algunos medios lo prohíben. Alternativas: no mostrar imagen, usar una imagen propia con licencia o pedir permiso.
 - [ ] El extracto no supera lo que el feed publica y nunca se reproduce el cuerpo del artículo (ya es así en `supabase/functions/_shared/normalize.ts`).
-- [ ] Existe un procedimiento de retirada rápida: correo `soporte@affutbol.app` + desactivar la fuente con un `UPDATE news_sources SET enabled = false WHERE id = ...` (no hace falta desplegar).
+- [ ] Existe un procedimiento de retirada rápida: correo `alejandrofdezfr9@gmail.com` + desactivar la fuente con un `UPDATE news_sources SET enabled = false WHERE id = ...` (no hace falta desplegar).
 - [ ] Se respeta `robots.txt`, el throttling de 10 minutos por fuente y un `User-Agent` identificativo (ya configurado).
 - [ ] La retención de 14 días y el límite de 60 piezas siguen siendo aceptables.
 - [ ] Si algún medio se opone, quitar su feed y sus noticias antes de la fecha de envío a revisión.
