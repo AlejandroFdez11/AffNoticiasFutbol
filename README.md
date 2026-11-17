@@ -131,7 +131,7 @@ La pestaña de estadísticas muestra la clasificación y los goleadores reales d
 **Puesta en marcha**
 
 1. Crea un token gratuito en [football-data.org](https://www.football-data.org/client/register).
-2. `npx supabase secrets set FOOTBALL_DATA_TOKEN=<token> STATISTICS_SYNC_SECRET=<secreto> WIKI_USER_AGENT="AFFutbol/1.0 (statistics sync; +https://affutbol.app)"`.
+2. `npx supabase secrets set FOOTBALL_DATA_TOKEN=<token> STATISTICS_SYNC_SECRET=<secreto> WIKI_USER_AGENT="AFFutbol/1.0 (statistics sync; +https://alejandrofdez11.github.io/AffNoticiasFutbol)"`.
 3. `npx supabase db push` (tabla y cron) y guarda el mismo secreto en Vault:
    `select vault.create_secret('<secreto>', 'statistics_secret', 'Secreto compartido de sync-statistics');`
 4. `npx supabase functions deploy sync-statistics --no-verify-jwt`.
@@ -188,7 +188,7 @@ Apple exige el borrado de cuenta dentro de la app (guía 5.1.1(v)) y una URL pú
   ```bash
   npx supabase functions deploy delete-account
   ```
-- **Textos legales:** una única fuente en `AFFutbol/src/features/legal/documents.ts`, renderizada por `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes` tanto en la app como en la web. Las URL públicas son `https://affutbol.app/legal/<documento>`. Los datos que se declaran a Apple y Google están en `docs/publicacion/app-privacy.md`.
+- **Textos legales:** una única fuente en `AFFutbol/src/features/legal/documents.ts`, renderizada por `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes` tanto en la app como en la web. Las URL públicas temporales son `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/<documento>` y se generan con `scripts/generate-legal-pages.ts`. Los datos declarados en Google Play están en `docs/publicacion/app-privacy.md`.
 - La licencia del repositorio es **propietaria** (`LICENSE`). La atribución de fuentes vive en `/legal/fuentes` y en `docs/publicacion/atribucion-fuentes.md`.
 
 El resto de la documentación de lanzamiento (ítems 8–13) está en [`docs/publicacion/checklist-tiendas.md`](docs/publicacion/checklist-tiendas.md).

@@ -6,13 +6,13 @@ Hay **una única fuente**: `AFFutbol/src/features/legal/documents.ts`. Tres ruta
 
 | Documento | Ruta en la app | URL pública (una vez desplegado el sitio web) |
 | --- | --- | --- |
-| Política de privacidad | `/legal/privacidad` | `https://affutbol.app/legal/privacidad` |
-| Condiciones de uso | `/legal/terminos` | `https://affutbol.app/legal/terminos` |
-| Fuentes y atribución | `/legal/fuentes` | `https://affutbol.app/legal/fuentes` |
+| Política de privacidad | `/legal/privacidad` | `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/privacidad` |
+| Condiciones de uso | `/legal/terminos` | `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/terminos` |
+| Fuentes y atribución | `/legal/fuentes` | `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/fuentes` |
 
 La web de Expo (`output: "server"` en `app.json`) sirve esas mismas rutas, así que el texto de la app y el de la URL pública no pueden divergir. Los enlaces de `auth.tsx` y de Perfil apuntan a las rutas internas; las tiendas apuntan a las URL públicas.
 
-> **Estado actual:** todavía no hay dominio ni hosting. La opción elegida es publicar primero unas páginas estáticas temporales en GitHub Pages y sustituir la URL al registrar `affutbol.app`. Los cambios de URL deben reflejarse en `LEGAL_SITE_URL`, en los tests de `documents-test.ts` y en esta documentación.
+> **Estado actual:** las URLs de este documento ya apuntan al sitio temporal de GitHub Pages del repo (`AlejandroFdez11/AffNoticiasFutbol`). Las páginas se generan desde `documents.ts` con `npx --yes tsx scripts/generate-legal-pages.ts` y viven en `docs/legal/*/index.html` y `docs/soporte/index.html`. Al registrar `affutbol.app` habrá que cambiar `LEGAL_SITE_URL`, regenerar las páginas, actualizar los tests de `documents-test.ts` y volver a desplegar.
 
 ## Por qué existe
 
@@ -24,7 +24,7 @@ App Store Connect y Google Play exigen una **URL pública** de la política de p
 | --- | --- | --- |
 | Correo de privacidad | `LEGAL_CONTACT_EMAIL` | `privacidad@affutbol.app` (buzón aún no creado; hace falta una dirección temporal que se lea) |
 | Correo de soporte | `LEGAL_SUPPORT_EMAIL` | `soporte@affutbol.app` (buzón aún no creado; hace falta una dirección temporal que se lea) |
-| Dominio | `LEGAL_SITE_URL` | `https://affutbol.app` (registrar; mientras tanto, GitHub Pages) |
+| Dominio | `LEGAL_SITE_URL` | `https://alejandrofdez11.github.io/AffNoticiasFutbol` (temporal; registrar `affutbol.app` más adelante) |
 | Región de hosting | — | Pendiente: Supabase (base de datos, auth y Edge Functions) y el hosting del build web |
 | Encargados del tratamiento | — | Supabase (auth, base de datos, funciones) y Expo/EAS (builds y push) |
 | Revisión legal | — | Pendiente: pasar el texto por un abogado antes de publicar |

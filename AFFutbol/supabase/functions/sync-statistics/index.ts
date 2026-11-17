@@ -20,7 +20,7 @@
  *
  * Secrets (server only, never `EXPO_PUBLIC_*`):
  *   npx supabase secrets set FOOTBALL_DATA_TOKEN=... STATISTICS_SYNC_SECRET=...
- *   npx supabase secrets set WIKI_USER_AGENT="AFFutbol/1.0 (statistics sync; +https://affutbol.app)"
+ *   npx supabase secrets set WIKI_USER_AGENT="AFFutbol/1.0 (statistics sync; +https://alejandrofdez11.github.io/AffNoticiasFutbol)"
  *
  * Manual run (also what the pg_cron job does):
  *   curl -X POST https://<project-ref>.supabase.co/functions/v1/sync-statistics \
@@ -57,7 +57,7 @@ const WIKIPEDIA_API = 'https://en.wikipedia.org/w/api.php';
 const FETCH_TIMEOUT_MS = 20_000;
 const MAX_SCORERS = 20;
 const MAX_PREVIEW = 5;
-const DEFAULT_USER_AGENT = 'AFFutbol/1.0 (statistics sync; +https://affutbol.app)';
+const DEFAULT_USER_AGENT = 'AFFutbol/1.0 (statistics sync; +https://alejandrofdez11.github.io/AffNoticiasFutbol)';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',

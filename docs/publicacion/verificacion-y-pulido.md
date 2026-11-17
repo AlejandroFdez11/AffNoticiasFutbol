@@ -60,7 +60,7 @@ Requiere cuenta externa y DSN; no se ha tocado código.
 
 `AFFutbol/app.json` declara `"web": { "output": "server" }`, así que `npx expo export --platform web` genera una build que necesita un entorno Node con el adaptador de servidor correspondiente: no se puede dejar como archivos estáticos en cualquier CDN.
 
-Si no se va a publicar la app web, se puede ignorar el hosting **pero no las URL legales**: Apple y Google exigen una política de privacidad públicamente accesible. Las tres rutas `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes` deben responder sin iniciar sesión y con HTTPS válido en `https://affutbol.app/legal/...`. Alternativas:
+Si no se va a publicar la app web, se puede ignorar el hosting **pero no las URL legales**: Apple y Google exigen una política de privacidad públicamente accesible. Las tres rutas `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes` deben responder sin iniciar sesión y con HTTPS válido en `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/...`. Alternativas:
 
 - Publicar la web con un adaptador Node (ej. un servidor Express con `@expo/server/adapters/express`).
 - Servir solo esas tres páginas como HTML estático desde cualquier hosting, manteniendo el mismo texto que `src/features/legal/documents.ts`.

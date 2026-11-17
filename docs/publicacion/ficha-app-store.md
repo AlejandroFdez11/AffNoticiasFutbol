@@ -10,10 +10,8 @@
 | Categoría principal | Deportes |
 | Categoría secundaria | Ninguna |
 | Copyright | © 2026 Alejandro Fernández Franco |
-| URL de privacidad | `https://affutbol.app/legal/privacidad` |
-| URL de soporte | `https://affutbol.app/soporte` (hay que crear la página) |
-| Contrato / licencia | Estándar de Apple; adjuntar las condiciones propias si se usa EULA personalizada |
-| ID de Apple | El de la cuenta del desarrollador |
+| URL de privacidad | `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/privacidad` |
+| URL de soporte | `https://alejandrofdez11.github.io/AffNoticiasFutbol/soporte` (generada en `docs/soporte/`) |
 
 **Palabras clave (100 car., sin espacios):**
 
@@ -103,8 +101,8 @@ The demo account has a favourite team, one prediction and a private league so al
 
 Account deletion (required by guideline 5.1.1(v)): open Perfil > Eliminar cuenta, type ELIMINAR and confirm. The account and all associated data are deleted immediately. Do not delete the demo account until you have finished the review.
 
-Privacy policy: https://affutbol.app/legal/privacidad
-Terms: https://affutbol.app/legal/terminos
+Privacy policy: https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/privacidad
+Terms: https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/terminos
 
 ---
 
@@ -116,12 +114,12 @@ La cuenta demo tiene equipo favorito, un pronóstico y una liga privada para pod
 
 Borrado de cuenta (norma 5.1.1(v)): Perfil > Eliminar cuenta, escribe ELIMINAR y confirma. La cuenta y todos sus datos se borran de inmediato. No elimines la cuenta demo hasta terminar la revisión.
 
-Privacidad: https://affutbol.app/legal/privacidad
-Condiciones: https://affutbol.app/legal/terminos
+Privacidad: https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/privacidad
+Condiciones: https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/terminos
 ```
 
 ## Enlaces que deben existir antes de enviar
 
-- `https://affutbol.app/soporte` (ficha de tienda).
-- `https://affutbol.app/legal/privacidad`, `/legal/terminos` y `/legal/fuentes`.
+- `https://alejandrofdez11.github.io/AffNoticiasFutbol/soporte` (ficha de tienda).
+- `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/privacidad`, `/legal/terminos` y `/legal/fuentes`.
 - Las URL de retorno de Supabase (`affutbol://**`) permitidas y `exp://**` retirada en producción.
