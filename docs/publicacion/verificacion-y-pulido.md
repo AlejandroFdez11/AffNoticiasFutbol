@@ -16,21 +16,24 @@ Comprobaciones ejecutadas desde `AFFutbol/` con Expo SDK 58:
 
 ```bash
 npx expo-doctor                 # 20/20 checks passed
-npx expo export --platform ios  # bundle iOS correcto
+npx expo export --platform android
+npx expo export --platform web
 npm run lint
 npm run typecheck
-npm test -- --ci                # 33 suites, 275 tests
+npm test -- --ci                # 33 suites, 278 tests
 ```
 
-El primer `expo-doctor` detectó 18 paquetes desalineados con el SDK (incluido `react-native-safe-area-context` en una versión menor distinta). Se corrigieron con `npx expo install --fix`, que también añadió el plugin `expo-status-bar` en `app.json`. Tras el ajuste, doctor, lint, typecheck, tests y el export de iOS pasan. El bundle es un smoke test: **no sustituye** probar la app en un móvil.
+El primer `expo-doctor` detectó 18 paquetes desalineados con el SDK (incluido `react-native-safe-area-context` en una versión menor distinta). Se corrigieron con `npx expo install --fix`, que también añadió el plugin `expo-status-bar` en `app.json`. Tras el ajuste, doctor (20/20), lint, typecheck, tests y los exports de Android y web pasan. El bundle es un smoke test: **no sustituye** probar la app en un móvil.
 
-Repaso pendiente en build (Expo Go sirve para todo salvo push y Apple Sign In):
+Build de producción de Android terminada el 17/11/2026: ID `4d38ec09-1e83-4c45-8409-5b216c41fbba`, perfil `production`, `versionCode` 2, canal `production`, commit `ebe3721`, AAB descargable desde Expo. Falta el envío a Google Play (requiere la clave de cuenta de servicio).
+
+Repaso pendiente en la build de Android (Expo Go sirve para todo salvo push):
 
 - [ ] Registro con email: confirmación por correo, login, reset de contraseña y cierre de sesión.
-- [ ] Registro con Google: consent screen publicado, cuenta de prueba incluida, retorno a `/auth-callback`.
+- [ ] Registro con Google: proveedor configurado en Supabase, cuenta de prueba incluida, retorno a `/auth-callback`.
 - [ ] Pronóstico: elegir partido del equipo favorito, guardarlo antes del kickoff y ver el resumen tras la liquidación.
 - [ ] Ligas privadas: crear liga, copiar/pegar código de 6 caracteres, unirse, ver la tabla y salir de una liga (el owner la borra).
-- [ ] Push: activar preferencias en Perfil, recibir recordatorio/resultado/cambio de ranking en iOS y Android con FCM y APNs configurados; desactivar cada tipo y comprobar que no llegan.
+- [ ] Push: activar preferencias en Perfil, recibir recordatorio/resultado/cambio de ranking en Android con FCM configurado; desactivar cada tipo y comprobar que no llegan.
 - [ ] Modo oscuro: recorrer Partidos, Noticias, Estadísticas, Predicciones, Ranking y Perfil con el tema del sistema en claro y en oscuro (incluidas hojas modales y pantallas legales).
 - [ ] Errores y offline: activar modo avión en cada pestaña, provocar una respuesta fallida del proxy y comprobar mensaje de error, botón de reintento, estados vacíos y que no se pierde un pronóstico ya enviado.
 - [ ] Borrado de cuenta: escribir `ELIMINAR`, volver al estado sin sesión y verificar que Supabase queda sin filas del usuario.
