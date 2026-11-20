@@ -6,13 +6,27 @@
  * CORS, deduplication, stable ids and caching in one place, and means a feed
  * that breaks can be disabled with an UPDATE instead of a redeploy.
  *
- * Deploy:  npx supabase functions deploy news-refresh
- * Secrets: SUPABASE_URL and SUPABASE_SERVICE_ROLE_KEY are injected by the
- *          runtime, so there is nothing to configure.
+ * Deploy:  npx supabase functions deploy news-refresh --no-verify-jwt
+ *
+ * Secrets (server only, never `EXPO_PUBLIC_*`):
+ *   npx supabase secrets set NEWS_REFRESH_SECRET=<secreto>
+ *   and the same value in Vault as `news_secret` for the pg_cron job.
+ *
+ * Callers:
+ *   * the app sends the project's public key on `apikey` (supabase-js adds it,
+ *     even when the user is signed in);
+ *   * pg_cron sends `x-news-secret: <NEWS_REFRESH_SECRET>` (see the cron
+ *     migration). The shared secret is checked inside the function because the
+ *     gateway no longer verifies a JWT for this function.
+ *
+ * Manual run (same as the cron):
+ *   curl -X POST https://<project-ref>.supabase.co/functions/v1/news-refresh \
+ *     -H "x-news-secret: $NEWS_REFRESH_SECRET" -H "Content-Type: application/json" -d '{}'
  */
 
 import { createClient } from 'npm:@supabase/supabase-js@2';
 
+import { authorizeNewsRefresh } from '../_shared/news-auth.ts';
 import {
   dedupeAcrossSources,
   normalizeFeed,
@@ -28,7 +42,8 @@ const USER_AGENT = 'AFFutbol/1.0 (RSS reader; +https://alejandrofdez11.github.io
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',
-  'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
+  'Access-Control-Allow-Headers':
+    'authorization, x-client-info, apikey, content-type, x-news-secret',
   'Access-Control-Allow-Methods': 'POST, OPTIONS',
 };
 
@@ -63,6 +78,38 @@ function json(body: unknown, status = 200): Response {
     status,
     headers: { ...CORS_HEADERS, 'content-type': 'application/json' },
   });
+}
+
+/** Supabase injects legacy anon keys and/or the named publishable keys. */
+function projectPublicKeys(): string[] {
+  const keys = new Set<string>();
+
+  for (const name of ['SUPABASE_ANON_KEY', 'SUPABASE_PUBLISHABLE_KEY'] as const) {
+    const value = Deno.env.get(name)?.trim();
+    if (value) {
+      keys.add(value);
+    }
+  }
+
+  const named = Deno.env.get('SUPABASE_PUBLISHABLE_KEYS');
+
+  if (named) {
+    try {
+      const parsed: unknown = JSON.parse(named);
+
+      if (parsed && typeof parsed === 'object' && !Array.isArray(parsed)) {
+        for (const value of Object.values(parsed)) {
+          if (typeof value === 'string' && value.trim()) {
+            keys.add(value.trim());
+          }
+        }
+      }
+    } catch {
+      console.warn('[news-refresh] SUPABASE_PUBLISHABLE_KEYS is not valid JSON');
+    }
+  }
+
+  return [...keys];
 }
 
 async function fetchSource(source: SourceRow, now: number, force: boolean): Promise<FetchedSource> {
@@ -122,18 +169,35 @@ Deno.serve(async (request: Request) => {
 
   const url = Deno.env.get('SUPABASE_URL');
   const serviceRoleKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY');
+  const newsSecret = Deno.env.get('NEWS_REFRESH_SECRET');
 
   if (!url || !serviceRoleKey) {
     return json({ error: 'Missing Supabase runtime credentials' }, 500);
+  }
+
+  if (!newsSecret) {
+    return json({ error: 'Missing NEWS_REFRESH_SECRET' }, 500);
+  }
+
+  const auth = authorizeNewsRefresh({
+    newsSecret,
+    cronHeader: request.headers.get('x-news-secret'),
+    apiKeyHeader: request.headers.get('apikey'),
+    authorizationHeader: request.headers.get('authorization'),
+    publicKeys: projectPublicKeys(),
+    serviceRoleKey,
+  });
+
+  if (!auth.authorized) {
+    return json({ error: 'Unauthorized' }, 401);
   }
 
   const supabase = createClient(url, serviceRoleKey, {
     auth: { persistSession: false, autoRefreshToken: false },
   });
 
-  // Only the service role may bypass the throttle; the app always goes through it.
-  const authorization = request.headers.get('authorization') ?? '';
-  const force = authorization === `Bearer ${serviceRoleKey}`;
+  // Only the service role bypasses the publisher throttle; app and cron obey it.
+  const force = auth.caller === 'service';
 
   const { data: sources, error: sourcesError } = await supabase
     .from('news_sources')
@@ -150,8 +214,8 @@ Deno.serve(async (request: Request) => {
     ((sources ?? []) as SourceRow[]).map((source) => fetchSource(source, now, force))
   );
 
-  // Marca's front page and its LaLiga section repeat the same story: dedupe
-  // across sources, keeping the highest-priority one (they arrive sorted).
+  // Several outlets report the same story: dedupe across sources, keeping the
+  // highest-priority one (they arrive sorted from the database).
   const items = dedupeAcrossSources(fetched.flatMap((result) => result.items));
 
   let upsertError: string | null = null;

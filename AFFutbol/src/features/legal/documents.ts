@@ -31,7 +31,7 @@ export type LegalDocument = {
   blocks: LegalBlock[];
 };
 
-export const LEGAL_LAST_UPDATED = '20 de noviembre de 2026 · revisión 4';
+export const LEGAL_LAST_UPDATED = '20 de noviembre de 2026 · revisión 5';
 
 /** Must exist before submitting: see `<repo>/docs/publicacion/legales.md`. */
 export const LEGAL_CONTACT_EMAIL = 'alejandrofdezfr9@gmail.com';
@@ -410,12 +410,13 @@ const FUENTES: LegalDocument = {
     },
     {
       kind: 'paragraph',
-      text: 'Los titulares, extractos e imágenes de actualidad proceden de los canales públicos (RSS) de Marca, Mundo Deportivo y Relevo. AFFutbol muestra un extracto y enlaza siempre al artículo original; nunca reproduce el texto completo. Los derechos pertenecen a cada medio.',
+      text: 'Los titulares, extractos e imágenes de actualidad proceden de los canales públicos (RSS) de Marca, Mundo Deportivo, Relevo, 20minutos, La Vanguardia y ESPN. AFFutbol muestra un extracto y enlaza siempre al artículo original; nunca reproduce el texto completo. Los derechos pertenecen a cada medio.',
     },
     {
       kind: 'bullets',
       items: [
         'Si un medio cambia o retira su canal, sus noticias dejan de aparecer.',
+        'Los canales se consultan automáticamente cada 30 minutos, con un límite de una consulta por fuente cada 10 minutos.',
         'Las noticias se conservan como máximo 14 días y se eliminan antes si el medio lo solicita.',
         'Las imágenes se enlazan desde el servidor del medio; no se copian a nuestros servidores.',
       ],

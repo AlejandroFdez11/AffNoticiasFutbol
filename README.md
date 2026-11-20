@@ -91,7 +91,7 @@ Escanea el QR con Expo Go o pulsa `i` / `a` para abrir un simulador.
 - El listado de partidos se filtra en el dispositivo con una lista blanca de competiciones (`src/features/matches/league-filter.ts`): 5 grandes ligas y sus segundas divisiones, copas nacionales, copas europeas, Brasil, Argentina, Libertadores y selecciones. Este filtro no gasta peticiones adicionales.
 - El plan Free incluye **100 peticiones al día**, así que el listado se cachea 5 minutos y el refresco es manual (tirar de la lista o el botón de actualizar). No hay polling automático.
 - Un día completo de partidos se obtiene con **una sola petición**; el detalle consume como máximo 4 (una por pestaña visitada).
-- **Noticias y rumores:** se leen de la tabla `news_items` de Supabase, que rellena la Edge Function `news-refresh` a partir de feeds RSS de medios españoles. La app solo muestra titular, extracto y enlace al medio original; nunca reproduce el artículo completo. Sin Supabase configurado se usa el contenido de muestra local.
+- **Noticias y rumores:** se leen de la tabla `news_items` de Supabase, que rellena la Edge Function `news-refresh` a partir de feeds RSS de medios en español. Un cron actualiza el feed cada 30 minutos, así que no hace falta abrir la app para que aparezcan titulares nuevos. La app solo muestra titular, extracto y enlace al medio original; nunca reproduce el artículo completo. Sin Supabase configurado se usa el contenido de muestra local.
 - **Predicciones y rankings:** las predicciones, sus puntos y las ligas privadas viven en Supabase. Los puntos los calcula el servidor al terminar el partido (la Edge Function `settle-predictions`); el cliente nunca puede escribirlos. Los rankings son agregados calculados en SQL y no gastan cuota de API-Football.
 - **Notificaciones:** los recordatorios leen la caché de partidos de Supabase (2 peticiones a API-Football al día), los resultados salen de las predicciones ya liquidadas y los avisos de ranking de agregados SQL. Enviar notificaciones no gasta cuota adicional.
 - **Estadísticas:** reales y gratis para siempre. La clasificación (puntos, diferencia de goles, forma y escudos) sale de football-data.org y los goleadores de la Wikipedia inglesa; ambas fuentes son gratuitas y sin límite diario. Las descarga la Edge Function `sync-statistics` dos veces al día y la app solo lee la tabla `statistics_snapshots` de Supabase, así que el móvil no gasta peticiones. Si Supabase no está configurado o la tabla aún no existe, la app muestra el contenido de muestra local (`src/features/statistics/data.ts`) etiquetado como «Datos de muestra». La fuente gratuita solo publica **goles**, no asistencias ni partidos jugados: cuando faltan, la columna de asistencias se oculta en vez de rellenarse con ceros.
@@ -105,9 +105,14 @@ Escanea el QR con Expo Go o pulsa `i` / `a` para abrir un simulador.
 | Marca | `mercado-fichajes.xml` | Rumores de fichajes |
 | Mundo Deportivo | `rss/futbol` | Noticias |
 | Relevo | `rss` | Noticias |
+| 20minutos | `rss/deportes/futbol/` | Noticias |
+| La Vanguardia | `rss/deportes/futbol.xml` | Noticias |
+| ESPN | `espn/rss/soccer/news` | Noticias internacionales |
 
 - Los feeds viven en la tabla `news_sources`, no en el código: desactivar uno que se rompa es un `UPDATE`, sin desplegar nada.
-- `supabase/functions/news-refresh` descarga y normaliza los feeds, deduplica entre medios y hace upsert en `news_items`. Se despliega con `npx supabase functions deploy news-refresh` y aplica un throttle de 10 minutos por fuente (los medios no son nuestra CDN).
+- `supabase/functions/news-refresh` descarga y normaliza los feeds, deduplica entre medios y hace upsert en `news_items`. Aplica un throttle de 10 minutos por fuente (los medios no son nuestra CDN), así que ni el cron ni los refrescos manuales pueden saturarlos.
+- **Actualización automática:** el job `news-refresh` (migración `20261120000100_news_cron.sql`) llama a la función cada 30 minutos con el secreto compartido `news_secret` de Vault. La app sigue pudiendo pedir un refresco manual con su clave pública. Si se cambia el secreto, deben coincidir el secreto de la función `NEWS_REFRESH_SECRET` y el de Vault.
+- Despliegue: `npx supabase secrets set NEWS_REFRESH_SECRET=<secreto>`, guardar el mismo valor en Vault como `news_secret`, `npx supabase db push` y `npx supabase functions deploy news-refresh --no-verify-jwt` (la función valida ella sola la clave pública de la app y el secreto del cron).
 - La normalización está en `supabase/functions/_shared/normalize.ts`: funciones puras, sin APIs de Deno, cubiertas por Jest. Los rumores salen de heurísticas sobre el titular (club, jugador, importe y estado); cuando algo no se puede deducir, el campo queda vacío en vez de inventarse.
 - Solo se guardan titular, extracto e imagen con enlace al medio original. El cuerpo del artículo no se reproduce.
 - Retención de 14 días en `news_items`. La app lee como máximo 60 piezas.

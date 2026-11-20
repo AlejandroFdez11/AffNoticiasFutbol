@@ -10,9 +10,12 @@ La app publica una versión resumida de este documento en `/legal/fuentes` (fuen
 | Marca | Feeds `portada.xml`, `primera-division.xml`, `futbol-internacional.xml`, `mercado-fichajes.xml` | Solo titular, extracto, imagen enlazada y enlace al medio; 14 días de retención | Ver revisión más abajo. |
 | Mundo Deportivo | Feed `rss/futbol` | Igual que Marca | Ver revisión más abajo. |
 | Relevo | Feed `rss` | Igual que Marca | Ver revisión más abajo. |
+| 20minutos | Feed `rss/deportes/futbol/` | Igual que Marca | Ver revisión más abajo. |
+| La Vanguardia | Feed `rss/deportes/futbol.xml` | Igual que Marca | Ver revisión más abajo. |
+| ESPN | Feed `espn/rss/soccer/news` (español, cobertura internacional) | Igual que Marca | Ver revisión más abajo. |
 | Clubes, ligas, federaciones | Escudos y nombres de equipos | Identificación de equipos en partidos, clasificaciones y pronósticos | Marcas de sus titulares. Aviso de no afiliación en `/legal/fuentes`, en Condiciones y en la descripción de la tienda. |
 
-## Revisión pendiente de los RSS (Marca / Mundo Deportivo / Relevo)
+## Revisión pendiente de los RSS (Marca / Mundo Deportivo / Relevo / 20minutos / La Vanguardia / ESPN)
 
 Antes de publicar, revisar **las condiciones de uso y la política de derechos de cada medio** (o pedir autorización por escrito). Puntos a verificar:
 
@@ -20,7 +23,7 @@ Antes de publicar, revisar **las condiciones de uso y la política de derechos d
 - [ ] La imagen se está **enlazando en caliente** desde el CDN del medio (`image_url` viene del feed y `expo-image` la carga por URL). Algunos medios lo prohíben. Alternativas: no mostrar imagen, usar una imagen propia con licencia o pedir permiso.
 - [ ] El extracto no supera lo que el feed publica y nunca se reproduce el cuerpo del artículo (ya es así en `supabase/functions/_shared/normalize.ts`).
 - [ ] Existe un procedimiento de retirada rápida: correo `alejandrofdezfr9@gmail.com` + desactivar la fuente con un `UPDATE news_sources SET enabled = false WHERE id = ...` (no hace falta desplegar).
-- [ ] Se respeta `robots.txt`, el throttling de 10 minutos por fuente y un `User-Agent` identificativo (ya configurado).
+- [ ] Se respeta `robots.txt`, el throttling de 10 minutos por fuente, la cadencia del cron (30 minutos) y un `User-Agent` identificativo (ya configurado).
 - [ ] La retención de 14 días y el límite de 60 piezas siguen siendo aceptables.
 - [ ] Si algún medio se opone, quitar su feed y sus noticias antes de la fecha de envío a revisión.
 

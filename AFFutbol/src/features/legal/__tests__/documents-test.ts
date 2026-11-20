@@ -47,6 +47,11 @@ describe('legal documents', () => {
     expect(text).toContain('football-data.org');
     expect(text).toContain('Wikipedia');
     expect(text).toContain('Marca');
+    expect(text).toContain('Mundo Deportivo');
+    expect(text).toContain('Relevo');
+    expect(text).toContain('20minutos');
+    expect(text).toContain('La Vanguardia');
+    expect(text).toContain('ESPN');
   });
 
   it('states the scoring rules used by the backend', () => {

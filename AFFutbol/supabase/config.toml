@@ -388,9 +388,10 @@ deno_version = 2
 # secret_key = "env(SECRET_VALUE)"
 
 # Cron-triggered functions authenticate with a shared secret header
-# (`x-settle-secret`, `x-notify-secret`, `x-statistics-secret`) instead of a
-# Supabase JWT, so the gateway must not require one. Deploy them with the same
-# flag:
+# (`x-settle-secret`, `x-notify-secret`, `x-statistics-secret`, `x-news-secret`)
+# instead of a Supabase JWT, so the gateway must not require one. `news-refresh`
+# also serves the app, which sends the project's public key: both are checked
+# inside that function. Deploy them with the same flag:
 #   npx supabase functions deploy <name> --no-verify-jwt
 [functions.settle-predictions]
 verify_jwt = false
@@ -399,6 +400,11 @@ verify_jwt = false
 verify_jwt = false
 
 [functions.sync-statistics]
+verify_jwt = false
+
+# The app calls news-refresh with its public key and pg_cron with x-news-secret;
+# the function validates both itself.
+[functions.news-refresh]
 verify_jwt = false
 
 # The app calls this proxy with its public anon key, so JWT verification stays

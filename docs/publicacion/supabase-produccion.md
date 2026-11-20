@@ -22,12 +22,12 @@ El plan **Free sirve para desarrollo, no para una app publicada**:
 | --- | --- | --- |
 | `api-football` | `npx supabase functions deploy api-football` | JWT del usuario (verify_jwt = true) |
 | `delete-account` | `npx supabase functions deploy delete-account` | JWT del usuario (verify_jwt = true) |
-| `news-refresh` | `npx supabase functions deploy news-refresh` | JWT / service role |
+| `news-refresh` | `npx supabase functions deploy news-refresh --no-verify-jwt` | Clave pública de la app / `x-news-secret` del cron |
 | `settle-predictions` | `npx supabase functions deploy settle-predictions --no-verify-jwt` | `x-settle-secret` |
 | `send-push` | `npx supabase functions deploy send-push --no-verify-jwt` | `x-notify-secret` |
 | `sync-statistics` | `npx supabase functions deploy sync-statistics --no-verify-jwt` | `x-statistics-secret` |
 
-Secretos de servidor (nunca `EXPO_PUBLIC_*`): `API_FOOTBALL_KEY`, `FOOTBALL_DATA_TOKEN`, `WIKI_USER_AGENT`, `PREDICTIONS_SETTLE_SECRET`, `PUSH_NOTIFY_SECRET`, `STATISTICS_SYNC_SECRET`, más los valores espejo de Supabase Vault (`settle_secret`, `notify_secret`, `statistics_secret`).
+Secretos de servidor (nunca `EXPO_PUBLIC_*`): `API_FOOTBALL_KEY`, `FOOTBALL_DATA_TOKEN`, `WIKI_USER_AGENT`, `NEWS_REFRESH_SECRET`, `PREDICTIONS_SETTLE_SECRET`, `PUSH_NOTIFY_SECRET`, `STATISTICS_SYNC_SECRET`, más los valores espejo de Supabase Vault (`news_secret`, `settle_secret`, `notify_secret`, `statistics_secret`).
 
 Variables públicas obligatorias en el entorno `production` de EAS: `EXPO_PUBLIC_SUPABASE_URL`, `EXPO_PUBLIC_SUPABASE_ANON_KEY`, `EXPO_PUBLIC_API_FOOTBALL_PROXY_URL` y `EXPO_PUBLIC_EAS_PROJECT_ID`. Comprobarlas con `npx eas-cli env:list --environment production` antes de cada build de release.
 
