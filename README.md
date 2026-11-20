@@ -12,6 +12,7 @@
   - 🌍 **Ranking mundial** entre todos los usuarios con pronósticos, con tu posición destacada.
   - 👥 **Ligas privadas** para competir con colegas o compañeros del curro: crea una liga, comparte su código de invitación de 6 caracteres y consulta la tabla de miembros.
 - **Notificaciones push:** recordatorio una hora antes de los partidos de tu equipo favorito, resultado de tus pronósticos cuando se liquidan y aviso cuando cambia tu posición en el ranking mundial o en una liga privada. Se pueden desactivar por tipo desde Perfil.
+- **Varios perfiles por cuenta:** al abrir la app eliges quién está viendo, con hasta 3 perfiles (nombre, avatar vectorial, color y equipo favorito propio), como en Netflix móvil. El equipo se elige en un desplegable agrupado por ligas y es independiente para cada perfil. Si no hay sesión, el selector ofrece iniciar sesión o registrarse y también permite explorar sin cuenta. Puntos, pronósticos y ligas siguen siendo de la cuenta.
 - **Tu cuenta, bajo tu control:** perfil editable y borrado permanente de la cuenta desde Perfil → Eliminar cuenta (requiere escribir `ELIMINAR`). Los datos se eliminan en cascada en el servidor.
 - **Legal integrado:** política de privacidad, condiciones de uso y fuentes de datos accesibles desde el registro y Perfil, con las mismas URL pública en la versión web.
 

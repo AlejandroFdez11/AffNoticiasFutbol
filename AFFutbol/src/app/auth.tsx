@@ -65,11 +65,11 @@ export default function AuthScreen() {
       return;
     }
 
-    router.replace('/profile');
+    router.replace('/select-profile');
   };
 
   const afterAuth = () => {
-    router.replace('/profile');
+    router.replace('/select-profile');
   };
 
   const switchMode = (nextMode: Mode) => {
@@ -185,7 +185,7 @@ export default function AuthScreen() {
           ]}>
           <ThemedText type="smallBold">Ya has iniciado sesión</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Puedes gestionar tu perfil, tu equipo favorito y tus puntos desde la pestaña Perfil.
+            Puedes elegir tu perfil y consultar tus puntos desde el selector de perfiles o la pestaña Perfil.
           </ThemedText>
           <Button label="Ir a mi perfil" onPress={afterAuth} />
         </View>

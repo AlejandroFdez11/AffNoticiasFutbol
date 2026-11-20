@@ -60,7 +60,7 @@ export default function AuthCallbackScreen() {
           return;
         }
 
-        router.replace('/profile');
+        router.replace('/select-profile');
       })
       .catch((authError: unknown) => {
         setAsyncError(describeAuthError(authError));

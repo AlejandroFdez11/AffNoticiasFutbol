@@ -5,6 +5,12 @@ export type TeamOption = {
   country: string;
 };
 
+export type TeamGroup = {
+  league: string;
+  country: string;
+  teams: TeamOption[];
+};
+
 /**
  * Curated club list used by the favourite-team picker. It is local data so it
  * costs no API-Football requests on the Free plan. IDs match API-Football, and
@@ -81,4 +87,22 @@ export function filterTeams(query: string): TeamOption[] {
       team.league.toLowerCase().includes(normalized) ||
       team.country.toLowerCase().includes(normalized)
   );
+}
+
+/** Groups the curated clubs by league, keeping the curated order of both. */
+export function groupTeamsByLeague(teams: readonly TeamOption[]): TeamGroup[] {
+  const groups: TeamGroup[] = [];
+
+  for (const team of teams) {
+    let group = groups.find((item) => item.league === team.league);
+
+    if (!group) {
+      group = { league: team.league, country: team.country, teams: [] };
+      groups.push(group);
+    }
+
+    group.teams.push(team);
+  }
+
+  return groups;
 }

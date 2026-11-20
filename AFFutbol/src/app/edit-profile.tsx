@@ -8,16 +8,17 @@ import { IconButton } from '@/components/icon-button';
 import { Screen } from '@/components/screen';
 import { ScreenHeader } from '@/components/screen-header';
 import { LoadingState } from '@/components/state-card';
+import { TeamBadge } from '@/components/team-badge';
 import { TextField } from '@/components/text-field';
 import { ThemedText } from '@/components/themed-text';
 import { Radii, Spacing } from '@/constants/theme';
 import { useTheme } from '@/hooks/use-theme';
 
 import { describeAuthError, useAuth } from '@/features/auth/auth-context';
-import { TeamPicker } from '@/features/profile/components/team-picker';
 import { getProfileDisplayName } from '@/features/profile/format';
-import { findTeamOption, getTeamLogoUrl, type TeamOption } from '@/features/profile/teams';
+import { findTeamOption, getTeamLogoUrl } from '@/features/profile/teams';
 import { getProfileInitials } from '@/features/profile/types';
+import { useActiveProfile } from '@/features/profile/use-account-profiles';
 import {
   hasProfileFormErrors,
   normalizeUsername,
@@ -29,11 +30,11 @@ export default function EditProfileScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { status, user, profile, profileError, updateProfile } = useAuth();
+  const activeProfile = useActiveProfile();
 
   const initialized = useRef(false);
   const [displayName, setDisplayName] = useState('');
   const [username, setUsername] = useState('');
-  const [selectedTeamId, setSelectedTeamId] = useState<number | null>(null);
   const [errors, setErrors] = useState<ProfileFormErrors>({});
   const [error, setError] = useState<string | null>(null);
   const [busy, setBusy] = useState(false);
@@ -46,7 +47,6 @@ export default function EditProfileScreen() {
     initialized.current = true;
     setDisplayName(profile?.displayName ?? getProfileDisplayName(profile, user));
     setUsername(profile?.username ?? '');
-    setSelectedTeamId(profile?.favoriteTeamId ?? null);
   }, [profile, profileError, user]);
 
   const close = () => {
@@ -58,10 +58,6 @@ export default function EditProfileScreen() {
     router.replace('/profile');
   };
 
-  const handleSelectTeam = (team: TeamOption) => {
-    setSelectedTeamId((current) => (current === team.id ? null : team.id));
-  };
-
   const handleSave = async () => {
     const nextErrors = validateProfileForm(displayName, username);
     setErrors(nextErrors);
@@ -70,9 +66,6 @@ export default function EditProfileScreen() {
       return;
     }
 
-    const team = findTeamOption(selectedTeamId);
-    const keepsExistingTeam = selectedTeamId === (profile?.favoriteTeamId ?? null);
-
     setBusy(true);
     setError(null);
 
@@ -80,9 +73,6 @@ export default function EditProfileScreen() {
       await updateProfile({
         displayName: displayName.trim() || null,
         username: normalizeUsername(username) || null,
-        favoriteTeamId: selectedTeamId,
-        favoriteTeamName: team?.name ?? (keepsExistingTeam ? profile?.favoriteTeamName ?? null : null),
-        favoriteTeamLogo: team ? getTeamLogoUrl(team.id) : keepsExistingTeam ? profile?.favoriteTeamLogo ?? null : null,
       });
       close();
     } catch (saveError) {
@@ -91,6 +81,9 @@ export default function EditProfileScreen() {
       setBusy(false);
     }
   };
+
+  const activeTeamId = activeProfile.profile?.favoriteTeamId ?? null;
+  const activeTeam = findTeamOption(activeTeamId);
 
   if (status !== 'authenticated' || !user) {
     return (
@@ -183,11 +176,33 @@ export default function EditProfileScreen() {
         <View style={styles.sectionHeader}>
           <ThemedText type="smallBold">Equipo favorito</ThemedText>
           <ThemedText type="small" themeColor="textSecondary">
-            Puedes cambiarlo cuando quieras.
+            Cada perfil tiene el suyo. Cambia el del perfil activo desde el selector.
           </ThemedText>
         </View>
 
-        <TeamPicker selectedTeamId={selectedTeamId} onSelect={handleSelectTeam} />
+        <View style={styles.identity}>
+          <TeamBadge
+            name={activeProfile.profile?.favoriteTeamName ?? activeTeam?.name ?? 'AFF'}
+            logo={
+              activeProfile.profile?.favoriteTeamLogo ??
+              (activeTeam ? getTeamLogoUrl(activeTeam.id) : undefined)
+            }
+            size={32}
+          />
+          <ThemedText type="smallBold" style={styles.email} numberOfLines={1}>
+            {activeProfile.profile?.favoriteTeamName ?? 'Sin equipo'}
+          </ThemedText>
+        </View>
+        <Button
+          label="Cambiar equipo del perfil"
+          variant="secondary"
+          onPress={() =>
+            router.push({
+              pathname: '/select-profile',
+              params: { edit: activeProfile.profile?.id ?? 'active' },
+            })
+          }
+        />
 
         {profileError ? (
           <ThemedText type="small" style={{ color: theme.warning }}>

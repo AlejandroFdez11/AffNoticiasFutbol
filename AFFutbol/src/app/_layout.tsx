@@ -5,6 +5,7 @@ import { StatusBar } from 'expo-status-bar';
 import { useColorScheme } from 'react-native';
 
 import { AnimatedSplashOverlay } from '@/components/animated-splash';
+import { StartupGate } from '@/components/startup-gate';
 import { NavigationDarkTheme, NavigationLightTheme } from '@/constants/navigation-theme';
 import { AuthProvider } from '@/features/auth/auth-context';
 import { NotificationBridge } from '@/features/notifications/notification-bridge';
@@ -23,8 +24,10 @@ export default function RootLayout() {
           <StatusBar style={isDark ? 'light' : 'dark'} />
           <AnimatedSplashOverlay />
           <NotificationBridge />
+          <StartupGate />
           <Stack screenOptions={{ headerShown: false }}>
             <Stack.Screen name="(tabs)" />
+            <Stack.Screen name="select-profile" options={{ presentation: 'fullScreenModal' }} />
             <Stack.Screen name="match/[id]" />
             <Stack.Screen name="article/[id]" />
             <Stack.Screen name="statistics" />

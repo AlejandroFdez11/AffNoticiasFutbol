@@ -26,14 +26,17 @@ import { ScoringRulesCard } from '@/features/predictions/components/scoring-rule
 import { isPredictionOpen } from '@/features/predictions/fixtures';
 import type { PredictionInput } from '@/features/predictions/types';
 import { findTeamOption } from '@/features/profile/teams';
+import { useActiveProfile } from '@/features/profile/use-account-profiles';
 
 export default function PredictionsScreen() {
   const theme = useTheme();
   const router = useRouter();
   const { status, isConfigured, profile, profileError } = useAuth();
+  const activeProfile = useActiveProfile();
 
   const predictionsQuery = usePredictionSummary();
-  const favouriteTeamId = profile?.favoriteTeamId ?? null;
+  const favouriteTeamId =
+    activeProfile.profile?.favoriteTeamId ?? profile?.favoriteTeamId ?? null;
   const upcomingQuery = useUpcomingTeamFixtures(favouriteTeamId);
   const saveMutation = useSavePrediction();
   const [actionError, setActionError] = useState<string | null>(null);
@@ -43,7 +46,10 @@ export default function PredictionsScreen() {
   const history = predictions.filter((item) => !isPredictionOpen(item.kickoffAt));
 
   const teamName =
-    profile?.favoriteTeamName ?? findTeamOption(favouriteTeamId)?.name ?? null;
+    activeProfile.profile?.favoriteTeamName ??
+    profile?.favoriteTeamName ??
+    findTeamOption(favouriteTeamId)?.name ??
+    null;
 
   const handleSave = (input: PredictionInput) => {
     setActionError(null);

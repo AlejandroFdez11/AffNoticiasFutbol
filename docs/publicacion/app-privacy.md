@@ -7,6 +7,7 @@ Esta tabla describe **lo que la app hace hoy**. Cópiala a los cuestionarios de 
 | Correo electrónico | Contact Info → Email Address | Sí (registro) | Sí | No | Identificar la cuenta, recuperar acceso | Hasta borrar la cuenta |
 | Nombre visible y nombre de usuario | Contact Info → Name | Sí (opcional) | Sí | No | Mostrar el perfil y los rankings | Hasta borrar la cuenta |
 | Equipo favorito, foto de perfil de OAuth | User Content → Other User Content | Sí (opcional) | Sí | No | Personalizar partidos, pronósticos y avisos | Hasta borrar la cuenta |
+| Nombre, avatar, color y equipo favorito de cada perfil de la app (máx. 3 por cuenta) | User Content → Other User Content | Sí | Sí | No | Elegir quién está viendo la app; cada perfil tiene su propio equipo y el perfil activo se guarda solo en el dispositivo | Hasta borrar el perfil o la cuenta |
 | Pronósticos, puntos e historial | User Content → Other User Content | Sí | Sí | No | Mecánica del juego y rankings | Hasta borrar la cuenta |
 | Nombre de liga, rol y pertenencia | User Content → Other User Content | Sí (si usas ligas) | Sí | No | Ligas privadas | Hasta borrar la cuenta (las ligas propias desaparecen) |
 | ID interno de Supabase | Identifiers → User ID | Sí | Sí | No | Asociar tus datos y aplicar permisos (RLS) | Hasta borrar la cuenta |
@@ -35,5 +36,5 @@ Esta tabla describe **lo que la app hace hoy**. Cópiala a los cuestionarios de 
 ## Verificación rápida antes de enviar
 
 1. Abrir Perfil en un build de producción y comprobar que aparecen **Eliminar cuenta** y **Legal**.
-2. Completar el borrado con la cuenta de demostración y verificar en Supabase que desaparecen `auth.users`, `profiles`, `predictions`, `leagues`, `league_members`, `push_tokens`, `notification_preferences`, `push_deliveries` y `ranking_state`.
+2. Completar el borrado con la cuenta de demostración y verificar en Supabase que desaparecen `auth.users`, `profiles`, `account_profiles`, `predictions`, `leagues`, `league_members`, `push_tokens`, `notification_preferences`, `push_deliveries` y `ranking_state`.
 3. Comprobar que la política pública indicada en la ficha coincide con el texto de la app (ambos salen de `documents.ts`).

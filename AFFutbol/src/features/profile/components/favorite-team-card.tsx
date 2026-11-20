@@ -13,10 +13,17 @@ type FavoriteTeamCardProps = {
   team: TeamOption | null;
   teamName?: string | null;
   teamLogo?: string | null;
+  description?: string;
   onPress: () => void;
 };
 
-export function FavoriteTeamCard({ team, teamName, teamLogo, onPress }: FavoriteTeamCardProps) {
+export function FavoriteTeamCard({
+  team,
+  teamName,
+  teamLogo,
+  description = 'Personaliza tu experiencia',
+  onPress,
+}: FavoriteTeamCardProps) {
   const theme = useTheme();
   const name = team?.name ?? teamName ?? null;
   const logo = team ? `https://media.api-sports.io/football/teams/${team.id}.png` : teamLogo;
@@ -30,7 +37,7 @@ export function FavoriteTeamCard({ team, teamName, teamLogo, onPress }: Favorite
       <View style={styles.header}>
         <ThemedText type="smallBold">Equipo favorito</ThemedText>
         <ThemedText type="small" themeColor="textSecondary">
-          Personaliza tu experiencia
+          {description}
         </ThemedText>
       </View>
 

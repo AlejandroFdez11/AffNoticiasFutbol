@@ -31,7 +31,7 @@ export type LegalDocument = {
   blocks: LegalBlock[];
 };
 
-export const LEGAL_LAST_UPDATED = '17 de noviembre de 2026 · revisión 2';
+export const LEGAL_LAST_UPDATED = '20 de noviembre de 2026 · revisión 4';
 
 /** Must exist before submitting: see `<repo>/docs/publicacion/legales.md`. */
 export const LEGAL_CONTACT_EMAIL = 'alejandrofdezfr9@gmail.com';
@@ -79,6 +79,7 @@ const PRIVACIDAD: LegalDocument = {
       kind: 'bullets',
       items: [
         'Cuenta: dirección de correo electrónico, contraseña (guardada como hash por Supabase Auth, nunca en claro), nombre visible, nombre de usuario, equipo favorito y, si entras con Google o Apple, la URL pública de tu foto de perfil.',
+        'Perfiles de la app: puedes crear hasta tres identidades visuales por cuenta con nombre, avatar, color y equipo favorito. Cada perfil guarda su propio equipo favorito: cambiar el de uno no afecta a los demás. El perfil activo se guarda solo en tu dispositivo. Tus puntos, pronósticos y ligas siguen perteneciendo a la cuenta, no a cada perfil.',
         'Pronósticos: partido, marcador pronosticado, puntos obtenidos y fecha de liquidación.',
         'Ligas privadas: nombre de la liga, código de invitación y tu papel en ella (propietario o miembro).',
         'Rankings: posición y puntos calculados a partir de tus pronósticos.',
