@@ -1,8 +1,10 @@
-# Envío a Google Play (testing interno)
+# Envío a Google Play (en espera)
 
-La app ya existe en Google Play Console con el package `com.alejandroff.affutbol`. La build de producción de Android está terminada y `eas.json` tiene `submit.production.android.track = "internal"`, así que el envío va al carril **Internal testing**.
+> **Estado 23/11/2026:** el titular ha decidido **no pagar el registro de Google Play Console**, así que no se enviará a Play. Este documento se conserva como referencia para el día que se reactive. La distribución actual es **interna con EAS** (APK), descrita en [`verificacion-y-pulido.md`](verificacion-y-pulido.md).
 
-## Build actual
+La app está dada de alta en Google Play Console con el package `com.alejandroff.affutbol` y `eas.json` conserva `submit.production.android.track = "internal"` para el futuro. La build AAB de producción está terminada, pero **no se ha enviado**.
+
+## Build AAB de producción (no enviada)
 
 - ID: `438dfa99-2bb0-4bce-9e2f-e84359d09a75`
 - Perfil: `production`

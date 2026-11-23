@@ -27,7 +27,7 @@
 | Fase 4 — Predicciones | ✅ Completada |
 | Fase 5 — Rankings y ligas privadas | ✅ Completada |
 | Fase 6 — Notificaciones push | ✅ Completada |
-| Fase 7 — Pulido y publicación | ⏳ Pendiente (código listo; faltan pasos en consolas y arte final) |
+| Fase 7 — Pulido y publicación | ⏳ En curso (distribución interna con EAS; tiendas en espera) |
 
 ## 🛠️ Stack tecnológico
 
@@ -194,7 +194,7 @@ Apple exige el borrado de cuenta dentro de la app (guía 5.1.1(v)) y una URL pú
   ```bash
   npx supabase functions deploy delete-account
   ```
-- **Textos legales:** una única fuente en `AFFutbol/src/features/legal/documents.ts`, renderizada por `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes` tanto en la app como en la web. Las URL públicas temporales son `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/<documento>` y se generan con `scripts/generate-legal-pages.ts`. Los datos declarados en Google Play están en `docs/publicacion/app-privacy.md`.
+- **Textos legales:** una única fuente en `AFFutbol/src/features/legal/documents.ts`, renderizada por `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes` tanto en la app como en la web. Las URL públicas temporales son `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/<documento>` y se generan con `scripts/generate-legal-pages.ts`. Los datos que se declararían en Google Play si se reactivara su envío están en `docs/publicacion/app-privacy.md`.
 - La licencia del repositorio es **propietaria** (`LICENSE`). La atribución de fuentes vive en `/legal/fuentes` y en `docs/publicacion/atribucion-fuentes.md`.
 
 El resto de la documentación de lanzamiento (ítems 8–13) está en [`docs/publicacion/checklist-tiendas.md`](docs/publicacion/checklist-tiendas.md).
@@ -244,17 +244,17 @@ AFFutbol/
 
 ## 🚀 Publicación (Fase 7)
 
-El código ya está preparado; lo que queda son acciones en las consolas de Supabase, EAS y las tiendas.
+El código ya está preparado; la distribución es **interna con EAS** (APK). No se paga el registro de Google Play Console, así que las tiendas quedan en espera y lo que queda son acciones en Supabase y EAS.
 
 ### Ya resuelto en el repositorio
 
-- **Variables de build:** `eas.json` declara `environment` y `channel` en los tres perfiles, así que las builds leen las environment variables de EAS (`production`, `preview`, `development`) y las OTA tienen canal. La configuración no se commitea.
+- **Variables de build:** `eas.json` declara `environment` y `channel` en los perfiles `development`, `preview`, `production` e `internal`, así que las builds leen las environment variables de EAS y las OTA tienen canal. El perfil `internal` usa el entorno `production` y genera APK para distribución interna. La configuración no se commitea.
 - **Clave de API-Football fuera del bundle:** la app llama a la Edge Function `api-football` (`EXPO_PUBLIC_API_FOOTBALL_PROXY_URL`) y la clave vive en el secreto `API_FOOTBALL_KEY`. La función solo acepta los endpoints y parámetros que usa la app (`supabase/functions/_shared/api-football-proxy.ts`), así que no es un proxy abierto.
 - **Apple Sign In** solo se muestra en iOS, donde existe el módulo nativo; en Android y web se oculta en vez de ofrecer un flujo que falla.
 - **Borrado de cuenta (Apple 5.1.1(v)):** Perfil → Eliminar cuenta pide escribir `ELIMINAR`; la Edge Function `delete-account` verifica el JWT y borra la cuenta, el perfil, los pronósticos, las ligas y el token de notificaciones (cascada en todas las tablas de usuario). La función está desplegada y activa.
 - **Legales con URL pública:** `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes`, con una única fuente de texto (`src/features/legal/documents.ts`) para la app y la web, enlazados desde el acceso y Perfil.
 - **Licencia propietaria** (`LICENSE`) y atribución de API-Football, football-data.org, Wikipedia y los medios RSS.
-- **Declaración de privacidad** lista para copiar a App Store Connect y Google Play (`docs/publicacion/app-privacy.md`).
+- **Declaración de privacidad** documentada en `docs/publicacion/app-privacy.md` como referencia si algún día se abren tiendas (hoy no se envía a ninguna).
 
 ### Pendiente (acción manual)
 
@@ -276,7 +276,7 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 7. **Plan de Supabase:** se mantiene el plan Free (sin Pro, backups ni PITR) durante el testing interno; el proyecto se reactiva manualmente si se pausa por inactividad. Ver `docs/publicacion/supabase-produccion.md`.
 8. **Sitio web legal publicado** en GitHub Pages desde `develop:/docs` (revisión 6, verificada el 23/11/2026); el correo temporal confirmado es `alejandrofdezfr9@gmail.com`. Al registrar `affutbol.app` hay que cambiar `LEGAL_SITE_URL` y regenerar las páginas.
 9. **Verificar iconos y splash en la build instalada:** el arte propio ya está integrado; queda comprobarlo en Android real. Ver `docs/publicacion/iconos-y-splash.md`.
-10. **Ficha de tienda, capturas y cuenta demo:** ver `docs/publicacion/ficha-app-store.md`.
+10. **Cuenta demo y capturas de QA:** la cuenta ya está creada y verificada; ver `docs/publicacion/ficha-app-store.md`. La ficha de tienda no se usa porque no hay envío a Play.
 
 ### Documentación de lanzamiento
 
@@ -298,7 +298,7 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 - [x] **Fase 4:** sistema de predicciones
 - [x] **Fase 5:** ranking mundial y ligas privadas
 - [x] **Fase 6:** notificaciones push
-- [ ] **Fase 7:** publicación en App Store
+- [ ] **Fase 7:** distribución interna con EAS (tiendas en espera)
 
 ## 🎨 Branding
 
