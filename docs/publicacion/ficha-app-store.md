@@ -79,7 +79,16 @@ Guion sugerido (mismo orden en iPhone y iPad, sin recortes raros):
 
 ## Cuenta de demostración para el revisor
 
-Crear una cuenta específica para revisión y mantenerla activa hasta que se apruebe la app:
+Cuenta creada el 23/11/2026 y activa:
+
+- Correo: `demo@affutbol.app`
+- Nombre visible: «Demo AFF», usuario: `demo_aff`
+- Equipo favorito: Real Madrid (id 541, con partido en el caché del día siguiente)
+- Pronóstico de ejemplo: Real Madrid 2–1 PSV (24/11/2026, Champions League)
+- Liga privada: «Liga Demo», código de invitación `6RKBTQ`
+- La contraseña se entregó al titular fuera del repo; guardarla en el gestor de secretos, nunca en GitHub ni en el chat público.
+
+Checklist original para crear una cuenta específica y mantenerla activa hasta que se apruebe la app:
 
 1. Registro con `demo@<tu-dominio>` y contraseña larga guardada en el gestor de secretos del equipo (nunca en el repo ni en la ficha pública de GitHub).
 2. Editar el perfil: nombre visible «Demo AFF», nombre de usuario `demo_aff` y equipo favorito con partidos próximos (por ejemplo, Barcelona o Real Madrid).
