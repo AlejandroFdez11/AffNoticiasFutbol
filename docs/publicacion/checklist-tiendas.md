@@ -9,7 +9,7 @@ Estado del código en el repo y lo que queda como acción manual en consolas. La
 | 10. Iconos y splash definitivos | ✅ Hecho: arte propio «escudo + balón» integrado; másteres en `assets/brand/` y PNG exportados | Verificar icono adaptativo/temático y splash en una build real de Android; ver `iconos-y-splash.md` |
 | 11. Ficha de tienda y cuenta demo | ✅ Borrador listo: descripción, metadatos, guion de capturas, notas y plantilla de credenciales; página de soporte publicada | Crear la cuenta demo, hacer las capturas de Android y rellenar los campos de Play Console |
 | 12. Licencia y atribución | ✅ Hecho: `LICENSE` propietaria, pantalla `/legal/fuentes`, documento de revisión de RSS y marcas | Revisar los términos de Marca / Mundo Deportivo / Relevo / 20minutos / La Vanguardia / ESPN y el uso de imágenes en caliente; validación jurídica |
-| 13. Plan de Supabase | 📝 Requisitos documentados; API-Football Free decidido para testing interno | Pasar a Pro, SMTP propio, backups + PITR, spend cap, región; subir de plan de API-Football antes de abrir al público |
+| 13. Plan de Supabase | ✅ Decidido: mantener el plan Free; API-Football Free para testing interno | Sin Pro, backups ni PITR; SMTP propio y vigilancia de inactividad/cuota; subir de plan de API-Football antes de abrir al público |
 
 ## Orden recomendado
 
@@ -21,7 +21,7 @@ Estado del código en el repo y lo que queda como acción manual en consolas. La
    ```
    No hace falta una migración nueva: todas las tablas con datos de usuario ya tienen `on delete cascade` hacia `auth.users`.
 2. **Publicar el sitio web** con las tres rutas legales y verificar las URL sin sesión.
-3. **Pasar Supabase a Pro** y configurar SMTP/backups; es lo que evita la pausa por inactividad y permite recuperación.
+3. **No cambiar el plan de Supabase:** se mantiene Free; configurar SMTP propio y vigilar la pausa por inactividad (no hay copias automáticas ni PITR).
 4. **Sustituir iconos y splash**, limpiar caché (`npx expo start -c`) y generar builds.
 5. **Crear cuenta demo y capturas** (iPhone 6,9" + iPad 13" son obligatorias).
 6. **Rellenar la ficha** con `ficha-app-store.md` y `app-privacy.md`, pegar las notas de revisión y enviar.

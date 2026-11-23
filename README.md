@@ -273,7 +273,7 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 4. **Supabase → Authentication → URL Configuration:** quitar `exp://**` (era solo para Expo Go) y dejar `affutbol://**`.
 5. **SMTP propio** en Supabase para la confirmación de email y el reset de contraseña; el SMTP por defecto tiene límites de prueba.
 6. **Proveedores de login:** publicar el consent screen de Google (deja de estar en *Testing*) y configurar FCM en EAS para el push en Android.
-7. **Supabase Pro y backups:** el plan Free se pausa por inactividad y no tiene copias de seguridad; ver `docs/publicacion/supabase-produccion.md`.
+7. **Plan de Supabase:** se mantiene el plan Free (sin Pro, backups ni PITR) durante el testing interno; el proyecto se reactiva manualmente si se pausa por inactividad. Ver `docs/publicacion/supabase-produccion.md`.
 8. **Sitio web legal publicado** en GitHub Pages desde `develop:/docs`; el correo temporal confirmado es `alejandrofdezfr9@gmail.com`. Al registrar `affutbol.app` hay que cambiar `LEGAL_SITE_URL` y regenerar las páginas.
 9. **Verificar iconos y splash en la build instalada:** el arte propio ya está integrado; queda comprobarlo en Android real. Ver `docs/publicacion/iconos-y-splash.md`.
 10. **Ficha de tienda, capturas y cuenta demo:** ver `docs/publicacion/ficha-app-store.md`.

@@ -36,12 +36,12 @@ Si cambia cualquiera de estos valores, hay que actualizar `LEGAL_LAST_UPDATED` e
 - [ ] Publicar las tres rutas `/legal/*` y verificar que responden **sin iniciar sesión** y con HTTPS válido.
 - [x] Usar `alejandrofdezfr9@gmail.com` como correo temporal de privacidad y soporte (confirmado por el titular). Si cambia, editar `LEGAL_CONTACT_EMAIL` y `LEGAL_SUPPORT_EMAIL` en `documents.ts`, regenerar las páginas y actualizar la ficha de tienda.
 - [ ] Confirmar la región real de alojamiento del proyecto de Supabase y añadirla al apartado 4 de la política de privacidad (ahora dice «la región configurada en Supabase»).
-- [ ] Confirmar la retención real de las copias de seguridad: la política dice «rotación máxima de 7 días», que es lo que incluye Supabase Pro por defecto. Si se contrata PITR o se cambia la retención, actualizar el apartado 5.
+- [x] Sin Supabase Pro: la política ya no afirma que existan copias automáticas; el apartado 5 indica que el plan actual no las incluye. Si se contrata Pro/PITR en el futuro, actualizar el apartado 5 y volver a subir `LEGAL_LAST_UPDATED`.
 - [ ] Revisar los textos con un profesional jurídico. Son documentos de una app española (RGPD + LOPDGDD), no asesoramiento legal.
 - [ ] Rellenar Google Play Console → **Data safety** con `docs/publicacion/app-privacy.md`.
 - [ ] Marcar la casilla de «cumplimiento de la regla 5.1.1(v)»: la app incluye borrado de cuenta en Perfil → Eliminar cuenta y el correo alternativo está en la política.
 - [ ] Si se añade analítica, publicidad, compras o inicios de sesión nuevos, actualizar los documentos y la declaración de privacidad **antes** de publicar la versión.
-- [ ] `LEGAL_LAST_UPDATED` actualizado con la fecha de la última revisión.
+- [x] `LEGAL_LAST_UPDATED` actualizado a revisión 6 (23 de noviembre de 2026); volver a subirlo si la revisión jurídica cambia el texto.
 - [ ] Función `delete-account` desplegada y probada con una cuenta real de prueba.
 
 ## Baja de cuenta (requisito de la tienda)

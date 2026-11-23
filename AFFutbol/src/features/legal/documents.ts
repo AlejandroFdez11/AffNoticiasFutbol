@@ -31,7 +31,7 @@ export type LegalDocument = {
   blocks: LegalBlock[];
 };
 
-export const LEGAL_LAST_UPDATED = '20 de noviembre de 2026 · revisión 5';
+export const LEGAL_LAST_UPDATED = '23 de noviembre de 2026 · revisión 6';
 
 /** Must exist before submitting: see `<repo>/docs/publicacion/legales.md`. */
 export const LEGAL_CONTACT_EMAIL = 'alejandrofdezfr9@gmail.com';
@@ -139,7 +139,7 @@ const PRIVACIDAD: LegalDocument = {
         'Datos de la cuenta, pronósticos, ligas y rankings: mientras tu cuenta exista. Si la eliminas, se borran de inmediato (ver el apartado 6).',
         'Token de notificaciones: hasta que desactivas los avisos, cierras sesión o eliminas tu cuenta.',
         'Noticias y rumores: 14 días, aunque no contienen datos personales.',
-        'Copias de seguridad del proveedor: cifradas y con una rotación máxima de 7 días.',
+        'Copias de seguridad: el plan actual de Supabase no incluye copias automáticas; no conservamos copias de tus datos más allá del tiempo indicado en los apartados anteriores.',
       ],
     },
     {

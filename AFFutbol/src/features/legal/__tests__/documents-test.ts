@@ -36,6 +36,7 @@ describe('legal documents', () => {
 
     expect(text).toContain('Eliminar cuenta');
     expect(text).toContain('Copias de seguridad');
+    expect(text).toContain('no incluye copias automáticas');
     expect(text).toContain('AEPD');
     expect(text).toContain(LEGAL_CONTACT_EMAIL);
   });

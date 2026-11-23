@@ -1,5 +1,7 @@
 # Plan de Supabase para producción (ítem 13)
 
+> **Decisión actual (23/11/2026):** no se va a contratar Supabase Pro. El proyecto se mantiene en el plan **Free** durante el testing interno, así que no hay copias automáticas ni PITR y puede pausarse por inactividad. Los requisitos de este documento quedan como referencia futura, no como paso del lanzamiento actual. La política de privacidad ya no afirma que existan copias.
+
 El plan **Free sirve para desarrollo, no para una app publicada**:
 
 - Los proyectos gratuitos se **pausan tras un periodo de inactividad** y hay que reactivarlos a mano. Los cron de AFFutbol generan tráfico, pero no es razón para depender de ese comportamiento: si el proyecto se pausa, caen el login, las predicciones, los rankings y las notificaciones a la vez.
