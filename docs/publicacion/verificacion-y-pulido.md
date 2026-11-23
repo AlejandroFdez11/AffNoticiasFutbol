@@ -67,11 +67,11 @@ Requiere cuenta externa y DSN; no se ha tocado código.
 
 No se va a publicar la app web completa, pero **sí las URL legales y la descarga del APK**. La solución elegida es un sitio estático aparte, `AlejandroFdez11/AffNoticiasWeb`, desplegado en Netlify con HTTPS válido:
 
-- `https://affnoticiasweb.netlify.app/descargar`
-- `https://affnoticiasweb.netlify.app/legal/privacidad`
-- `https://affnoticiasweb.netlify.app/legal/terminos`
-- `https://affnoticiasweb.netlify.app/legal/fuentes`
-- `https://affnoticiasweb.netlify.app/soporte`
+- `https://fabulous-lokum-31a2e8.netlify.app/descargar`
+- `https://fabulous-lokum-31a2e8.netlify.app/legal/privacidad`
+- `https://fabulous-lokum-31a2e8.netlify.app/legal/terminos`
+- `https://fabulous-lokum-31a2e8.netlify.app/legal/fuentes`
+- `https://fabulous-lokum-31a2e8.netlify.app/soporte`
 
 El texto legal se genera desde `src/features/legal/documents.ts` con `npx --yes tsx scripts/generate-legal-pages.ts`, que escribe directamente en el repo de la web; así no puede divergir del que muestra la app. Al registrar `affutbol.app` habrá que cambiar `LEGAL_SITE_URL`, regenerar las páginas y actualizar los tests.
 

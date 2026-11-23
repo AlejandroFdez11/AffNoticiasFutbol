@@ -137,7 +137,7 @@ La pestaña de estadísticas muestra la clasificación y los goleadores reales d
 **Puesta en marcha**
 
 1. Crea un token gratuito en [football-data.org](https://www.football-data.org/client/register).
-2. `npx supabase secrets set FOOTBALL_DATA_TOKEN=<token> STATISTICS_SYNC_SECRET=<secreto> WIKI_USER_AGENT="AFFutbol/1.0 (statistics sync; +https://affnoticiasweb.netlify.app)"`.
+2. `npx supabase secrets set FOOTBALL_DATA_TOKEN=<token> STATISTICS_SYNC_SECRET=<secreto> WIKI_USER_AGENT="AFFutbol/1.0 (statistics sync; +https://fabulous-lokum-31a2e8.netlify.app)"`.
 3. `npx supabase db push` (tabla y cron) y guarda el mismo secreto en Vault:
    `select vault.create_secret('<secreto>', 'statistics_secret', 'Secreto compartido de sync-statistics');`
 4. `npx supabase functions deploy sync-statistics --no-verify-jwt`.
@@ -194,7 +194,7 @@ Apple exige el borrado de cuenta dentro de la app (guía 5.1.1(v)) y una URL pú
   ```bash
   npx supabase functions deploy delete-account
   ```
-- **Textos legales:** una única fuente en `AFFutbol/src/features/legal/documents.ts`, renderizada por `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes` tanto en la app como en la web de `AffNoticiasWeb` (Netlify). Las URL públicas son `https://affnoticiasweb.netlify.app/legal/<documento>` y se generan con `scripts/generate-legal-pages.ts`. Los datos que se declararían en Google Play si se reactivara su envío están en `docs/publicacion/app-privacy.md`.
+- **Textos legales:** una única fuente en `AFFutbol/src/features/legal/documents.ts`, renderizada por `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes` tanto en la app como en la web de `AffNoticiasWeb` (Netlify). Las URL públicas son `https://fabulous-lokum-31a2e8.netlify.app/legal/<documento>` y se generan con `scripts/generate-legal-pages.ts`. Los datos que se declararían en Google Play si se reactivara su envío están en `docs/publicacion/app-privacy.md`.
 - La licencia del repositorio es **propietaria** (`LICENSE`). La atribución de fuentes vive en `/legal/fuentes` y en `docs/publicacion/atribucion-fuentes.md`.
 
 El resto de la documentación de lanzamiento (ítems 8–13) está en [`docs/publicacion/checklist-tiendas.md`](docs/publicacion/checklist-tiendas.md).
@@ -253,7 +253,7 @@ El código ya está preparado; la distribución es **interna con EAS** (APK). No
 - **Apple Sign In** solo se muestra en iOS, donde existe el módulo nativo; en Android y web se oculta en vez de ofrecer un flujo que falla.
 - **Borrado de cuenta (Apple 5.1.1(v)):** Perfil → Eliminar cuenta pide escribir `ELIMINAR`; la Edge Function `delete-account` verifica el JWT y borra la cuenta, el perfil, los pronósticos, las ligas y el token de notificaciones (cascada en todas las tablas de usuario). La función está desplegada y activa.
 - **Legales con URL pública:** `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes`, con una única fuente de texto (`src/features/legal/documents.ts`) para la app y la web, enlazados desde el acceso y Perfil.
-- **Página de descarga:** `https://affnoticiasweb.netlify.app/descargar/` (repo `AffNoticiasWeb`) publica el APK de distribución interna y las instrucciones de instalación; el raíz del sitio redirige a ella.
+- **Página de descarga:** `https://fabulous-lokum-31a2e8.netlify.app/descargar/` (repo `AffNoticiasWeb`) publica el APK de distribución interna y las instrucciones de instalación; el raíz del sitio redirige a ella.
 - **Licencia propietaria** (`LICENSE`) y atribución de API-Football, football-data.org, Wikipedia y los medios RSS.
 - **Declaración de privacidad** documentada en `docs/publicacion/app-privacy.md` como referencia si algún día se abren tiendas (hoy no se envía a ninguna).
 

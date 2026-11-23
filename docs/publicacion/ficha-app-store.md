@@ -10,8 +10,8 @@
 | Categoría principal | Deportes |
 | Categoría secundaria | Ninguna |
 | Copyright | © 2026 Alejandro Fernández Franco |
-| URL de privacidad | `https://affnoticiasweb.netlify.app/legal/privacidad` |
-| URL de soporte | `https://affnoticiasweb.netlify.app/soporte` (generada en el repo `AffNoticiasWeb`) |
+| URL de privacidad | `https://fabulous-lokum-31a2e8.netlify.app/legal/privacidad` |
+| URL de soporte | `https://fabulous-lokum-31a2e8.netlify.app/soporte` (generada en el repo `AffNoticiasWeb`) |
 
 **Palabras clave (100 car., sin espacios):**
 
@@ -110,8 +110,8 @@ The demo account has a favourite team, one prediction and a private league so al
 
 Account deletion (required by guideline 5.1.1(v)): open Perfil > Eliminar cuenta, type ELIMINAR and confirm. The account and all associated data are deleted immediately. Do not delete the demo account until you have finished the review.
 
-Privacy policy: https://affnoticiasweb.netlify.app/legal/privacidad
-Terms: https://affnoticiasweb.netlify.app/legal/terminos
+Privacy policy: https://fabulous-lokum-31a2e8.netlify.app/legal/privacidad
+Terms: https://fabulous-lokum-31a2e8.netlify.app/legal/terminos
 
 ---
 
@@ -123,12 +123,12 @@ La cuenta demo tiene equipo favorito, un pronóstico y una liga privada para pod
 
 Borrado de cuenta (norma 5.1.1(v)): Perfil > Eliminar cuenta, escribe ELIMINAR y confirma. La cuenta y todos sus datos se borran de inmediato. No elimines la cuenta demo hasta terminar la revisión.
 
-Privacidad: https://affnoticiasweb.netlify.app/legal/privacidad
-Condiciones: https://affnoticiasweb.netlify.app/legal/terminos
+Privacidad: https://fabulous-lokum-31a2e8.netlify.app/legal/privacidad
+Condiciones: https://fabulous-lokum-31a2e8.netlify.app/legal/terminos
 ```
 
 ## Enlaces que deben existir antes de enviar
 
-- `https://affnoticiasweb.netlify.app/soporte` (ficha de tienda).
-- `https://affnoticiasweb.netlify.app/legal/privacidad`, `/legal/terminos` y `/legal/fuentes`.
+- `https://fabulous-lokum-31a2e8.netlify.app/soporte` (ficha de tienda).
+- `https://fabulous-lokum-31a2e8.netlify.app/legal/privacidad`, `/legal/terminos` y `/legal/fuentes`.
 - Las URL de retorno de Supabase (`affutbol://**`) permitidas y `exp://**` retirada en producción.

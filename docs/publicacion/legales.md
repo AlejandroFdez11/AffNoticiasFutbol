@@ -6,13 +6,13 @@ Hay **una única fuente**: `AFFutbol/src/features/legal/documents.ts`. Tres ruta
 
 | Documento | Ruta en la app | URL pública (una vez desplegado el sitio web) |
 | --- | --- | --- |
-| Política de privacidad | `/legal/privacidad` | `https://affnoticiasweb.netlify.app/legal/privacidad` |
-| Condiciones de uso | `/legal/terminos` | `https://affnoticiasweb.netlify.app/legal/terminos` |
-| Fuentes y atribución | `/legal/fuentes` | `https://affnoticiasweb.netlify.app/legal/fuentes` |
+| Política de privacidad | `/legal/privacidad` | `https://fabulous-lokum-31a2e8.netlify.app/legal/privacidad` |
+| Condiciones de uso | `/legal/terminos` | `https://fabulous-lokum-31a2e8.netlify.app/legal/terminos` |
+| Fuentes y atribución | `/legal/fuentes` | `https://fabulous-lokum-31a2e8.netlify.app/legal/fuentes` |
 
 La web de Expo (`output: "server"` en `app.json`) sirve esas mismas rutas dentro del build de la app. El sitio público estático vive aparte, en `AlejandroFdez11/AffNoticiasWeb` y se despliega en Netlify; sus HTML se generan desde `documents.ts`, así que el texto de la app y el de la URL pública no pueden divergir. Los enlaces de `auth.tsx` y de Perfil apuntan a las rutas internas; las tiendas apuntan a las URL públicas.
 
-> **Estado actual:** las URLs de este documento apuntan al sitio de Netlify `https://affnoticiasweb.netlify.app`. Las páginas se generan desde `documents.ts` con `npx --yes tsx scripts/generate-legal-pages.ts`, que escribe directamente en `../AffNoticiasWeb` (`legal/*/index.html` y `soporte/index.html`). Al registrar `affutbol.app` habrá que cambiar `LEGAL_SITE_URL`, regenerar las páginas, actualizar los tests de `documents-test.ts` y volver a desplegar en Netlify.
+> **Estado actual:** las URLs de este documento apuntan al sitio de Netlify `https://fabulous-lokum-31a2e8.netlify.app`. Las páginas se generan desde `documents.ts` con `npx --yes tsx scripts/generate-legal-pages.ts`, que escribe directamente en `../AffNoticiasWeb` (`legal/*/index.html` y `soporte/index.html`). Al registrar `affutbol.app` habrá que cambiar `LEGAL_SITE_URL`, regenerar las páginas, actualizar los tests de `documents-test.ts` y volver a desplegar en Netlify.
 
 ## Por qué existe
 
@@ -24,7 +24,7 @@ Google Play exige una **URL pública** de la política de privacidad. Al compart
 | --- | --- | --- |
 | Correo de privacidad | `LEGAL_CONTACT_EMAIL` | `alejandrofdezfr9@gmail.com` (buzón real confirmado; sirve hasta crear `privacidad@affutbol.app`) |
 | Correo de soporte | `LEGAL_SUPPORT_EMAIL` | `alejandrofdezfr9@gmail.com` (buzón real confirmado; sirve hasta crear `soporte@affutbol.app`) |
-| Dominio | `LEGAL_SITE_URL` | `https://affnoticiasweb.netlify.app` (temporal; registrar `affutbol.app` más adelante) |
+| Dominio | `LEGAL_SITE_URL` | `https://fabulous-lokum-31a2e8.netlify.app` (temporal; registrar `affutbol.app` más adelante) |
 | Región de hosting | — | Pendiente: Supabase (base de datos, auth y Edge Functions) y el hosting del build web |
 | Encargados del tratamiento | — | Supabase (auth, base de datos, funciones) y Expo/EAS (builds y push) |
 | Revisión legal | — | Pendiente: pasar el texto por un abogado antes de publicar |
