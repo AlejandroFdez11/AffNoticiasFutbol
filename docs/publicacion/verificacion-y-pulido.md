@@ -20,12 +20,12 @@ npx expo export --platform android
 npx expo export --platform web
 npm run lint
 npm run typecheck
-npm test -- --ci                # 33 suites, 278 tests
+npm test -- --ci                # 35 suites, 295 tests
 ```
 
 El primer `expo-doctor` detectó 18 paquetes desalineados con el SDK (incluido `react-native-safe-area-context` en una versión menor distinta). Se corrigieron con `npx expo install --fix`, que también añadió el plugin `expo-status-bar` en `app.json`. Tras el ajuste, doctor (20/20), lint, typecheck, tests y los exports de Android y web pasan. El bundle es un smoke test: **no sustituye** probar la app en un móvil.
 
-Build de producción de Android terminada el 17/11/2026: ID `4d38ec09-1e83-4c45-8409-5b216c41fbba`, perfil `production`, `versionCode` 2, canal `production`, commit `ebe3721`, AAB descargable desde Expo. Falta el envío a Google Play (requiere la clave de cuenta de servicio).
+Build de producción de Android terminada el 23/11/2026: ID `438dfa99-2bb0-4bce-9e2f-e84359d09a75`, perfil `production`, `versionCode` 3 (autoincrement desde 2), canal `production`, lanzada desde `develop` con las correcciones de noticias y legales rev 6. AAB: https://expo.dev/artifacts/eas/rzGKL1z8uwhMMyzdaxz49cjaro_hH1gTQ6zwg1Vvi1s.aab. Logs: https://expo.dev/accounts/aff_11/projects/affutbol/builds/438dfa99-2bb0-4bce-9e2f-e84359d09a75. Build anterior: `4d38ec09-1e83-4c45-8409-5b216c41fbba` (`versionCode` 2, commit `ebe3721`). Falta el envío a Google Play (requiere la clave de cuenta de servicio).
 
 Repaso pendiente en la build de Android (Expo Go sirve para todo salvo push):
 
