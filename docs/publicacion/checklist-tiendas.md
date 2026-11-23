@@ -4,7 +4,7 @@ Estado del código en el repo y lo que queda como acción manual en consolas. La
 
 | Ítem | Estado en el repo | Pendiente fuera del repo |
 | --- | --- | --- |
-| 8. Eliminar cuenta | ✅ Hecho: UI en Perfil → Eliminar cuenta (confirmación escribiendo `ELIMINAR`), Edge Function `delete-account` con service role, RLS/cascada ya existente, tests | Desplegar la función; comprobar el borrado con la cuenta demo; adjuntar la captura del flujo si la tienda la pide |
+| 8. Eliminar cuenta | ✅ Hecho: UI en Perfil → Eliminar cuenta (confirmación escribiendo `ELIMINAR`), Edge Function `delete-account` desplegada y activa, RLS/cascada ya existente, tests | Comprobar el borrado con la cuenta demo; adjuntar la captura del flujo si la tienda la pide |
 | 9. Privacidad y términos con URL pública | ✅ Hecho: textos en `src/features/legal/documents.ts`, rutas `/legal/*` (app + web), enlaces en `auth.tsx` y Perfil, declaración de privacidad documentada | Publicar las URLs (primero GitHub Pages), buzones reales, revisión jurídica, rellenar Data Safety de Google Play |
 | 10. Iconos y splash definitivos | ✅ Hecho: arte propio «escudo + balón» integrado; másteres en `assets/brand/` y PNG exportados | Verificar icono adaptativo/temático y splash en una build real de Android; ver `iconos-y-splash.md` |
 | 11. Ficha de tienda y cuenta demo | ✅ Borrador listo: descripción, metadatos, guion de capturas, notas y plantilla de credenciales; página de soporte publicada | Crear la cuenta demo, hacer las capturas de Android y rellenar los campos de Play Console |

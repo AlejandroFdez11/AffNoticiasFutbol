@@ -251,14 +251,14 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 - **Variables de build:** `eas.json` declara `environment` y `channel` en los tres perfiles, así que las builds leen las environment variables de EAS (`production`, `preview`, `development`) y las OTA tienen canal. La configuración no se commitea.
 - **Clave de API-Football fuera del bundle:** la app llama a la Edge Function `api-football` (`EXPO_PUBLIC_API_FOOTBALL_PROXY_URL`) y la clave vive en el secreto `API_FOOTBALL_KEY`. La función solo acepta los endpoints y parámetros que usa la app (`supabase/functions/_shared/api-football-proxy.ts`), así que no es un proxy abierto.
 - **Apple Sign In** solo se muestra en iOS, donde existe el módulo nativo; en Android y web se oculta en vez de ofrecer un flujo que falla.
-- **Borrado de cuenta (Apple 5.1.1(v)):** Perfil → Eliminar cuenta pide escribir `ELIMINAR`; la Edge Function `delete-account` verifica el JWT y borra la cuenta, el perfil, los pronósticos, las ligas y el token de notificaciones (cascada en todas las tablas de usuario). Falta desplegar la función.
+- **Borrado de cuenta (Apple 5.1.1(v)):** Perfil → Eliminar cuenta pide escribir `ELIMINAR`; la Edge Function `delete-account` verifica el JWT y borra la cuenta, el perfil, los pronósticos, las ligas y el token de notificaciones (cascada en todas las tablas de usuario). La función está desplegada y activa.
 - **Legales con URL pública:** `/legal/privacidad`, `/legal/terminos` y `/legal/fuentes`, con una única fuente de texto (`src/features/legal/documents.ts`) para la app y la web, enlazados desde el acceso y Perfil.
 - **Licencia propietaria** (`LICENSE`) y atribución de API-Football, football-data.org, Wikipedia y los medios RSS.
 - **Declaración de privacidad** lista para copiar a App Store Connect y Google Play (`docs/publicacion/app-privacy.md`).
 
 ### Pendiente (acción manual)
 
-1. **Desplegar el proxy, el borrado de cuenta y guardar la clave:**
+1. **Proxy y borrado de cuenta: ✅ desplegados** el 23/11/2026 (`api-football` y `delete-account` activos, `API_FOOTBALL_KEY` guardada como secreto). Solo repetir si cambia el código:
    ```bash
    npx supabase secrets set API_FOOTBALL_KEY=...
    npx supabase functions deploy api-football
@@ -274,7 +274,7 @@ El código ya está preparado; lo que queda son acciones en las consolas de Supa
 5. **SMTP propio** en Supabase para la confirmación de email y el reset de contraseña; el SMTP por defecto tiene límites de prueba.
 6. **Proveedores de login:** publicar el consent screen de Google (deja de estar en *Testing*) y configurar FCM en EAS para el push en Android.
 7. **Plan de Supabase:** se mantiene el plan Free (sin Pro, backups ni PITR) durante el testing interno; el proyecto se reactiva manualmente si se pausa por inactividad. Ver `docs/publicacion/supabase-produccion.md`.
-8. **Sitio web legal publicado** en GitHub Pages desde `develop:/docs`; el correo temporal confirmado es `alejandrofdezfr9@gmail.com`. Al registrar `affutbol.app` hay que cambiar `LEGAL_SITE_URL` y regenerar las páginas.
+8. **Sitio web legal publicado** en GitHub Pages desde `develop:/docs` (revisión 6, verificada el 23/11/2026); el correo temporal confirmado es `alejandrofdezfr9@gmail.com`. Al registrar `affutbol.app` hay que cambiar `LEGAL_SITE_URL` y regenerar las páginas.
 9. **Verificar iconos y splash en la build instalada:** el arte propio ya está integrado; queda comprobarlo en Android real. Ver `docs/publicacion/iconos-y-splash.md`.
 10. **Ficha de tienda, capturas y cuenta demo:** ver `docs/publicacion/ficha-app-store.md`.
 
