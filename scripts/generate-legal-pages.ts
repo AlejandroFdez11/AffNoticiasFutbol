@@ -69,6 +69,9 @@ function layout(title: string, body: string): string {
   <title>${escapeHtml(title)} · AFFutbol</title>
   <meta name="description" content="Información legal de AFFutbol">
   <meta name="theme-color" content="#0B7A4B">
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg">
+  <link rel="icon" type="image/png" sizes="64x64" href="/favicon.png">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
   <style>
     :root { color-scheme: light dark; }
     body { margin: 0; background: #07120d; color: #f2f5f3; font: 16px/1.65 system-ui, -apple-system, "Segoe UI", sans-serif; }

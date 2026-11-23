@@ -1,10 +1,7 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 432 432" width="432" height="432">
-  <defs>
-    <mask id="ball-cut">
-      <rect width="432" height="432" fill="#fff"/>
-      <circle cx="216" cy="215" r="74" fill="#000"/>
-    </mask>
-  </defs>
-  <path d="M216 74 C177 100 145 112 115 119 L115 250 C115 302 159 342 216 362 C273 342 317 302 317 250 L317 119 C287 112 255 100 216 74 Z" fill="#fff" mask="url(#ball-cut)"/>
-  <circle cx="216" cy="215" r="30" fill="#fff"/>
+  <g transform="translate(216 216) scale(0.388) translate(-512 -512)">
+    <path d="M512 190 C438 238 356 264 284 276 L284 526 C284 686 384 802 512 866 C640 802 740 686 740 526 L740 276 C668 264 586 238 512 190 Z" fill="#fff"/>
+    <circle cx="512" cy="514" r="164" fill="#000"/>
+    <path d="M512 438 L573 482 L550 556 L474 556 L451 482 Z" fill="#fff"/>
+  </g>
 </svg>
