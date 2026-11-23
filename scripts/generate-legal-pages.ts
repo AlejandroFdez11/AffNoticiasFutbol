@@ -1,11 +1,13 @@
 /**
- * Generates the static GitHub Pages copies of the legal documents.
+ * Generates the static pages of the AffNoticiasWeb site (Netlify) from the
+ * canonical copy in `AFFutbol/src/features/legal/documents.ts`.
  *
- * The TypeScript source in `AFFutbol/src/features/legal/documents.ts` is the
- * single source of truth; this script only renders it as HTML. Run it from the
- * repository root with:
+ * Run from the repository root:
  *
  *   npx --yes tsx scripts/generate-legal-pages.ts
+ *
+ * By default it writes to the sibling `../AffNoticiasWeb` repo. Override the
+ * destination with LEGAL_WEB_DIR if the web repo lives elsewhere.
  */
 
 import { mkdir, writeFile } from 'node:fs/promises';
@@ -23,6 +25,9 @@ import {
 } from '../AFFutbol/src/features/legal/documents';
 
 const ROOT = process.cwd();
+const WEB_ROOT = process.env.LEGAL_WEB_DIR
+  ? path.resolve(process.env.LEGAL_WEB_DIR)
+  : path.resolve(ROOT, '..', 'AffNoticiasWeb');
 const NAV: Array<{ id: LegalDocumentId; label: string; path: string }> = [
   { id: 'privacidad', label: 'Privacidad', path: '/legal/privacidad' },
   { id: 'terminos', label: 'Condiciones', path: '/legal/terminos' },
@@ -52,9 +57,9 @@ function renderBlock(block: LegalBlock): string {
 }
 
 function layout(title: string, body: string): string {
-  const nav = NAV.map(
-    (item) => `<a href="${LEGAL_SITE_URL}${item.path}">${item.label}</a>`
-  ).join('');
+  const nav =
+    `<a href="${LEGAL_SITE_URL}/descargar">Descargar</a>` +
+    NAV.map((item) => `<a href="${LEGAL_SITE_URL}${item.path}">${item.label}</a>`).join('');
 
   return `<!doctype html>
 <html lang="es">
@@ -88,15 +93,15 @@ function layout(title: string, body: string): string {
       <nav>${nav}<a href="${LEGAL_SITE_URL}/soporte">Soporte</a></nav>
     </header>
     ${body}
-    <footer>Última actualización: ${escapeHtml(LEGAL_LAST_UPDATED)}. Página temporal publicada en ${escapeHtml(LEGAL_SITE_URL)}.</footer>
+    <footer>Última actualización: ${escapeHtml(LEGAL_LAST_UPDATED)}. Publicada en ${escapeHtml(LEGAL_SITE_URL)}.</footer>
   </main>
 </body>
 </html>
 `;
 }
 
-async function writePage(relativePath: string, html: string): Promise<void> {
-  const target = path.join(ROOT, relativePath);
+async function writePage(outRoot: string, relativePath: string, html: string): Promise<void> {
+  const target = path.join(outRoot, relativePath);
   await mkdir(path.dirname(target), { recursive: true });
   await writeFile(target, html, 'utf8');
   console.log(`written ${relativePath}`);
@@ -109,7 +114,7 @@ async function main(): Promise<void> {
       `<p class="summary">${escapeHtml(document.summary)}</p>`,
       ...document.blocks.map(renderBlock),
     ].join('\n    ');
-    await writePage(path.join('docs', 'legal', id, 'index.html'), layout(document.title, body));
+    await writePage(WEB_ROOT, path.join('legal', id, 'index.html'), layout(document.title, body));
   }
 
   const supportBody = [
@@ -118,7 +123,7 @@ async function main(): Promise<void> {
     `<p><strong>Privacidad:</strong> <a href="mailto:${escapeHtml(LEGAL_CONTACT_EMAIL)}">${escapeHtml(LEGAL_CONTACT_EMAIL)}</a></p>`,
     '<p>Para borrar tu cuenta, usa la opción <strong>Perfil → Eliminar cuenta</strong> dentro de la app.</p>',
   ].join('\n    ');
-  await writePage(path.join('docs', 'soporte', 'index.html'), layout('Soporte', supportBody));
+  await writePage(WEB_ROOT, path.join('soporte', 'index.html'), layout('Soporte', supportBody));
 }
 
 void main();

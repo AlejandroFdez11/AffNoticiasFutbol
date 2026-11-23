@@ -13,9 +13,9 @@ describe('legal documents', () => {
   });
 
   it('exposes stable public URLs for the stores', () => {
-    expect(legalPublicUrl('privacidad')).toBe('https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/privacidad');
-    expect(legalPublicUrl('terminos')).toBe('https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/terminos');
-    expect(legalPublicUrl('fuentes')).toBe('https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/fuentes');
+    expect(legalPublicUrl('privacidad')).toBe('https://affnoticiasweb.netlify.app/legal/privacidad');
+    expect(legalPublicUrl('terminos')).toBe('https://affnoticiasweb.netlify.app/legal/terminos');
+    expect(legalPublicUrl('fuentes')).toBe('https://affnoticiasweb.netlify.app/legal/fuentes');
     expect(LEGAL_PUBLIC_PATHS.fuentes).toBe('/legal/fuentes');
   });
 

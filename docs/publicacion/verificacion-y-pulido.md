@@ -7,7 +7,7 @@ Continuación de [`checklist-tiendas.md`](checklist-tiendas.md). Estado del repo
 | 14. Verificación técnica y repaso en dispositivos | ✅ Comprobaciones locales ejecutadas el 17/11/2026 | Recorrido manual de todos los flujos en la build de Android, con modo claro/oscuro y sin red |
 | 15. Rate limits y CAPTCHA de Supabase Auth | ✅ Decidido: **solo rate limits**, sin CAPTCHA por ahora | Configurar límites por IP en Supabase y dejar CAPTCHA desactivado; si se activa en el futuro, implementar antes el widget en el cliente |
 | 16. Monitorización de errores | 📝 Decidido: **no implementar ahora**; queda documentado (no hay Sentry ni equivalente) | Si se añade más adelante: crear proyecto, SDK y DSN, subir source maps y actualizar la política de privacidad si se recogen datos de diagnóstico |
-| 17. Hosting de la web | ✅ URLs legales publicadas en GitHub Pages desde `develop:/docs`, generadas desde `documents.ts` | Sustituir por el dominio definitivo cuando se registre `affutbol.app` |
+| 17. Hosting de la web | ✅ Sitio estático en Netlify desde el repo `AffNoticiasWeb`, generado desde `documents.ts` | Sustituir por el dominio definitivo cuando se registre `affutbol.app` |
 | 18. Instantáneas con `shortName` | ✅ Hecho: función redesplegada, `dryRun` y sync real correctos, `shortName` presente en las cuatro ligas | Nada; el cron `statistics-sync` ya mantendrá el campo en las siguientes ejecuciones |
 
 ## 14. Verificación técnica y pruebas en dispositivo
@@ -26,6 +26,8 @@ npm test -- --ci                # 35 suites, 295 tests
 El primer `expo-doctor` detectó 18 paquetes desalineados con el SDK (incluido `react-native-safe-area-context` en una versión menor distinta). Se corrigieron con `npx expo install --fix`, que también añadió el plugin `expo-status-bar` en `app.json`. Tras el ajuste, doctor (20/20), lint, typecheck, tests y los exports de Android y web pasan. El bundle es un smoke test: **no sustituye** probar la app en un móvil.
 
 Build de producción de Android terminada el 23/11/2026: ID `438dfa99-2bb0-4bce-9e2f-e84359d09a75`, perfil `production`, `versionCode` 3 (autoincrement desde 2), canal `production`, lanzada desde `develop` con las correcciones de noticias y legales rev 6. AAB: https://expo.dev/artifacts/eas/rzGKL1z8uwhMMyzdaxz49cjaro_hH1gTQ6zwg1Vvi1s.aab. Logs: https://expo.dev/accounts/aff_11/projects/affutbol/builds/438dfa99-2bb0-4bce-9e2f-e84359d09a75. Build anterior: `4d38ec09-1e83-4c45-8409-5b216c41fbba` (`versionCode` 2, commit `ebe3721`). No se enviará a Google Play: el titular decidió no pagar el registro de Play Console. La QA se hace con el APK de distribución interna de EAS (perfil `internal`).
+
+Build interna terminada el 23/11/2026: ID `ebc70f1d-b5be-4c34-a414-9f6ada2ca308`, versión `1.0.0` (`versionCode` 3), perfil `internal`, canal `production`, commit `091239c`. APK: https://expo.dev/artifacts/eas/dlf6ROJ4gBSWtDklP91cSZsEuvvvXJZuitV5D4JUZFM.apk. Enlace de instalación: https://expo.dev/accounts/aff_11/projects/affutbol/builds/ebc70f1d-b5be-4c34-a414-9f6ada2ca308. Logs: https://expo.dev/accounts/aff_11/projects/affutbol/builds/ebc70f1d-b5be-4c34-a414-9f6ada2ca308. El artefacto caduca el 07/12/2026; habrá que generar otro build y actualizar `AffNoticiasWeb/descargar/index.html`.
 
 Repaso pendiente en el APK interno de EAS (Expo Go sirve para todo salvo push):
 
@@ -63,14 +65,15 @@ Requiere cuenta externa y DSN; no se ha tocado código.
 
 `AFFutbol/app.json` declara `"web": { "output": "server" }`, así que `npx expo export --platform web` genera una build que necesita un entorno Node con el adaptador de servidor correspondiente: no se puede dejar como archivos estáticos en cualquier CDN.
 
-No se va a publicar la app web completa, pero **sí las URL legales**, que Google Play exige públicamente accesibles. La solución elegida es servir solo esas páginas como HTML estático en GitHub Pages, desde `develop:/docs`, con HTTPS válido:
+No se va a publicar la app web completa, pero **sí las URL legales y la descarga del APK**. La solución elegida es un sitio estático aparte, `AlejandroFdez11/AffNoticiasWeb`, desplegado en Netlify con HTTPS válido:
 
-- `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/privacidad`
-- `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/terminos`
-- `https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/fuentes`
-- `https://alejandrofdez11.github.io/AffNoticiasFutbol/soporte`
+- `https://affnoticiasweb.netlify.app/descargar`
+- `https://affnoticiasweb.netlify.app/legal/privacidad`
+- `https://affnoticiasweb.netlify.app/legal/terminos`
+- `https://affnoticiasweb.netlify.app/legal/fuentes`
+- `https://affnoticiasweb.netlify.app/soporte`
 
-El texto se genera desde `src/features/legal/documents.ts` con `npx --yes tsx scripts/generate-legal-pages.ts`, así que no puede divergir del que muestra la app. Al registrar `affutbol.app` habrá que cambiar `LEGAL_SITE_URL`, regenerar las páginas y actualizar los tests.
+El texto legal se genera desde `src/features/legal/documents.ts` con `npx --yes tsx scripts/generate-legal-pages.ts`, que escribe directamente en el repo de la web; así no puede divergir del que muestra la app. Al registrar `affutbol.app` habrá que cambiar `LEGAL_SITE_URL`, regenerar las páginas y actualizar los tests.
 
 ## 18. Instantáneas con `shortName`
 

@@ -38,7 +38,7 @@ import {
 const THROTTLE_MS = 10 * 60_000;
 const RETENTION_DAYS = 14;
 const FETCH_TIMEOUT_MS = 15_000;
-const USER_AGENT = 'AFFutbol/1.0 (RSS reader; +https://alejandrofdez11.github.io/AffNoticiasFutbol)';
+const USER_AGENT = 'AFFutbol/1.0 (RSS reader; +https://affnoticiasweb.netlify.app)';
 
 const CORS_HEADERS = {
   'Access-Control-Allow-Origin': '*',

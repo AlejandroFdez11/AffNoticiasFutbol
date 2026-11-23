@@ -2,9 +2,9 @@
  * Legal copy shown in the app and, through the web build, at the public URLs
  * required by App Store Connect and Google Play:
  *
- *   https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/privacidad
- *   https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/terminos
- *   https://alejandrofdez11.github.io/AffNoticiasFutbol/legal/fuentes
+ *   https://affnoticiasweb.netlify.app/legal/privacidad
+ *   https://affnoticiasweb.netlify.app/legal/terminos
+ *   https://affnoticiasweb.netlify.app/legal/fuentes
  *
  * There is exactly one source of truth: this file. The routes under
  * `src/app/legal/` render it, so the in-app text and the public page can never
@@ -36,7 +36,7 @@ export const LEGAL_LAST_UPDATED = '23 de noviembre de 2026 · revisión 6';
 /** Must exist before submitting: see `<repo>/docs/publicacion/legales.md`. */
 export const LEGAL_CONTACT_EMAIL = 'alejandrofdezfr9@gmail.com';
 export const LEGAL_SUPPORT_EMAIL = 'alejandrofdezfr9@gmail.com';
-export const LEGAL_SITE_URL = 'https://alejandrofdez11.github.io/AffNoticiasFutbol';
+export const LEGAL_SITE_URL = 'https://affnoticiasweb.netlify.app';
 
 export const LEGAL_PUBLIC_PATHS = {
   privacidad: '/legal/privacidad',

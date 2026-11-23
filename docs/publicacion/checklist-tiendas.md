@@ -5,9 +5,9 @@ Estado del código en el repo y lo que queda como acción manual en consolas. La
 | Ítem | Estado en el repo | Pendiente fuera del repo |
 | --- | --- | --- |
 | 8. Eliminar cuenta | ✅ Hecho: UI en Perfil → Eliminar cuenta (confirmación escribiendo `ELIMINAR`), Edge Function `delete-account` desplegada y activa, RLS/cascada ya existente, tests | Comprobar el borrado con la cuenta demo en el APK interno (sin tienda) |
-| 9. Privacidad y términos con URL pública | ✅ Hecho: textos en `src/features/legal/documents.ts`, rutas `/legal/*` (app + web), enlaces en `auth.tsx` y Perfil, revisión 6 publicada en GitHub Pages | Buzones reales y revisión jurídica; no hay Data Safety porque Play queda en espera |
+| 9. Privacidad y términos con URL pública | ✅ Hecho: textos en `src/features/legal/documents.ts`, rutas `/legal/*` (app + web de `AffNoticiasWeb` en Netlify), enlaces en `auth.tsx` y Perfil, revisión 6 publicada | Buzones reales y revisión jurídica; no hay Data Safety porque Play queda en espera |
 | 10. Iconos y splash definitivos | ✅ Hecho: arte propio «escudo + balón» integrado; másteres en `assets/brand/` y PNG exportados | Verificar icono adaptativo/temático y splash en el APK interno; ver `iconos-y-splash.md` |
-| 11. Ficha de tienda y cuenta demo | ✅ Cuenta demo creada y verificada; descripción, metadatos, guion de capturas y página de soporte publicados | Capturas de QA en el APK interno. Play Console y su ficha quedan en espera |
+| 11. Ficha de tienda y cuenta demo | ✅ Cuenta demo creada y verificada; descripción, metadatos, guion de capturas, página de soporte y página de descarga publicados | Capturas de QA en el APK interno. Play Console y su ficha quedan en espera |
 | 12. Licencia y atribución | ✅ Hecho: `LICENSE` propietaria, pantalla `/legal/fuentes`, documento de revisión de RSS y marcas | Revisar los términos de Marca / Mundo Deportivo / Relevo / 20minutos / La Vanguardia / ESPN y el uso de imágenes en caliente; validación jurídica |
 | 13. Plan de Supabase | ✅ Decidido: mantener el plan Free; API-Football Free para testing interno | Sin Pro, backups ni PITR; SMTP propio y vigilancia de inactividad/cuota; subir de plan de API-Football antes de abrir al público |
 
