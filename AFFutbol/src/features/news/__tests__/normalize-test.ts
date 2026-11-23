@@ -91,6 +91,15 @@ describe('RSS normalisation', () => {
     expect(item.topic).toBe('LaLiga');
   });
 
+  it('stores an HTML-encoded feed excerpt as plain text', () => {
+    // Mundo Deportivo escapes the markup inside its RSS descriptions.
+    const item = `<item><title>El Betis gana&lt;br&gt;</title><link>https://www.mundodeportivo.com/futbol/betis.html</link><description>El &lt;b&gt;Real Betis&lt;/b&gt; gana&amp;nbsp;el partido y &lt;p&gt;suma tres puntos&lt;/p&gt;</description><pubDate>Wed, 04 Nov 2026 10:00:00 +0100</pubDate></item>`;
+    const [news] = normalizeFeed(wrap(item), newsSource, NOW);
+
+    expect(news.title).toBe('El Betis gana');
+    expect(news.summary).toBe('El Real Betis gana el partido y suma tres puntos');
+  });
+
   it('drops items without a link or a valid date', () => {
     const withoutLink = '<item><title>Sin enlace</title><pubDate>Wed, 04 Nov 2026 10:00:00 GMT</pubDate></item>';
     const withoutDate = '<item><title>Sin fecha</title><link>https://example.com/a</link></item>';
@@ -189,6 +198,28 @@ describe('status detection', () => {
 describe('text helpers', () => {
   it('strips tags, CDATA and entities', () => {
     expect(toPlainText('<![CDATA[ Un gol &amp; una </p> jugada ]]>')).toBe('Un gol & una jugada');
+  });
+
+  it('strips HTML encoded as entities after decoding it', () => {
+    expect(toPlainText('El &lt;b&gt;FC Barcelona&lt;/b&gt; juega hoy')).toBe(
+      'El FC Barcelona juega hoy'
+    );
+    expect(toPlainText('Un gol &amp;nbsp; una jugada&lt;br&gt;')).toBe('Un gol una jugada');
+  });
+
+  it('strips HTML encoded twice and escaped CDATA', () => {
+    expect(toPlainText('&amp;lt;p&amp;gt;LaLiga sufri&#243; un ataque&amp;lt;/p&amp;gt;')).toBe(
+      'LaLiga sufrió un ataque'
+    );
+    expect(toPlainText('&lt;![CDATA[&lt;p&gt;Sigue leyendo...&lt;/p&gt;]]&gt;')).toBe(
+      'Sigue leyendo...'
+    );
+  });
+
+  it('strips a tag cut off by the excerpt limit', () => {
+    expect(toPlainText('Un resumen con un enlace <a href="https://example.com/noticia"…')).toBe(
+      'Un resumen con un enlace'
+    );
   });
 
   it('normalises accents for comparisons', () => {

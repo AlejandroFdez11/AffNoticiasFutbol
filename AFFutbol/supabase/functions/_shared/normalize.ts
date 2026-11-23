@@ -282,11 +282,32 @@ export function decodeEntities(value: string): string {
   });
 }
 
-/** Removes CDATA wrappers, tags and entities, then collapses whitespace. */
+/**
+ * Strips CDATA wrappers, tags and entities, then collapses whitespace.
+ *
+ * Feeds escape markup in three ways: raw `<p>`, `&lt;p&gt;` and even
+ * `&amp;lt;p&amp;gt;`. Stripping tags before decoding entities would leave
+ * visible tags in the stored summary, so decode and strip in turns until the
+ * text stops changing (bounded in case a feed keeps re-introducing entities).
+ */
 export function toPlainText(value: string): string {
-  const withoutCdata = value.replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1');
-  const withoutTags = withoutCdata.replace(/<[^>]+>/g, ' ');
-  return decodeEntities(withoutTags).replace(/\s+/g, ' ').trim();
+  let text = value;
+
+  for (let pass = 0; pass < 4; pass += 1) {
+    const next = decodeEntities(text)
+      .replace(/<!\[CDATA\[([\s\S]*?)\]\]>/g, '$1')
+      .replace(/<[^>]+>/g, ' ');
+
+    if (next === text) {
+      break;
+    }
+    text = next;
+  }
+
+  return text
+    .replace(/<\/?[a-zA-Z][^>]*?…?$/g, ' ')
+    .replace(/\s+/g, ' ')
+    .trim();
 }
 
 /** Cuts on a word boundary so summaries never end mid-word. */
